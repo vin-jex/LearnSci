@@ -1,4 +1,3 @@
-// app/api/attempt/[id]/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -23,7 +22,6 @@ export async function GET(
       return NextResponse.json({ error: "Attempt not found" }, { status: 404 });
     }
 
-    // Next topic (if exists)
     const nextTopic = await prisma.topic.findFirst({
       where: { order: { gt: attempt.topic.order ?? 0 } },
       orderBy: { order: "asc" },
