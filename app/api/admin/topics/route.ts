@@ -1,4 +1,3 @@
-// app/api/admin/topics/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminAuth";
@@ -19,7 +18,14 @@ export async function GET() {
   const topics = await prisma.topic.findMany({
     orderBy: { order: "asc" },
     include: {
-      _count: { select: { lessons: true, keyTerms: true, questions: true, attempts: true } },
+      _count: {
+        select: {
+          lessons: true,
+          keyTerms: true,
+          questions: true,
+          attempts: true,
+        },
+      },
     },
   });
 
@@ -34,8 +40,11 @@ export async function POST(request: Request) {
   const parsed = createTopicSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
-      { status: 400 }
+      {
+        error: "Validation failed",
+        details: parsed.error.flatten().fieldErrors,
+      },
+      { status: 400 },
     );
   }
 

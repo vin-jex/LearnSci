@@ -1,9 +1,9 @@
-export const dynamic = "force-dynamic";
-
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
@@ -29,7 +29,7 @@ export async function GET() {
       if (!attemptMap.has(a.topicId)) attemptMap.set(a.topicId, a);
     }
 
-    const topicsWithStatus = topics.map((topic) => {
+    const topicsWithStatus = topics.map((topic: (typeof topics)[number]) => {
       const attempt = attemptMap.get(topic.id);
       let status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" = "NOT_STARTED";
       if (attempt) {

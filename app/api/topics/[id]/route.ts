@@ -1,4 +1,3 @@
-// app/api/topics/[id]/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -6,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -42,6 +41,9 @@ export async function GET(
     });
   } catch (error) {
     console.error("[TOPIC_GET]", error);
-    return NextResponse.json({ error: "Failed to fetch topic" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch topic" },
+      { status: 500 },
+    );
   }
 }
