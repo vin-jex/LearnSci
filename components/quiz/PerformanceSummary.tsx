@@ -150,7 +150,7 @@ export function PerformanceSummary({
             Areas to Review
           </p>
           <ul className='space-y-2'>
-            {[...new Set(weakAreas)].map((area, i) => (
+            {Array.from(new Set(weakAreas)).map((area, i) => (
               <li
                 key={i}
                 className='flex items-start gap-2 text-sm text-ink-400 font-body'

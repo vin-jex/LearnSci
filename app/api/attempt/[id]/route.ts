@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export async function GET(
 
     const attempt = await prisma.attempt.findFirst({
       where: { id: params.id, userId: session.user.id },
-      include: { topic: { select: { id: true, title: true } } },
+      include: { topic: { select: { id: true, title: true, order: true } } },
     });
 
     if (!attempt) {
@@ -33,6 +33,9 @@ export async function GET(
     return NextResponse.json({ attempt, nextTopic });
   } catch (error) {
     console.error("[ATTEMPT_GET]", error);
-    return NextResponse.json({ error: "Failed to fetch result" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch result" },
+      { status: 500 },
+    );
   }
 }

@@ -1,9 +1,9 @@
-// app/layout.tsx
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import { Suspense } from "react";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -18,6 +18,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://learn-sci.vercel.app"),
   title: {
     default: "LearnSci - Computer-Assisted Learning",
     template: "%s · LearnSci",
@@ -52,7 +53,9 @@ export default function RootLayout({
     <html lang='en' className={`${fraunces.variable} ${plusJakarta.variable}`}>
       <body className='font-body bg-ink-950 text-ink-100 antialiased'>
         <SessionProvider>
-          <ReduxProvider>{children}</ReduxProvider>
+          <ReduxProvider>
+            <Suspense>{children}</Suspense>
+          </ReduxProvider>
         </SessionProvider>
       </body>
     </html>

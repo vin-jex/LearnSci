@@ -1,4 +1,3 @@
-// app/api/admin/topics/[id]/questions/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminAuth";
@@ -20,7 +19,10 @@ const questionSchema = z.object({
   }),
 });
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 
@@ -32,7 +34,10 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   return NextResponse.json({ questions });
 }
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 
@@ -40,13 +45,23 @@ export async function POST(request: Request, { params }: { params: { id: string 
   const parsed = questionSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
-      { status: 400 }
+      {
+        error: "Validation failed",
+        details: parsed.error.flatten().fieldErrors,
+      },
+      { status: 400 },
     );
   }
 
   const question = await prisma.question.create({
-    data: { topicId: params.id, ...parsed.data },
+    data: {
+      topicId: params.id,
+      ...parsed.data,
+      options:
+        parsed.data.options !== undefined && parsed.data.options !== null
+          ? parsed.data.options
+          : undefined,
+    },
   });
 
   return NextResponse.json({ question }, { status: 201 });

@@ -1,4 +1,5 @@
-// app/api/topics/route.ts
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -18,7 +19,6 @@ export async function GET() {
       },
     });
 
-    // Fetch latest attempt per topic for this user
     const attempts = await prisma.attempt.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
@@ -33,7 +33,8 @@ export async function GET() {
       const attempt = attemptMap.get(topic.id);
       let status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" = "NOT_STARTED";
       if (attempt) {
-        status = attempt.classification === "STRONG" ? "COMPLETED" : "IN_PROGRESS";
+        status =
+          attempt.classification === "STRONG" ? "COMPLETED" : "IN_PROGRESS";
       }
       return {
         ...topic,
@@ -48,6 +49,9 @@ export async function GET() {
     return NextResponse.json({ topics: topicsWithStatus });
   } catch (error) {
     console.error("[TOPICS_GET]", error);
-    return NextResponse.json({ error: "Failed to fetch topics" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch topics" },
+      { status: 500 },
+    );
   }
 }
