@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(LEARNER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempts Attempt[]
+
+  @@map("users")
+}
+
+model Topic {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  duration    String
+  order       Int      @default(0)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lessons   Lesson[]
+  keyTerms  KeyTerm[]
+  questions Question[]
+  attempts  Attempt[]
+
+  @@map("topics")
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  topicId   String
+  content   String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@map("lessons")
+}
+
+model KeyTerm {
+  id              String  @id @default(cuid())
+  topicId         String
+  englishTerm     String
+  igboTerm        String
+  igboExplanation String?
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@map("key_terms")
+}
+
+model Question {
+  id            String       @id @default(cuid())
+  topicId       String
+  type          QuestionType
+  questionText  String
+  options       Json?
+  correctAnswer String
+  feedbackRules Json
+  createdAt     DateTime     @default(now())
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@map("questions")
+}
+
+model Attempt {
+  id             String         @id @default(cuid())
+  userId         String
+  topicId        String
+  score          Float
+  classification Classification
+  weakAreas      Json?
+  createdAt      DateTime       @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  @@map("attempts")
+}
+
+enum Role {
+  LEARNER
+  ADMIN
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+  SHORT_ANSWER
+}
+
+enum Classification {
+  STRONG
+  MODERATE
+  WEAK
+}
