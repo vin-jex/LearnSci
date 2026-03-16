@@ -49,10 +49,7 @@ export function DashboardNav({ user }: Props) {
           {isAdmin && (
             <Link
               href='/admin/topics'
-              className='hidden sm:flex items-center gap-1.5 text-xs font-semibold font-body
-                         text-earth-400 hover:text-earth-300 border border-earth-400/20
-                         bg-earth-400/8 hover:bg-earth-400/15 px-2.5 py-1 rounded-lg
-                         transition-colors'
+              className='hidden sm:flex items-center gap-1.5 text-xs font-semibold font-body text-earth-400 hover:text-earth-300 border border-earth-400/20 bg-earth-400/8 hover:bg-earth-400/15 px-2.5 py-1 rounded-lg transition-colors'
             >
               <svg className='w-3 h-3' viewBox='0 0 20 20' fill='currentColor'>
                 <path
@@ -82,8 +79,7 @@ export function DashboardNav({ user }: Props) {
           <button
             onClick={handleSignOut}
             disabled={signingOut}
-            className='text-xs text-ink-500 hover:text-red-400 transition-colors font-body
-                       disabled:opacity-50 flex items-center gap-1.5'
+            className='text-xs text-ink-500 hover:text-red-400 transition-colors font-body disabled:opacity-50 flex items-center gap-1.5'
           >
             {signingOut ? (
               <div className='spinner !w-3 !h-3' />
