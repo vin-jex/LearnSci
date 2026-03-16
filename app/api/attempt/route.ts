@@ -44,12 +44,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const results = questions.map((q) => {
+    const results = questions.map((q: (typeof questions)[number]) => {
       const userAnswer = answers[q.id] ?? "";
+
       const feedbackRules = q.feedbackRules as {
         misconceptions: { pattern: string; feedback: string }[];
         defaultFeedback: string;
       };
+
       return {
         questionId: q.id,
         questionText: q.questionText,
