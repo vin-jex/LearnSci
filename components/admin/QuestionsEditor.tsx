@@ -1,5 +1,4 @@
 "use client";
-// components/admin/QuestionsEditor.tsx
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -387,7 +386,7 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
             {/* Default feedback */}
             <div className='flex flex-col gap-1.5'>
               <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
-                Default Feedback (shown when wrong answer doesn't match a
+                Default Feedback (shown when wrong answer doesn&apos;t match a
                 misconception)
               </label>
               <textarea

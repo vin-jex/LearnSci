@@ -1,5 +1,5 @@
 "use client";
-// components/quiz/QuizEngine.tsx
+
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { MCQQuestion } from "./MCQQuestion";
@@ -7,7 +7,7 @@ import { TrueFalseQuestion } from "./TrueFalseQuestion";
 import { ShortAnswerQuestion } from "./ShortAnswerQuestion";
 import { FeedbackPanel } from "./FeedbackPanel";
 import { QuizProgress } from "./QuizProgress";
-import { evaluateAnswer } from "@/lib/evaluate";
+// import { evaluateAnswer } from "@/lib/evaluate";
 
 interface Question {
   id: string;
@@ -16,13 +16,13 @@ interface Question {
   options?: string[] | null;
 }
 
-interface QuestionWithAnswer extends Question {
-  correctAnswer: string;
-  feedbackRules: {
-    misconceptions: { pattern: string; feedback: string }[];
-    defaultFeedback: string;
-  };
-}
+// interface QuestionWithAnswer extends Question {
+//   correctAnswer: string;
+//   feedbackRules: {
+//     misconceptions: { pattern: string; feedback: string }[];
+//     defaultFeedback: string;
+//   };
+// }
 
 interface Props {
   topicId: string;

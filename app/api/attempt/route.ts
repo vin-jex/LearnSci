@@ -1,4 +1,3 @@
-import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -34,10 +33,9 @@ export async function POST(request: Request) {
     const { topicId, answers } = parsed.data;
 
     // Fetch all questions (with correct answers + feedback rules) - server only
-    const questions: Prisma.QuestionGetPayload<{}>[] =
-      await prisma.question.findMany({
-        where: { topicId },
-      });
+    const questions = await prisma.question.findMany({
+      where: { topicId },
+    });
 
     if (questions.length === 0) {
       return NextResponse.json(
@@ -46,7 +44,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const results = questions.map((q: (typeof questions)[number]) => {
+    const results = questions.map((q) => {
       const userAnswer = answers[q.id] ?? "";
       const feedbackRules = q.feedbackRules as {
         misconceptions: { pattern: string; feedback: string }[];
