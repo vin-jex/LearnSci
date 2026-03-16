@@ -18,7 +18,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://learn-sci.vercel.app"),
+  metadataBase: new URL("https://learn-sci-vert.vercel.app"),
   title: {
     default: "LearnSci - Computer-Assisted Learning",
     template: "%s · LearnSci",
