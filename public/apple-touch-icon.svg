@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" rx="40" fill="#14532d"/>
+  <path d="M90 162 C52 130,40 80,62 32 Q72 10,90 4 Q108 10,118 32 C140 80,128 130,90 162Z" fill="#22c55e"/>
+  <path d="M90 158 Q90 88,90 16" stroke="#14532d" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M90 124 Q70 106,58 98" stroke="#14532d" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M90 124 Q110 106,122 98" stroke="#14532d" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M90 94 Q72 78,52 70" stroke="#14532d" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <path d="M90 94 Q108 78,128 70" stroke="#14532d" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="90" cy="90" rx="64" ry="20" stroke="#86efac" stroke-width="3" fill="none" opacity="0.65" transform="rotate(-20,90,90)"/>
+  <ellipse cx="90" cy="90" rx="64" ry="20" stroke="#86efac" stroke-width="3" fill="none" opacity="0.65" transform="rotate(40,90,90)"/>
+  <circle cx="150" cy="75" r="8" fill="#bbf7d0"/>
+  <circle cx="36" cy="112" r="6" fill="#bbf7d0"/>
+  <circle cx="122" cy="36" r="6" fill="#bbf7d0"/>
+  <circle cx="90" cy="90" r="12" fill="#4ade80"/>
+</svg>
