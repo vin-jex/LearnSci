@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { QuizEngine } from "@/components/quiz/QuizEngine";
@@ -10,11 +11,19 @@ interface Question {
   options?: string[] | null;
 }
 
+interface KeyTerm {
+  id: string;
+  englishTerm: string;
+  igboTerm: string;
+  igboExplanation: string | null;
+}
+
 export default function QuizPage({ params }: { params: { id: string } }) {
   const [topic, setTopic] = useState<{ id: string; title: string } | null>(
     null,
   );
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [keyTerms, setKeyTerms] = useState<KeyTerm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [started, setStarted] = useState(false);
@@ -29,6 +38,7 @@ export default function QuizPage({ params }: { params: { id: string } }) {
         }
         setTopic(data.topic);
         setQuestions(data.questions);
+        setKeyTerms(data.keyTerms ?? []);
       })
       .catch(() => setError("Failed to load quiz"))
       .finally(() => setIsLoading(false));
@@ -74,12 +84,10 @@ export default function QuizPage({ params }: { params: { id: string } }) {
     );
   }
 
-  // Pre-quiz start screen
   if (!started) {
     return (
       <div className='max-w-2xl mx-auto animate-fade-up'>
         <div className='glass-card rounded-2xl p-8 border border-white/5 text-center'>
-          {/* Icon */}
           <div
             className='w-16 h-16 rounded-2xl bg-forest-600/15 border border-forest-500/20
                           flex items-center justify-center mx-auto mb-6'
@@ -110,8 +118,7 @@ export default function QuizPage({ params }: { params: { id: string } }) {
             Answer each question and get instant feedback.
           </p>
 
-          {/* Question type breakdown */}
-          <div className='flex flex-wrap gap-2 justify-center mb-8'>
+          <div className='flex flex-wrap gap-2 justify-center mb-4'>
             {["MCQ", "TRUE_FALSE", "SHORT_ANSWER"].map((type) => {
               const count = questions.filter((q) => q.type === type).length;
               if (!count) return null;
@@ -123,14 +130,21 @@ export default function QuizPage({ params }: { params: { id: string } }) {
               return (
                 <span
                   key={type}
-                  className='px-3 py-1 text-xs font-body text-ink-400 glass-card
-                             rounded-full border border-white/5'
+                  className='px-3 py-1 text-xs font-body text-ink-400 glass-card rounded-full border border-white/5'
                 >
                   {count}× {labels[type]}
                 </span>
               );
             })}
           </div>
+
+          {keyTerms.length > 0 && (
+            <p className='text-xs text-ink-600 font-body mb-6'>
+              {keyTerms.length} key term{keyTerms.length !== 1 ? "s" : ""}{" "}
+              available during the quiz - toggle Igbo translations in the
+              sidebar.
+            </p>
+          )}
 
           <button
             onClick={() => setStarted(true)}
@@ -157,6 +171,7 @@ export default function QuizPage({ params }: { params: { id: string } }) {
       topicId={topic.id}
       topicTitle={topic.title}
       questions={questions}
+      keyTerms={keyTerms}
     />
   );
 }
