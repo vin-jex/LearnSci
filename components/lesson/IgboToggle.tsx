@@ -1,5 +1,5 @@
 "use client";
-// components/lesson/IgboToggle.tsx
+
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { toggleIgbo } from "@/lib/store/slices/igboSlice";
 
@@ -21,14 +21,13 @@ export function IgboToggle() {
       `}
       title={isVisible ? "Hide Igbo translations" : "Show Igbo translations"}
     >
-      {/* Igbo flag-inspired dot */}
-      <span className="flex items-center gap-0.5">
-        <span className="w-2 h-3 rounded-sm bg-forest-600 opacity-80" />
-        <span className="w-2 h-3 rounded-sm bg-white opacity-30" />
-        <span className="w-2 h-3 rounded-sm bg-forest-600 opacity-80" />
+      <span className='flex items-center gap-0.5'>
+        <span className='w-2 h-3 rounded-sm bg-forest-600 opacity-80' />
+        <span className='w-2 h-3 rounded-sm bg-white opacity-30' />
+        <span className='w-2 h-3 rounded-sm bg-forest-600 opacity-80' />
       </span>
       {isVisible ? "Igbo: ON" : "Igbo: OFF"}
-      {/* Toggle pill */}
+
       <span
         className={`
           relative inline-flex w-7 h-4 rounded-full transition-colors duration-200
