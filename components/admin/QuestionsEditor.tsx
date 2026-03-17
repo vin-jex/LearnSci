@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,9 +19,17 @@ interface Question {
   };
 }
 
+interface KeyTerm {
+  id: string;
+  englishTerm: string;
+  igboTerm: string;
+  igboExplanation: string | null;
+}
+
 interface Props {
   topicId: string;
   questions: Question[];
+  keyTerms?: KeyTerm[];
   onSaved: () => void;
 }
 
@@ -46,12 +55,18 @@ const TYPE_LABELS: Record<QuestionType, string> = {
   SHORT_ANSWER: "Short Answer",
 };
 
-export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
+export function QuestionsEditor({
+  topicId,
+  questions,
+  keyTerms = [],
+  onSaved,
+}: Props) {
   const [isAdding, setIsAdding] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
 
   const {
     register,
@@ -78,7 +93,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
 
   const questionType = watch("type");
 
-  // When type changes, reset options and correctAnswer
   const handleTypeChange = (type: QuestionType) => {
     setValue("type", type);
     setValue("correctAnswer", "");
@@ -146,17 +160,74 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
 
   return (
     <div className='space-y-6'>
-      {/* Success message */}
+      {keyTerms.length > 0 && (
+        <div className='glass-card rounded-2xl border border-earth-400/15 overflow-hidden'>
+          <button
+            onClick={() => setTermsOpen((o) => !o)}
+            className='w-full flex items-center justify-between px-5 py-3.5 hover:bg-white/[0.02] transition-colors'
+          >
+            <div className='flex items-center gap-2'>
+              <span className='text-xs font-semibold uppercase tracking-widest text-earth-500'>
+                Igbo Key Terms Reference
+              </span>
+              <span className='text-xs text-ink-600 font-body'>
+                ({keyTerms.length} terms)
+              </span>
+              <span className='text-xs text-ink-700 font-body italic'>
+                - use these when writing feedback
+              </span>
+            </div>
+            <svg
+              className={`w-4 h-4 text-ink-600 transition-transform duration-200 ${termsOpen ? "rotate-180" : ""}`}
+              viewBox='0 0 20 20'
+              fill='currentColor'
+            >
+              <path
+                fillRule='evenodd'
+                d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z'
+                clipRule='evenodd'
+              />
+            </svg>
+          </button>
+
+          <div
+            className={`
+              overflow-hidden transition-all duration-300
+              ${termsOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}
+            `}
+          >
+            <div className='px-5 pb-4 pt-2 border-t border-white/5'>
+              <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-72 overflow-y-auto'>
+                {keyTerms.map((term) => (
+                  <div
+                    key={term.id}
+                    className='bg-ink-900/40 border border-ink-800 rounded-xl px-3 py-2'
+                  >
+                    <p className='text-xs font-semibold text-ink-200 font-body'>
+                      {term.englishTerm}
+                    </p>
+                    <p className='text-xs text-earth-400 font-body'>
+                      {term.igboTerm}
+                    </p>
+                    {term.igboExplanation && (
+                      <p className='text-xs text-ink-600 font-body italic mt-0.5 leading-relaxed'>
+                        {term.igboExplanation}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {saved && (
-        <div
-          className='px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20
-                        text-forest-400 text-sm font-body animate-fade-in'
-        >
+        <div className='px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20 text-forest-400 text-sm font-body animate-fade-in'>
           ✓ Question saved successfully
         </div>
       )}
 
-      {/* Existing questions */}
       <div>
         <div className='flex items-center justify-between mb-3'>
           <p className='text-xs font-semibold uppercase tracking-widest text-ink-500'>
@@ -164,9 +235,7 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
           </p>
           <button
             onClick={() => setShowForm((s) => !s)}
-            className='flex items-center gap-1.5 text-xs font-semibold font-body
-                       bg-earth-500/90 hover:bg-earth-400 text-white
-                       px-3 py-1.5 rounded-lg transition-colors'
+            className='flex items-center gap-1.5 text-xs font-semibold font-body bg-earth-500/90 hover:bg-earth-400 text-white px-3 py-1.5 rounded-lg transition-colors'
           >
             {showForm ? "✕ Cancel" : "+ Add Question"}
           </button>
@@ -199,13 +268,13 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                       </span>
                       <span
                         className={`text-xs font-body font-semibold px-2 py-0.5 rounded-full border
-                        ${
-                          q.type === "MCQ"
-                            ? "text-forest-400 bg-forest-500/10 border-forest-500/20"
-                            : q.type === "TRUE_FALSE"
-                              ? "text-earth-400 bg-earth-400/10 border-earth-400/20"
-                              : "text-ink-300 bg-ink-800 border-ink-700"
-                        }`}
+                          ${
+                            q.type === "MCQ"
+                              ? "text-forest-400 bg-forest-500/10 border-forest-500/20"
+                              : q.type === "TRUE_FALSE"
+                                ? "text-earth-400 bg-earth-400/10 border-earth-400/20"
+                                : "text-ink-300 bg-ink-800 border-ink-700"
+                          }`}
                       >
                         {TYPE_LABELS[q.type as QuestionType]}
                       </span>
@@ -218,17 +287,17 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                       <span className='text-forest-400 font-semibold'>
                         {q.correctAnswer}
                       </span>
-                      {q.feedbackRules?.misconceptions?.length > 0 && (
+                      {q.feedbackRules.misconceptions?.length > 0 && (
                         <span className='ml-3 text-ink-600'>
-                          {q.feedbackRules?.misconceptions?.length}{" "}
-                          misconception rule
-                          {q.feedbackRules?.misconceptions?.length !== 1
+                          {q.feedbackRules.misconceptions?.length} misconception
+                          rule
+                          {q.feedbackRules.misconceptions?.length !== 1
                             ? "s"
                             : ""}
                         </span>
                       )}
                     </p>
-                    {q.options && q.options.length > 0 && (
+                    {q.options && q.options?.length > 0 && (
                       <p className='text-xs text-ink-600 font-body mt-0.5'>
                         Options: {q.options.join(" · ")}
                       </p>
@@ -237,8 +306,7 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                   <button
                     onClick={() => handleDelete(q.id)}
                     disabled={deletingId === q.id}
-                    className='text-xs text-red-500 hover:text-red-400 font-body shrink-0
-                               transition-colors disabled:opacity-40'
+                    className='text-xs text-red-500 hover:text-red-400 font-body shrink-0 transition-colors disabled:opacity-40'
                   >
                     {deletingId === q.id ? "…" : "Delete"}
                   </button>
@@ -249,7 +317,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
         )}
       </div>
 
-      {/* Add question form */}
       {showForm && (
         <div className='glass-card rounded-2xl border border-earth-400/15 bg-earth-400/3 p-6'>
           <p className='text-xs font-semibold uppercase tracking-widest text-earth-500 mb-5'>
@@ -257,10 +324,7 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
           </p>
 
           {error && (
-            <div
-              className='mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20
-                            text-red-400 text-sm font-body'
-            >
+            <div className='mb-4 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-body'>
               {error}
             </div>
           )}
@@ -270,7 +334,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
             className='space-y-5'
             noValidate
           >
-            {/* Question type selector */}
             <div className='flex flex-col gap-1.5'>
               <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
                 Question Type
@@ -282,8 +345,7 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                       key={t}
                       type='button'
                       onClick={() => handleTypeChange(t)}
-                      className={`px-3 py-2 rounded-lg text-xs font-semibold font-body
-                                border transition-colors
+                      className={`px-3 py-2 rounded-lg text-xs font-semibold font-body border transition-colors
                       ${
                         questionType === t
                           ? "bg-earth-400/15 border-earth-400/30 text-earth-300"
@@ -297,7 +359,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
               </div>
             </div>
 
-            {/* Question text */}
             <div className='flex flex-col gap-1.5'>
               <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
                 Question Text
@@ -315,7 +376,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
               )}
             </div>
 
-            {/* MCQ options */}
             {questionType === "MCQ" && (
               <div className='flex flex-col gap-2'>
                 <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
@@ -341,7 +401,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
               </div>
             )}
 
-            {/* Correct answer */}
             <div className='flex flex-col gap-1.5'>
               <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
                 Correct Answer
@@ -383,11 +442,12 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
               )}
             </div>
 
-            {/* Default feedback */}
             <div className='flex flex-col gap-1.5'>
               <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
-                Default Feedback (shown when wrong answer doesn&apos;t match a
-                misconception)
+                Default Feedback
+                <span className='ml-1 text-ink-600 font-normal normal-case'>
+                  (shown when wrong answer doesn&apos;t match a misconception)
+                </span>
               </label>
               <textarea
                 rows={2}
@@ -402,7 +462,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
               )}
             </div>
 
-            {/* Misconception rules */}
             <div className='flex flex-col gap-3'>
               <div className='flex items-center justify-between'>
                 <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
@@ -416,8 +475,7 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                   onClick={() =>
                     addMisconception({ pattern: "", feedback: "" })
                   }
-                  className='text-xs text-earth-400 hover:text-earth-300 font-body
-                             border border-earth-400/30 px-2.5 py-1 rounded-lg transition-colors'
+                  className='text-xs text-earth-400 hover:text-earth-300 font-body border border-earth-400/30 px-2.5 py-1 rounded-lg transition-colors'
                 >
                   + Add Rule
                 </button>
@@ -451,7 +509,9 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                       Pattern (wrong answer text to match)
                     </label>
                     <input
-                      className={`input-field ${errors.misconceptions?.[idx]?.pattern ? "error" : ""}`}
+                      className={`input-field ${
+                        errors.misconceptions?.[idx]?.pattern ? "error" : ""
+                      }`}
                       placeholder='e.g. Mitochondria'
                       {...register(`misconceptions.${idx}.pattern`)}
                     />
@@ -467,7 +527,9 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
                     </label>
                     <textarea
                       rows={2}
-                      className={`input-field resize-none ${errors.misconceptions?.[idx]?.feedback ? "error" : ""}`}
+                      className={`input-field resize-none ${
+                        errors.misconceptions?.[idx]?.feedback ? "error" : ""
+                      }`}
                       placeholder='e.g. Mitochondria is where respiration occurs. Photosynthesis happens in the chloroplast.'
                       {...register(`misconceptions.${idx}.feedback`)}
                     />
@@ -481,7 +543,6 @@ export function QuestionsEditor({ topicId, questions, onSaved }: Props) {
               ))}
             </div>
 
-            {/* Submit */}
             <div className='flex items-center justify-end gap-3 pt-2 border-t border-white/5'>
               <button
                 type='button'
