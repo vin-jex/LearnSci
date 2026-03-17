@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { LessonEditor } from "@/components/admin/LessonEditor";
@@ -57,7 +58,6 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   if (isLoading) {
@@ -86,7 +86,6 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
 
   return (
     <div className='animate-fade-up'>
-      {/* Header */}
       <div className='mb-6'>
         <Link
           href='/admin/topics'
@@ -116,8 +115,7 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
             <Link
               href={`/topic/${topic.id}`}
               target='_blank'
-              className='text-xs text-ink-500 hover:text-ink-300 font-body transition-colors
-                         border border-ink-700 px-3 py-1.5 rounded-lg hover:border-ink-600'
+              className='text-xs text-ink-500 hover:text-ink-300 font-body transition-colors border border-ink-700 px-3 py-1.5 rounded-lg hover:border-ink-600'
             >
               Preview ↗
             </Link>
@@ -125,14 +123,12 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className='flex gap-1 mb-6 border-b border-white/5 pb-0'>
         {TABS.map(({ key, label, icon }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
-            className={`px-4 py-2.5 text-sm font-body font-semibold rounded-t-lg
-                        transition-colors relative -mb-px border-b-2
+            className={`px-4 py-2.5 text-sm font-body font-semibold rounded-t-lg transition-colors relative -mb-px border-b-2
               ${
                 activeTab === key
                   ? "text-earth-300 border-earth-400"
@@ -141,11 +137,20 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
           >
             <span className='mr-1.5'>{icon}</span>
             {label}
+            {key === "terms" && topic.keyTerms.length > 0 && (
+              <span className='ml-1.5 text-xs bg-ink-800 text-ink-500 px-1.5 py-0.5 rounded-full'>
+                {topic.keyTerms.length}
+              </span>
+            )}
+            {key === "questions" && topic.questions.length > 0 && (
+              <span className='ml-1.5 text-xs bg-ink-800 text-ink-500 px-1.5 py-0.5 rounded-full'>
+                {topic.questions.length}
+              </span>
+            )}
           </button>
         ))}
       </div>
 
-      {/* Tab content */}
       <div className='min-h-[400px]'>
         {activeTab === "settings" && (
           <TopicSettingsEditor topic={topic} onSaved={load} />
@@ -168,6 +173,7 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
           <QuestionsEditor
             topicId={topic.id}
             questions={topic.questions}
+            keyTerms={topic.keyTerms}
             onSaved={load}
           />
         )}
