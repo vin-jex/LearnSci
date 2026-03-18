@@ -49,10 +49,7 @@
 
   /* Animated gradient border on focus */
   .input-field {
-    @apply w-full bg-ink-900/50 border border-ink-700 rounded-xl px-4 py-3
-           text-ink-100 placeholder-ink-500 font-body text-sm
-           transition-all duration-200 outline-none
-           focus:border-forest-500/70 focus:ring-2 focus:ring-forest-500/10;
+    @apply w-full bg-ink-900/50 border border-ink-700 rounded-xl px-4 py-3 text-ink-100 placeholder-ink-500 font-body text-sm transition-all duration-200 outline-none focus:border-forest-500/70 focus:ring-2 focus:ring-forest-500/10;
   }
 
   .input-field.error {
@@ -60,17 +57,11 @@
   }
 
   .btn-primary {
-    @apply w-full bg-forest-600 hover:bg-forest-500 active:bg-forest-700
-           text-white font-body font-semibold text-sm py-3 px-6 rounded-xl
-           transition-all duration-200 relative overflow-hidden
-           disabled:opacity-50 disabled:cursor-not-allowed
-           focus:outline-none focus:ring-2 focus:ring-forest-500 focus:ring-offset-2
-           focus:ring-offset-ink-950;
+    @apply w-full bg-forest-600 hover:bg-forest-500 active:bg-forest-700 text-white font-body font-semibold text-sm py-3 px-6 rounded-xl transition-all duration-200 relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-forest-500 focus:ring-offset-2 focus:ring-offset-ink-950;
   }
 
   .btn-ghost {
-    @apply text-ink-400 hover:text-ink-200 text-sm font-body
-           transition-colors duration-200 underline underline-offset-2;
+    @apply text-ink-400 hover:text-ink-200 text-sm font-body transition-colors duration-200 underline underline-offset-2;
   }
 
   /* Leaf decorative orb */
@@ -95,8 +86,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .animate-fade-up {
@@ -108,31 +103,59 @@
 }
 
 /* Staggered children */
-.stagger > *:nth-child(1) { animation-delay: 0.0s; }
-.stagger > *:nth-child(2) { animation-delay: 0.08s; }
-.stagger > *:nth-child(3) { animation-delay: 0.16s; }
-.stagger > *:nth-child(4) { animation-delay: 0.24s; }
-.stagger > *:nth-child(5) { animation-delay: 0.32s; }
-.stagger > *:nth-child(6) { animation-delay: 0.40s; }
+.stagger > *:nth-child(1) {
+  animation-delay: 0s;
+}
+.stagger > *:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.stagger > *:nth-child(3) {
+  animation-delay: 0.16s;
+}
+.stagger > *:nth-child(4) {
+  animation-delay: 0.24s;
+}
+.stagger > *:nth-child(5) {
+  animation-delay: 0.32s;
+}
+.stagger > *:nth-child(6) {
+  animation-delay: 0.4s;
+}
 
 /* ─── Lesson prose styles ─────────────────────────────────── */
 .lesson-prose {
-  color: theme('colors.ink.300');
+  color: theme("colors.ink.300");
   font-family: var(--font-plus-jakarta), sans-serif;
   line-height: 1.8;
   font-size: 0.95rem;
 }
-.lesson-h1 { @apply font-display text-3xl text-ink-100 mt-8 mb-4 leading-tight; }
-.lesson-h2 { @apply font-display text-2xl text-ink-100 mt-7 mb-3 leading-snug; }
-.lesson-h3 { @apply font-display text-xl text-ink-200 mt-6 mb-2; }
-.lesson-p  { @apply text-ink-300 leading-relaxed mb-4; }
-.lesson-strong { @apply text-ink-100 font-semibold; }
-.lesson-em { @apply text-ink-300 italic; }
+.lesson-h1 {
+  @apply font-display text-3xl text-ink-100 mt-8 mb-4 leading-tight;
+}
+.lesson-h2 {
+  @apply font-display text-2xl text-ink-100 mt-7 mb-3 leading-snug;
+}
+.lesson-h3 {
+  @apply font-display text-xl text-ink-200 mt-6 mb-2;
+}
+.lesson-p {
+  @apply text-ink-300 leading-relaxed mb-4;
+}
+.lesson-strong {
+  @apply text-ink-100 font-semibold;
+}
+.lesson-em {
+  @apply text-ink-300 italic;
+}
 .lesson-blockquote {
   @apply border-l-2 border-forest-500/40 pl-4 my-5 text-ink-400 italic;
 }
-.lesson-ul { @apply list-none pl-0 my-4 space-y-1.5; }
-.lesson-ol { @apply list-decimal pl-5 my-4 space-y-1.5; }
+.lesson-ul {
+  @apply list-none pl-0 my-4 space-y-1.5;
+}
+.lesson-ol {
+  @apply list-decimal pl-5 my-4 space-y-1.5;
+}
 .lesson-li {
   @apply text-ink-300 text-sm leading-relaxed;
 }
@@ -140,19 +163,49 @@
   @apply flex items-start gap-2;
 }
 .lesson-li-bullet::before {
-  content: '›';
+  content: "›";
   @apply text-forest-500 font-bold shrink-0 mt-0.5;
+}
+
+.lesson-table-wrap {
+  @apply overflow-x-auto my-5 rounded-xl border border-white/10;
+}
+
+.lesson-table {
+  @apply w-full text-sm border-collapse;
+}
+
+.lesson-th {
+  @apply px-4 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-ink-400 bg-ink-900/60 border-b border-white/10;
+}
+
+.lesson-td {
+  @apply px-4 py-2.5 text-ink-300 font-body border-b border-white/5 leading-relaxed;
+}
+
+.lesson-table tr:last-child .lesson-td {
+  @apply border-b-0;
+}
+
+.lesson-table tr:hover .lesson-td {
+  @apply bg-white/[0.02];
+}
+
+.lesson-code {
+  @apply text-xs font-mono bg-ink-800 text-forest-300 px-1.5 py-0.5 rounded border border-white/10;
 }
 
 /* ─── Spinner ─────────────────────────────────────────────── */
 /* Spinner */
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .spinner {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
