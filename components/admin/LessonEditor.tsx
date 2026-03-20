@@ -1,4 +1,3 @@
-// components/admin/LessonEditor.tsx
 "use client";
 import { useState } from "react";
 import { LessonContent } from "@/components/lesson/LessonContent";

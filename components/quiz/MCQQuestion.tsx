@@ -1,5 +1,4 @@
 "use client";
-// components/quiz/MCQQuestion.tsx
 
 interface Props {
   questionText: string;
@@ -21,11 +20,17 @@ export function MCQQuestion({
   total,
 }: Props) {
   return (
-    <div className="space-y-5">
-      <QuestionHeader number={questionNumber} total={total} type="Multiple Choice" />
-      <p className="font-display text-xl text-ink-100 leading-snug">{questionText}</p>
+    <div className='space-y-5'>
+      <QuestionHeader
+        number={questionNumber}
+        total={total}
+        type='Multiple Choice'
+      />
+      <p className='font-display text-xl text-ink-100 leading-snug'>
+        {questionText}
+      </p>
 
-      <div className="grid gap-3">
+      <div className='grid gap-3'>
         {options.map((opt) => {
           const isSelected = selected === opt;
           const showResult = feedback !== null;
@@ -51,14 +56,14 @@ export function MCQQuestion({
                   isCorrectAnswer
                     ? "border-forest-500/60 bg-forest-500/10 text-forest-300"
                     : isWrongAnswer
-                    ? "border-red-500/60 bg-red-500/10 text-red-300"
-                    : isSelected
-                    ? "border-ink-400 bg-ink-800/60 text-ink-200"
-                    : "border-ink-800 bg-ink-900/40 text-ink-300"
+                      ? "border-red-500/60 bg-red-500/10 text-red-300"
+                      : isSelected
+                        ? "border-ink-400 bg-ink-800/60 text-ink-200"
+                        : "border-ink-800 bg-ink-900/40 text-ink-300"
                 }
               `}
             >
-              <span className="flex items-center gap-3">
+              <span className='flex items-center gap-3'>
                 {/* Option letter */}
                 <span
                   className={`
@@ -68,10 +73,10 @@ export function MCQQuestion({
                       isCorrectAnswer
                         ? "border-forest-500 text-forest-400 bg-forest-500/10"
                         : isWrongAnswer
-                        ? "border-red-500 text-red-400 bg-red-500/10"
-                        : isSelected
-                        ? "border-ink-300 text-ink-200"
-                        : "border-ink-700 text-ink-500"
+                          ? "border-red-500 text-red-400 bg-red-500/10"
+                          : isSelected
+                            ? "border-ink-300 text-ink-200"
+                            : "border-ink-700 text-ink-500"
                     }
                   `}
                 >
@@ -80,13 +85,29 @@ export function MCQQuestion({
                 {opt}
                 {/* Tick / X icon */}
                 {isCorrectAnswer && (
-                  <svg className="w-4 h-4 ml-auto text-forest-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                  <svg
+                    className='w-4 h-4 ml-auto text-forest-400 shrink-0'
+                    viewBox='0 0 20 20'
+                    fill='currentColor'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+                      clipRule='evenodd'
+                    />
                   </svg>
                 )}
                 {isWrongAnswer && (
-                  <svg className="w-4 h-4 ml-auto text-red-400 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                  <svg
+                    className='w-4 h-4 ml-auto text-red-400 shrink-0'
+                    viewBox='0 0 20 20'
+                    fill='currentColor'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z'
+                      clipRule='evenodd'
+                    />
                   </svg>
                 )}
               </span>
@@ -108,12 +129,12 @@ function QuestionHeader({
   type: string;
 }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="text-xs font-semibold text-ink-500 font-body uppercase tracking-widest">
+    <div className='flex items-center gap-3'>
+      <span className='text-xs font-semibold text-ink-500 font-body uppercase tracking-widest'>
         {number} / {total}
       </span>
-      <span className="w-px h-3 bg-ink-700" />
-      <span className="text-xs text-ink-600 font-body">{type}</span>
+      <span className='w-px h-3 bg-ink-700' />
+      <span className='text-xs text-ink-600 font-body'>{type}</span>
     </div>
   );
 }

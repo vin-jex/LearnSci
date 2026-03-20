@@ -1,4 +1,3 @@
-// components/lesson/LessonContent.tsx
 "use client";
 
 interface Props {

@@ -1,4 +1,3 @@
-// lib/auth.ts
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -26,12 +25,26 @@ export const authOptions: NextAuthOptions = {
         }
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
-          select: { id: true, name: true, email: true, password: true, role: true },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            password: true,
+            role: true,
+          },
         });
         if (!user) throw new Error("No account found with this email");
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password,
+        );
         if (!isPasswordValid) throw new Error("Incorrect password");
-        return { id: user.id, name: user.name, email: user.email, role: user.role };
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],

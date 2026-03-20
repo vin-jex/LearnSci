@@ -1,4 +1,3 @@
-// app/api/quiz/[id]/evaluate/route.ts
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -13,7 +12,7 @@ const schema = z.object({
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -34,7 +33,10 @@ export async function POST(
     });
 
     if (!question) {
-      return NextResponse.json({ error: "Question not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Question not found" },
+        { status: 404 },
+      );
     }
 
     const feedbackRules = question.feedbackRules as {
@@ -46,7 +48,7 @@ export async function POST(
       answer,
       question.correctAnswer,
       feedbackRules,
-      question.questionText
+      question.questionText,
     );
 
     return NextResponse.json(result);

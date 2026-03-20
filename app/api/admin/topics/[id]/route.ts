@@ -1,4 +1,3 @@
-// app/api/admin/topics/[id]/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminAuth";
@@ -12,7 +11,10 @@ const updateSchema = z.object({
   published: z.boolean().optional(),
 });
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 
@@ -29,14 +31,23 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   return NextResponse.json({ topic });
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 
   const body = await request.json();
   const parsed = updateSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: "Validation failed",
+        details: parsed.error.flatten().fieldErrors,
+      },
+      { status: 400 },
+    );
   }
 
   const topic = await prisma.topic.update({
@@ -47,7 +58,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   return NextResponse.json({ topic });
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 

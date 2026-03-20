@@ -1,5 +1,5 @@
 "use client";
-// components/lesson/KeyTermCard.tsx
+
 import { useState } from "react";
 import { useAppSelector } from "@/lib/store/hooks";
 
@@ -26,7 +26,9 @@ export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
       `}
     >
       {/* English term */}
-      <p className="text-sm font-semibold text-ink-200 font-body">{englishTerm}</p>
+      <p className='text-sm font-semibold text-ink-200 font-body'>
+        {englishTerm}
+      </p>
 
       {/* Igbo term (shown when toggle is ON) */}
       <div
@@ -35,23 +37,31 @@ export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
           ${isIgboVisible ? "max-h-40 opacity-100 mt-1.5" : "max-h-0 opacity-0"}
         `}
       >
-        <p className="text-sm text-earth-300 font-body font-medium">{igboTerm}</p>
+        <p className='text-sm text-earth-300 font-body font-medium'>
+          {igboTerm}
+        </p>
 
         {/* Igbo explanation (expandable tooltip) */}
         {igboExplanation && (
           <>
             <button
               onClick={() => setExpanded((e) => !e)}
-              className="mt-1 text-xs text-ink-500 hover:text-earth-400 transition-colors
-                         flex items-center gap-1 font-body"
+              className='mt-1 text-xs text-ink-500 hover:text-earth-400 transition-colors
+                         flex items-center gap-1 font-body'
             >
               <svg
                 className={`w-3 h-3 transition-transform duration-200 ${expanded ? "rotate-90" : ""}`}
-                viewBox="0 0 12 12"
-                fill="currentColor"
+                viewBox='0 0 12 12'
+                fill='currentColor'
               >
-                <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5"
-                      strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                <path
+                  d='M4 2l4 4-4 4'
+                  stroke='currentColor'
+                  strokeWidth='1.5'
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  fill='none'
+                />
               </svg>
               {expanded ? "Hide explanation" : "Nkọwa"}
             </button>
@@ -61,7 +71,7 @@ export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
                 ${expanded ? "max-h-24 opacity-100 mt-1" : "max-h-0 opacity-0"}
               `}
             >
-              <p className="text-xs text-ink-400 font-body italic leading-relaxed">
+              <p className='text-xs text-ink-400 font-body italic leading-relaxed'>
                 {igboExplanation}
               </p>
             </div>

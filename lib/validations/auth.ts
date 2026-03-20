@@ -1,4 +1,3 @@
-// lib/validations/auth.ts
 import { z } from "zod";
 
 export const registerSchema = z
@@ -7,11 +6,11 @@ export const registerSchema = z
       .string()
       .min(2, "Name must be at least 2 characters")
       .max(50, "Name must be under 50 characters")
-      .regex(/^[a-zA-Z\s'-]+$/, "Name may only contain letters, spaces, hyphens, or apostrophes"),
-    email: z
-      .string()
-      .email("Please enter a valid email address")
-      .toLowerCase(),
+      .regex(
+        /^[a-zA-Z\s'-]+$/,
+        "Name may only contain letters, spaces, hyphens, or apostrophes",
+      ),
+    email: z.string().email("Please enter a valid email address").toLowerCase(),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters")

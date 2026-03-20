@@ -1,5 +1,5 @@
 "use client";
-// components/lesson/LessonViewer.tsx
+
 import Link from "next/link";
 import { LessonContent } from "./LessonContent";
 import { KeyTermsPanel } from "./KeyTermsPanel";

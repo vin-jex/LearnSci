@@ -1,4 +1,3 @@
-// lib/store/slices/igboSlice.ts
 import { createSlice } from "@reduxjs/toolkit";
 
 interface IgboState {

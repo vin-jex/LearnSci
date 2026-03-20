@@ -1,4 +1,3 @@
-// app/api/admin/topics/[id]/lessons/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/adminAuth";
@@ -9,14 +8,23 @@ const lessonSchema = z.object({
   order: z.number().int().min(0).optional(),
 });
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 
   const body = await request.json();
   const parsed = lessonSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Validation failed", details: parsed.error.flatten().fieldErrors }, { status: 400 });
+    return NextResponse.json(
+      {
+        error: "Validation failed",
+        details: parsed.error.flatten().fieldErrors,
+      },
+      { status: 400 },
+    );
   }
 
   const maxOrder = await prisma.lesson.aggregate({
@@ -35,13 +43,17 @@ export async function POST(request: Request, { params }: { params: { id: string 
   return NextResponse.json({ lesson }, { status: 201 });
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
   const auth = await requireAdmin();
   if (auth.error) return auth.error;
 
   const body = await request.json();
   const { lessonId, ...data } = body;
-  if (!lessonId) return NextResponse.json({ error: "lessonId required" }, { status: 400 });
+  if (!lessonId)
+    return NextResponse.json({ error: "lessonId required" }, { status: 400 });
 
   const lesson = await prisma.lesson.update({
     where: { id: lessonId, topicId: params.id },

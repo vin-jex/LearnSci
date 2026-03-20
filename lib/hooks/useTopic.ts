@@ -1,4 +1,3 @@
-// lib/hooks/useTopic.ts
 "use client";
 import { useEffect, useState } from "react";
 

@@ -1,5 +1,3 @@
-// lib/evaluate.ts
-
 export interface FeedbackRule {
   pattern: string;
   feedback: string;
