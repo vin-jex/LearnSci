@@ -1,4 +1,4 @@
-# LearnSci - Computer-Assisted Learning System
+# LearnSci — Computer-Assisted Learning System
 
 A full-stack Next.js application for teaching basic science with Igbo terminology support and adaptive quiz feedback.
 
@@ -13,57 +13,116 @@ A full-stack Next.js application for teaching basic science with Igbo terminolog
 | Auth | NextAuth.js (Credentials Provider) + JWT |
 | State | Redux Toolkit |
 | Forms | React Hook Form + Zod |
-| ORM | Prisma |
-| Database | PostgreSQL |
-| Hosting | Vercel + Railway/Supabase |
+| ORM | Prisma (with `@prisma/adapter-pg`) |
+| Database | PostgreSQL (Neon serverless) |
+| Hosting | Vercel + Neon |
 
 ---
 
 ## Project Structure
-
 ```
 cal-system/
 ├── app/
 │   ├── (auth)/
-│   │   ├── layout.tsx          # Shared auth layout (dark botanical bg)
-│   │   ├── login/page.tsx      # Sign-in page
-│   │   └── register/page.tsx   # Registration page
+│   │   ├── layout.tsx
+│   │   ├── login/page.tsx
+│   │   └── register/page.tsx
 │   ├── api/
-│   │   ├── auth/[...nextauth]/ # NextAuth handler
-│   │   └── register/           # User registration endpoint
+│   │   ├── auth/[...nextauth]/
+│   │   ├── register/
+│   │   ├── topics/
+│   │   │   ├── route.ts
+│   │   │   └── [id]/route.ts
+│   │   ├── quiz/
+│   │   │   └── [id]/
+│   │   │       ├── route.ts
+│   │   │       └── evaluate/route.ts
+│   │   ├── attempt/
+│   │   │   ├── route.ts
+│   │   │   └── [id]/route.ts
+│   │   ├── dashboard/
+│   │   │   └── stats/route.ts
+│   │   └── admin/
+│   │       └── topics/ (CRUD + lessons, terms, questions)
+│   ├── admin/
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── topics/
+│   │       ├── page.tsx
+│   │       ├── new/page.tsx
+│   │       └── [id]/page.tsx
 │   ├── dashboard/
-│   │   ├── layout.tsx          # Auth-guarded dashboard layout
-│   │   └── page.tsx            # Dashboard home
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── topic/[id]/
+│   ├── quiz/[id]/
+│   ├── result/[id]/
 │   ├── globals.css
-│   ├── layout.tsx              # Root layout (fonts, providers)
-│   └── page.tsx                # Landing page
+│   ├── layout.tsx
+│   └── page.tsx
 ├── components/
+│   ├── admin/
+│   │   ├── AdminNav.tsx
+│   │   ├── KeyTermsEditor.tsx
+│   │   ├── LessonEditor.tsx
+│   │   ├── QuestionsEditor.tsx
+│   │   └── TopicSettingsEditor.tsx
 │   ├── auth/
-│   │   ├── FormInput.tsx       # Reusable text input
-│   │   └── PasswordInput.tsx   # Password input with show/hide
+│   │   ├── FormInput.tsx
+│   │   └── PasswordInput.tsx
 │   ├── dashboard/
-│   │   └── DashboardNav.tsx    # Top navbar with sign-out
-│   └── providers/
-│       ├── ReduxProvider.tsx
-│       └── SessionProvider.tsx
+│   │   └── DashboardNav.tsx
+│   ├── lesson/
+│   │   ├── IgboToggle.tsx
+│   │   ├── KeyTermCard.tsx
+│   │   ├── KeyTermsPanel.tsx
+│   │   ├── LessonContent.tsx
+│   │   └── LessonViewer.tsx
+│   ├── providers/
+│   │   ├── ReduxProvider.tsx
+│   │   └── SessionProvider.tsx
+│   ├── quiz/
+│   │   ├── FeedbackPanel.tsx
+│   │   ├── MCQQuestion.tsx
+│   │   ├── PerformanceSummary.tsx
+│   │   ├── QuizEngine.tsx
+│   │   ├── QuizProgress.tsx
+│   │   ├── ShortAnswerQuestion.tsx
+│   │   └── TrueFalseQuestion.tsx
+│   └── topic/
+│       ├── TopicCard.tsx
+│       └── TopicGrid.tsx
 ├── lib/
-│   ├── auth.ts                 # NextAuth config
-│   ├── prisma.ts               # Prisma singleton
+│   ├── adminAuth.ts
+│   ├── auth.ts
+│   ├── evaluate.ts
+│   ├── prisma.ts
+│   ├── hooks/
+│   │   ├── useTopic.ts
+│   │   ├── useTopics.ts
+│   │   └── useTranslation.ts
 │   ├── store/
-│   │   ├── index.ts            # Redux store
-│   │   ├── hooks.ts            # Typed hooks
-│   │   └── slices/authSlice.ts # Auth UI state
-│   └── validations/auth.ts     # Zod schemas
+│   │   ├── index.ts
+│   │   ├── hooks.ts
+│   │   └── slices/
+│   │       ├── authSlice.ts
+│   │       └── igboSlice.ts
+│   └── validations/auth.ts
 ├── messages/
-│   ├── en.json                 # English UI labels
-│   └── ig.json                 # Igbo UI labels
+│   ├── en.json
+│   └── ig.json
 ├── prisma/
-│   ├── schema.prisma           # Full DB schema
-│   └── seed.ts                 # Sample data seed
+│   ├── schema.prisma
+│   └── seed.ts
+├── public/
+│   ├── favicon.svg
+│   ├── apple-touch-icon.svg
+│   ├── logo.svg
+│   └── og-image.svg
 ├── types/
-│   ├── index.ts                # Domain types
-│   └── next-auth.d.ts          # Session type augmentation
-└── middleware.ts               # Route protection
+│   ├── index.ts
+│   └── next-auth.d.ts
+└── middleware.ts
 ```
 
 ---
@@ -71,52 +130,49 @@ cal-system/
 ## Getting Started
 
 ### 1. Clone & Install
-
 ```bash
 git clone <your-repo>
 cd cal-system
-npm install
+pnpm install
 ```
 
 ### 2. Environment Variables
-
-Copy `.env.example` to `.env.local` and fill in your values:
-
 ```bash
 cp .env.example .env.local
 ```
-
 ```env
-DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/cal_db?schema=public"
+DATABASE_URL="postgresql://USER:PASSWORD@HOST/DB?sslmode=require"
 NEXTAUTH_URL="http://localhost:3000"
-NEXTAUTH_SECRET="your-secret-here"    # openssl rand -base64 32
+NEXTAUTH_SECRET="..."    # openssl rand -base64 32
 ```
 
+> **Note:** Use a [Neon](https://neon.tech) PostgreSQL connection string. Do not add `channel_binding=require` — it is not supported by the `@prisma/adapter-pg` driver.
+
 ### 3. Database Setup
-
 ```bash
-# Generate Prisma client
-npm run db:generate
-
-# Push schema to database
-npm run db:push
-
-# Seed sample data (Photosynthesis topic + admin user)
-npm run db:seed
+pnpm db:push
+pnpm db:seed
 ```
 
 ### 4. Run Development Server
-
 ```bash
-npm run dev
+pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## Authentication Flow
+## Demo Accounts (after seeding)
 
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@cal.edu | admin1234 |
+| Learner | learner@cal.edu | learner1234 |
+
+---
+
+## Authentication Flow
 ```
 / (landing)
   └── /register → POST /api/register → auto sign-in → /dashboard
@@ -126,35 +182,97 @@ Protected routes (middleware.ts):
   /dashboard/*, /topic/*, /quiz/*, /result/*, /admin/*
 ```
 
-### Demo Account (after seeding)
-- **Email:** admin@cal.edu
-- **Password:** admin1234
-
 ---
 
-## Database Schema Overview
+## Database Schema
 
 | Model | Key Fields |
 |---|---|
-| `User` | id, name, email, password |
-| `Topic` | id, title, description, duration, order |
+| `User` | id, name, email, password, role (LEARNER \| ADMIN) |
+| `Topic` | id, title, description, duration, order, published |
 | `Lesson` | id, topicId, content (markdown), order |
 | `KeyTerm` | id, topicId, englishTerm, igboTerm, igboExplanation |
 | `Question` | id, topicId, type, correctAnswer, feedbackRules (JSON) |
-| `Attempt` | id, userId, topicId, score, classification, weakAreas |
+| `Attempt` | id, userId, topicId, score, classification, weakAreas (JSON) |
+
+---
+
+## Seeded Content
+
+The seed populates **14 science topics** covering the Nigerian secondary school curriculum, with a total of **296 quiz questions**:
+
+| # | Topic | Questions |
+|---|---|---|
+| 1 | Photosynthesis | 20 |
+| 2 | Cell Structure | 20 |
+| 3 | Human Digestive System | 22 |
+| 4 | Ecosystems and Food Chains | 22 |
+| 5 | Human Reproductive System | 20 |
+| 6 | States of Matter | 22 |
+| 7 | Electricity and Circuits | 22 |
+| 8 | Genetics and Heredity | 24 |
+| 9 | Forces and Motion | 22 |
+| 10 | The Atom | 20 |
+| 11 | Human Circulatory System | 20 |
+| 12 | Plant Biology | 20 |
+| 13 | Chemical Reactions | 22 |
+| 14 | Human Nervous System | 20 |
+
+Each topic includes a full markdown lesson, 7–8 bilingual Igbo key terms with explanations, and questions spanning MCQ, True/False, and Short Answer types.
 
 ---
 
 ## Development Phases
 
-- [x] **Phase 1** - Database schema + Prisma setup
-- [x] **Phase 2** - Authentication (Register, Login, JWT, Middleware)
-- [x] **Phase 3** - Topic & Lesson rendering + Igbo Toggle
-- [x] **Phase 4** - Quiz Engine (MCQ, True/False, Short Answer)
-- [x] **Phase 5** - Rule-based Evaluation Engine (server-side, deterministic)
-- [x] **Phase 6** - Performance Summary (STRONG / MODERATE / WEAK + recommendations)
-- [x] **Phase 7** - Admin Panel (Topics, Lessons, Key Terms, Questions CRUD)
-- [ ] **Phase 8** - Deployment (Vercel + Railway)
+- [x] **Phase 1** — Database schema + Prisma setup
+- [x] **Phase 2** — Authentication (Register, Login, JWT, Middleware)
+- [x] **Phase 3** — Topic & Lesson rendering + Igbo Toggle
+- [x] **Phase 4** — Quiz Engine (MCQ, True/False, Short Answer)
+- [x] **Phase 5** — Rule-based Evaluation Engine (server-side, deterministic)
+- [x] **Phase 6** — Performance Summary (STRONG / MODERATE / WEAK + recommendations)
+- [x] **Phase 7** — Admin Panel (Topics, Lessons, Key Terms, Questions CRUD)
+- [x] **Phase 8** — Deployment (Vercel + Neon)
+
+---
+
+## Igbo Support
+
+- **Global toggle** in the navigation bar — persists across all learner pages via Redux
+- `KeyTerm` model stores English term, Igbo term, and Igbo explanation per topic
+- Toggleable bilingual sidebar in lessons and quiz
+- UI labels translatable via `messages/en.json` and `messages/ig.json`
+- `useTranslation()` hook drives all translatable UI strings
+
+---
+
+## AI Evaluation Engine (`lib/evaluate.ts`)
+
+The quiz uses a **rule-based, deterministic** evaluation engine — no external AI API calls.
+
+For each question, the engine:
+1. Normalises the learner's answer (lowercase, trim)
+2. Checks against the correct answer
+3. If wrong, scans `feedbackRules.misconceptions` for a matching pattern
+4. Returns targeted feedback if matched, or `defaultFeedback` otherwise
+5. After a full attempt: classifies performance and identifies weak areas
+
+**Classifications:**
+- `STRONG` — ≥ 80% → unlocks next topic
+- `MODERATE` — 50–79% → directed to weak areas
+- `WEAK` — < 50% → directed to review the full lesson
+
+---
+
+## Dashboard Stats
+
+The `/api/dashboard/stats` endpoint computes live per-user stats:
+
+| Stat | Description |
+|---|---|
+| Topics | Total published topics available |
+| Quizzes | Number of distinct topics attempted |
+| Avg Score | Mean score across all attempts |
+| Streak | Consecutive days with at least one attempt |
 
 ---
 
@@ -163,63 +281,7 @@ Protected routes (middleware.ts):
 - Minimum 8 characters
 - At least one uppercase letter
 - At least one number
-- Strength meter displayed in real-time on registration
-
----
-
-## Igbo Support Strategy
-
-- Terminology-level bilingual support (not full page translation)
-- `KeyTerm` model stores English + Igbo + Igbo explanation per topic
-- `<IgboToggle />` component (Phase 3) shows/hides Igbo terms inline
-- UI labels translatable via `messages/en.json` and `messages/ig.json`
-
----
-
-## Phase 8 - Deployment Guide
-
-### Vercel (Frontend + API)
-
-```bash
-# 1. Push to GitHub
-git init && git add . && git commit -m "Initial commit"
-gh repo create cal-system --public --push
-
-# 2. Import on vercel.com
-# Connect your GitHub repo, then add environment variables:
-#   DATABASE_URL=...
-#   NEXTAUTH_URL=https://your-app.vercel.app
-#   NEXTAUTH_SECRET=...  (openssl rand -base64 32)
-```
-
-### Railway (PostgreSQL)
-
-```bash
-# 1. Create a new project on railway.app
-# 2. Add a PostgreSQL service
-# 3. Copy the DATABASE_URL from Railway → paste into Vercel env vars
-# 4. Run migrations:
-npx prisma migrate deploy
-npm run db:seed
-```
-
-### Make first user an Admin
-
-After seeding, the default admin credentials are:
-- **Email:** admin@cal.edu  
-- **Password:** admin1234
-
-To make any other user an admin, run in Prisma Studio or directly in SQL:
-
-```sql
-UPDATE users SET role = 'ADMIN' WHERE email = 'your@email.com';
-```
-
-Or via Prisma Studio:
-
-```bash
-npm run db:studio
-```
+- Real-time strength meter on registration
 
 ---
 
@@ -231,10 +293,11 @@ npm run db:studio
 | POST | `/api/auth/...` | NextAuth login/session |
 | GET | `/api/topics` | List topics with user progress |
 | GET | `/api/topics/:id` | Single topic + lessons + key terms |
-| GET | `/api/quiz/:id` | Quiz questions (no answers) |
+| GET | `/api/quiz/:id` | Quiz questions + key terms (no answers) |
 | POST | `/api/quiz/:id/evaluate` | Evaluate single answer (immediate feedback) |
 | POST | `/api/attempt` | Submit full quiz → runs evaluation engine |
 | GET | `/api/attempt/:id` | Fetch attempt result |
+| GET | `/api/dashboard/stats` | Live learner stats (topics, quizzes, avg, streak) |
 | GET | `/api/admin/topics` | Admin: list all topics |
 | POST | `/api/admin/topics` | Admin: create topic |
 | PATCH | `/api/admin/topics/:id` | Admin: update topic |
@@ -246,3 +309,30 @@ npm run db:studio
 | POST | `/api/admin/topics/:id/questions` | Admin: create question |
 | PATCH | `/api/admin/topics/:id/questions/:qid` | Admin: update question |
 | DELETE | `/api/admin/topics/:id/questions/:qid` | Admin: delete question |
+
+---
+
+## Deployment
+
+### Vercel
+
+1. Push to GitHub
+2. Import the repo on [vercel.com](https://vercel.com)
+3. Add environment variables: `DATABASE_URL`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`
+4. Deploy
+
+### Neon (PostgreSQL)
+
+1. Create a project on [neon.tech](https://neon.tech)
+2. Copy the connection string into `DATABASE_URL`
+3. Run `pnpm db:push && pnpm db:seed`
+
+### Promote a user to Admin (post-deploy)
+```bash
+pnpm db:studio
+```
+
+Or directly in SQL:
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'your@email.com';
+```
