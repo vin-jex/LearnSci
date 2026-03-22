@@ -3,15 +3,19 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { evaluateAnswer } from "@/lib/evaluate";
-import { z } from "zod";
+import {
+  evaluateShortAnswerNLI,
+  augmentFeedback,
+  predictWeakAreas,
+} from "@/lib/hf";
 
-const schema = z.object({
-  questionId: z.string().min(1),
-  answer: z.string(),
-});
+const quizSessionState = new Map<
+  string,
+  { answered: { questionText: string; isCorrect: boolean; answer: string }[] }
+>();
 
 export async function POST(
-  request: Request,
+  req: Request,
   { params }: { params: { id: string } },
 ) {
   try {
@@ -20,16 +24,11 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const parsed = schema.safeParse(body);
-    if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
-    }
+    const { questionId, answer } = await req.json();
 
-    const { questionId, answer } = parsed.data;
-
-    const question = await prisma.question.findFirst({
-      where: { id: questionId, topicId: params.id },
+    const question = await prisma.question.findUnique({
+      where: { id: questionId },
+      include: { topic: { select: { title: true } } },
     });
 
     if (!question) {
@@ -39,21 +38,73 @@ export async function POST(
       );
     }
 
-    const feedbackRules = question.feedbackRules as {
+    const rules = question.feedbackRules as {
       misconceptions: { pattern: string; feedback: string }[];
       defaultFeedback: string;
     };
 
-    const result = evaluateAnswer(
+    // ── Step 1: Rule-based evaluation ─────────────────────────────
+    let result = evaluateAnswer(
       answer,
       question.correctAnswer,
-      feedbackRules,
-      question.questionText,
+      rules,
+      question.type,
     );
 
-    return NextResponse.json(result);
+    // ── Step 2: NLI for short answers (smarter matching) ──────────
+    if (question.type === "SHORT_ANSWER") {
+      const nli = await evaluateShortAnswerNLI(
+        question.questionText,
+        question.correctAnswer,
+        answer,
+      );
+      // Use NLI result if it differs and confidence is high
+      if (nli.confidence >= 0.65) {
+        result = { ...result, isCorrect: nli.isCorrect };
+      }
+    }
+
+    // ── Step 3: Augment feedback with HF if no misconception matched
+    let feedback = result.feedback;
+    const usedDefaultFeedback = feedback === rules.defaultFeedback;
+    if (!result.isCorrect && usedDefaultFeedback) {
+      feedback = await augmentFeedback(
+        question.questionText,
+        question.correctAnswer,
+        answer,
+        rules.defaultFeedback,
+      );
+    }
+
+    // ── Step 4: Mid-quiz weak area prediction ─────────────────────
+    const sessionKey = `${session.user.id}:${params.id}`;
+    const state = quizSessionState.get(sessionKey) ?? { answered: [] };
+    state.answered.push({
+      questionText: question.questionText,
+      isCorrect: result.isCorrect,
+      answer,
+    });
+    quizSessionState.set(sessionKey, state);
+
+    let predictedWeakAreas: string[] = [];
+    if (state.answered.length >= 3 && state.answered.length % 3 === 0) {
+      predictedWeakAreas = await predictWeakAreas(
+        question.topic.title,
+        state.answered,
+      );
+    }
+
+    return NextResponse.json({
+      isCorrect: result.isCorrect,
+      feedback,
+      weakArea: result.weakArea,
+      predictedWeakAreas,
+    });
   } catch (error) {
     console.error("[EVALUATE_POST]", error);
-    return NextResponse.json({ error: "Evaluation failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
