@@ -7,13 +7,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(LEARNER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  password      String
+  role          Role     @default(LEARNER)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   attempts Attempt[]
 
@@ -30,10 +31,11 @@ model Topic {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  lessons   Lesson[]
-  keyTerms  KeyTerm[]
-  questions Question[]
-  attempts  Attempt[]
+  lessons      Lesson[]
+  keyTerms     KeyTerm[]
+  questions    Question[]
+  attempts     Attempt[]
+  translations Translation[]
 
   @@map("topics")
 }
@@ -46,7 +48,8 @@ model Lesson {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  translations Translation[]
 
   @@map("lessons")
 }
@@ -58,7 +61,8 @@ model KeyTerm {
   igboTerm        String
   igboExplanation String?
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  translations Translation[]
 
   @@map("key_terms")
 }
@@ -71,26 +75,69 @@ model Question {
   options       Json?
   correctAnswer String
   feedbackRules Json
+  difficulty    Float        @default(0.5) // 0.0 easy → 1.0 hard, updated by adaptive engine
+  embedding     Json? // stored as number[] for semantic similarity
   createdAt     DateTime     @default(now())
 
-  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  topic        Topic         @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  translations Translation[]
 
   @@map("questions")
 }
 
 model Attempt {
-  id             String         @id @default(cuid())
-  userId         String
-  topicId        String
-  score          Float
-  classification Classification
-  weakAreas      Json?
-  createdAt      DateTime       @default(now())
+  id                 String         @id @default(cuid())
+  userId             String
+  topicId            String
+  score              Float
+  classification     Classification
+  weakAreas          Json?
+  predictedWeakAreas Json? // ML prediction made mid-quiz
+  idempotencyKey     String?        @unique // prevents duplicate submissions
+  createdAt          DateTime       @default(now())
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
 
   @@map("attempts")
+}
+
+model Translation {
+  id             String   @id @default(cuid())
+  entityType     String // "topic" | "lesson" | "keyterm" | "question"
+  entityId       String
+  locale         String // "ig"
+  field          String // "title" | "content" | "questionText" | "defaultFeedback" etc
+  originalText   String
+  translatedText String
+  model          String // HF model used
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Polymorphic relations — only one will be set
+  topicId    String?
+  lessonId   String?
+  keyTermId  String?
+  questionId String?
+
+  topic    Topic?    @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  lesson   Lesson?   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  keyTerm  KeyTerm?  @relation(fields: [keyTermId], references: [id], onDelete: Cascade)
+  question Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([entityId, locale, field])
+  @@map("translations")
+}
+
+model LearnerProfile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  weaknessEmbedding Json? // float[] — updated after each attempt
+  strengthAreas     Json? // string[] of topicIds learner is strong in
+  recommendedTopics Json? // string[] of topicIds ranked by relevance
+  lastUpdated       DateTime @default(now())
+
+  @@map("learner_profiles")
 }
 
 enum Role {
