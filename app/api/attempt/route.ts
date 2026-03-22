@@ -4,35 +4,36 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
   evaluateAnswer,
-  buildPerformanceSummary,
   classifyScore,
+  buildPerformanceSummary,
 } from "@/lib/evaluate";
-import { z } from "zod";
+import { checkIdempotency, storeIdempotencyResult } from "@/lib/redis";
+import { getEmbedding, rankTopicRecommendations } from "@/lib/hf";
 
-const attemptSchema = z.object({
-  topicId: z.string().min(1),
-  answers: z.record(z.string(), z.string()), // { questionId: userAnswer }
-});
-
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const parsed = attemptSchema.safeParse(body);
-    if (!parsed.success) {
+    // ── Idempotency check ─────────────────────────────────────────
+    const idempotencyKey = req.headers.get("x-idempotency-key");
+    if (idempotencyKey) {
+      const { seen, cachedResult } = await checkIdempotency(idempotencyKey);
+      if (seen && cachedResult) {
+        return NextResponse.json(JSON.parse(cachedResult));
+      }
+    }
+
+    const { topicId, answers } = await req.json();
+    if (!topicId || !answers || typeof answers !== "object") {
       return NextResponse.json(
-        { error: "Invalid submission", details: parsed.error.flatten() },
+        { error: "Invalid request body" },
         { status: 400 },
       );
     }
 
-    const { topicId, answers } = parsed.data;
-
-    // Fetch all questions (with correct answers + feedback rules) - server only
     const questions = await prisma.question.findMany({
       where: { topicId },
     });
@@ -44,50 +45,92 @@ export async function POST(request: Request) {
       );
     }
 
-    const results = questions.map((q: (typeof questions)[number]) => {
+    // ── Evaluate all answers ──────────────────────────────────────
+    const results = questions.map((q) => {
       const userAnswer = answers[q.id] ?? "";
-
-      const feedbackRules = q.feedbackRules as {
+      const rules = q.feedbackRules as {
         misconceptions: { pattern: string; feedback: string }[];
         defaultFeedback: string;
       };
-
-      return {
-        questionId: q.id,
-        questionText: q.questionText,
-        userAnswer,
-        correctAnswer: q.correctAnswer,
-        ...evaluateAnswer(
-          userAnswer,
-          q.correctAnswer,
-          feedbackRules,
-          q.questionText,
-        ),
-      };
+      return evaluateAnswer(userAnswer, q.correctAnswer, rules, q.questionText);
     });
+
+    const score =
+      (results.filter((r) => r.isCorrect).length / questions.length) * 100;
+    const classification = classifyScore(score);
 
     const summary = buildPerformanceSummary(results, questions.length);
 
-    const attempt = await prisma.attempt.create({
-      data: {
-        userId: session.user.id,
-        topicId,
-        score: summary.score,
-        classification: classifyScore(summary.score),
-        weakAreas: summary.weakAreas,
-      },
+    updateLearnerProfile(session.user.id, summary.weakAreas).catch(
+      console.error,
+    );
+
+    // ── Transaction: persist attempt ──────────────────────────────
+    const attempt = await prisma.$transaction(async (tx) => {
+      return tx.attempt.create({
+        data: {
+          userId: session.user.id,
+          topicId,
+          score,
+          classification,
+          weakAreas: summary.weakAreas,
+          idempotencyKey: idempotencyKey ?? undefined,
+        },
+      });
     });
 
-    return NextResponse.json({
+    const responseBody = {
       attemptId: attempt.id,
-      results,
-      summary,
-    });
+      score,
+      classification,
+      correctCount: results.filter((r) => r.isCorrect).length,
+      totalQuestions: questions.length,
+      weakAreas: summary.weakAreas,
+    };
+
+    // ── Store idempotency result ───────────────────────────────────
+    if (idempotencyKey) {
+      await storeIdempotencyResult(
+        idempotencyKey,
+        JSON.stringify(responseBody),
+      );
+    }
+
+    return NextResponse.json(responseBody);
   } catch (error) {
     console.error("[ATTEMPT_POST]", error);
     return NextResponse.json(
-      { error: "Failed to submit attempt" },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }
+}
+
+async function updateLearnerProfile(userId: string, weakAreas: string[]) {
+  if (weakAreas.length === 0) return;
+
+  const weakText = weakAreas.join(". ");
+  const embedding = await getEmbedding(weakText);
+  if (embedding.length === 0) return;
+
+  const allTopics = await prisma.topic.findMany({
+    where: { published: true },
+    select: { id: true, title: true, description: true },
+  });
+
+  const rankedIds = await rankTopicRecommendations(allTopics, weakAreas);
+
+  await prisma.learnerProfile.upsert({
+    where: { userId },
+    update: {
+      weaknessEmbedding: embedding,
+      recommendedTopics: rankedIds,
+      lastUpdated: new Date(),
+    },
+    create: {
+      userId,
+      weaknessEmbedding: embedding,
+      recommendedTopics: rankedIds,
+    },
+  });
 }
