@@ -104,17 +104,17 @@ model Attempt {
 
 model Translation {
   id             String   @id @default(cuid())
-  entityType     String // "topic" | "lesson" | "keyterm" | "question"
+  entityType     String
   entityId       String
-  locale         String // "ig"
-  field          String // "title" | "content" | "questionText" | "defaultFeedback" etc
+  locale         String
+  field          String
   originalText   String
   translatedText String
-  model          String // HF model used
+  model          String
+  reviewed       Boolean  @default(false)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  // Polymorphic relations — only one will be set
   topicId    String?
   lessonId   String?
   keyTermId  String?
