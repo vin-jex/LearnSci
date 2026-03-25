@@ -15,7 +15,7 @@ export async function GET(
 
     const attempt = await prisma.attempt.findFirst({
       where: { id: params.id, userId: session.user.id },
-      include: { topic: { select: { id: true, title: true, order: true } } },
+      include: { topic: { select: { id: true, title: true, titleIgbo: true, order: true } } },
     });
 
     if (!attempt) {
@@ -25,7 +25,7 @@ export async function GET(
     const nextTopic = await prisma.topic.findFirst({
       where: { order: { gt: attempt.topic.order ?? 0 } },
       orderBy: { order: "asc" },
-      select: { id: true, title: true },
+      select: { id: true, title: true, titleIgbo: true },
     });
 
     return NextResponse.json({ attempt, nextTopic });
