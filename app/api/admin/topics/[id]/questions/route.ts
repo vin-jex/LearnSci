@@ -11,11 +11,14 @@ const misconceptionSchema = z.object({
 const questionSchema = z.object({
   type: z.enum(["MCQ", "TRUE_FALSE", "SHORT_ANSWER"]),
   questionText: z.string().min(5, "Question must be at least 5 characters"),
+  questionTextIgbo: z.string().optional(),
   options: z.array(z.string().min(1)).optional().nullable(),
+  optionsIgbo: z.array(z.string().min(1)).optional().nullable(),
   correctAnswer: z.string().min(1, "Correct answer is required"),
   feedbackRules: z.object({
     misconceptions: z.array(misconceptionSchema),
     defaultFeedback: z.string().min(1, "Default feedback is required"),
+    defaultFeedbackIgbo: z.string().optional(),
   }),
 });
 
@@ -45,10 +48,7 @@ export async function POST(
   const parsed = questionSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      {
-        error: "Validation failed",
-        details: parsed.error.flatten().fieldErrors,
-      },
+      { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
       { status: 400 },
     );
   }
@@ -56,11 +56,17 @@ export async function POST(
   const question = await prisma.question.create({
     data: {
       topicId: params.id,
-      ...parsed.data,
-      options:
-        parsed.data.options !== undefined && parsed.data.options !== null
-          ? parsed.data.options
-          : undefined,
+      type: parsed.data.type,
+      questionText: parsed.data.questionText,
+      questionTextIgbo: parsed.data.questionTextIgbo ?? null,
+      options: parsed.data.options !== undefined && parsed.data.options !== null
+        ? parsed.data.options
+        : undefined,
+      optionsIgbo: parsed.data.optionsIgbo !== undefined && parsed.data.optionsIgbo !== null
+        ? parsed.data.optionsIgbo
+        : undefined,
+      correctAnswer: parsed.data.correctAnswer,
+      feedbackRules: parsed.data.feedbackRules,
     },
   });
 
