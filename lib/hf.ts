@@ -3,31 +3,13 @@ import { HfInference } from "@huggingface/inference";
 const hf = new HfInference(process.env.HUGGINGFACE_API_KEY!);
 
 const MODELS = {
-  translation: "Helsinki-NLP/opus-mt-en-ig",
-  feedback: "HuggingFaceH4/zephyr-7b-beta",
-  questionGen: "HuggingFaceH4/zephyr-7b-beta",
+  feedback: "mistralai/Mistral-7B-Instruct-v0.3",
+  questionGen: "mistralai/Mistral-7B-Instruct-v0.3",
   embedding: "sentence-transformers/all-MiniLM-L6-v2",
   shortAnswerNLI: "facebook/bart-large-mnli",
 } as const;
 
 const HF_TIMEOUT_MS = 8000;
-
-// ── Translation ───────────────────────────────────────────────────
-
-export async function translateToIgbo(text: string): Promise<string> {
-  try {
-    const result = await withTimeout(
-      hf.translation({
-        model: MODELS.translation,
-        inputs: text,
-      }),
-      HF_TIMEOUT_MS,
-    );
-    return (result as { translation_text: string }).translation_text ?? text;
-  } catch {
-    return text;
-  }
-}
 
 // ── Feedback augmentation ─────────────────────────────────────────
 
@@ -38,16 +20,15 @@ export async function augmentFeedback(
   defaultFeedback: string,
 ): Promise<string> {
   try {
-    const prompt =
-      `<|system|>\nYou are a science tutor for Nigerian secondary school students. ` +
-      `You give clear, encouraging, specific explanations. Never repeat the question. ` +
-      `Reply with the explanation only — no preamble, no labels.</s>\n` +
-      `<|user|>\nA student answered a quiz question incorrectly.\n\n` +
-      `Question: ${questionText}\n` +
-      `Correct answer: ${correctAnswer}\n` +
-      `Student's answer: ${learnerAnswer}\n\n` +
-      `Write a clear, encouraging 2-sentence explanation of why the correct answer is right.</s>\n` +
-      `<|assistant|>\n`;
+    const prompt = `<s>[INST] You are a science tutor for Nigerian secondary school students.
+A student answered a question incorrectly.
+
+Question: ${questionText}
+Correct answer: ${correctAnswer}
+Student's answer: ${learnerAnswer}
+
+Write a clear, encouraging 2-sentence explanation of why the correct answer is right.
+Be specific and educational. Do not repeat the question. Reply with the explanation only. [/INST]`;
 
     const result = await withTimeout(
       hf.textGeneration({
@@ -77,7 +58,7 @@ export async function evaluateShortAnswerNLI(
   learnerAnswer: string,
 ): Promise<{ isCorrect: boolean; confidence: number }> {
   try {
-    const result = (await withTimeout(
+    const result = await withTimeout(
       hf.zeroShotClassification({
         model: MODELS.shortAnswerNLI,
         inputs: `Question: ${questionText} Answer: ${learnerAnswer}`,
@@ -89,10 +70,12 @@ export async function evaluateShortAnswerNLI(
         },
       }),
       HF_TIMEOUT_MS,
-    )) as { label: string; score: number }[];
+    );
 
-    const correct = result.find((r) => r.label.startsWith("correct"));
-    const confidence = correct?.score ?? 0;
+    const correctElem = Array.isArray(result)
+      ? result.find((el) => el.label && el.label.startsWith("correct"))
+      : undefined;
+    const confidence = correctElem?.score ?? 0;
     return { isCorrect: confidence >= 0.65, confidence };
   } catch {
     const norm = (s: string) => s.toLowerCase().trim();
@@ -137,29 +120,30 @@ export async function generateQuestions(
 ): Promise<GeneratedQuestion[]> {
   const truncated = lessonContent.slice(0, 2000);
 
-  const prompt =
-    `<|system|>\nYou are a quiz author for Nigerian secondary school science students. ` +
-    `You respond ONLY with valid JSON — no explanation, no markdown, no preamble.</s>\n` +
-    `<|user|>\nGenerate ${count} quiz questions for the following topic and lesson.\n\n` +
-    `Topic: ${topicTitle}\n\n` +
-    `Lesson content:\n${truncated}\n\n` +
-    `Return a JSON array in exactly this format:\n` +
-    `[\n` +
-    `  {\n` +
-    `    "type": "MCQ",\n` +
-    `    "questionText": "...",\n` +
-    `    "options": ["Option A", "Option B", "Option C", "Option D"],\n` +
-    `    "correctAnswer": "Option A",\n` +
-    `    "defaultFeedback": "1-2 sentence explanation of why the answer is correct."\n` +
-    `  }\n` +
-    `]\n\n` +
-    `Rules:\n` +
-    `- Mix MCQ, TRUE_FALSE, and SHORT_ANSWER types across the ${count} questions\n` +
-    `- TRUE_FALSE must have options ["True", "False"]\n` +
-    `- SHORT_ANSWER must have options as null\n` +
-    `- correctAnswer must exactly match one of the options for MCQ and TRUE_FALSE\n` +
-    `- Return ONLY the JSON array, nothing else</s>\n` +
-    `<|assistant|>\n`;
+  const prompt = `<s>[INST] You are creating quiz questions for Nigerian secondary school science students.
+
+Topic: ${topicTitle}
+Lesson content:
+${truncated}
+
+Generate ${count} quiz questions in this exact JSON format:
+[
+  {
+    "type": "MCQ",
+    "questionText": "...",
+    "options": ["A", "B", "C", "D"],
+    "correctAnswer": "A",
+    "defaultFeedback": "Brief explanation of why the answer is correct."
+  }
+]
+
+Rules:
+- Mix MCQ, TRUE_FALSE, and SHORT_ANSWER types
+- TRUE_FALSE has options ["True","False"]
+- SHORT_ANSWER has options null
+- correctAnswer must exactly match one option for MCQ/TRUE_FALSE
+- defaultFeedback must be educational, 1-2 sentences
+- Return ONLY valid JSON, no extra text [/INST]`;
 
   try {
     const result = await withTimeout(
@@ -201,15 +185,13 @@ export async function predictWeakAreas(
 
   if (!wrongAnswers) return [];
 
-  const prompt =
-    `<|system|>\nYou are an educational analyst. ` +
-    `You respond ONLY with a valid JSON array — no explanation, no preamble.</s>\n` +
-    `<|user|>\nA student is taking a quiz on "${topicTitle}".\n\n` +
-    `They answered these questions incorrectly:\n${wrongAnswers}\n\n` +
-    `Based on the errors above, list 2-3 specific science concepts this student likely struggles with.\n` +
-    `Return ONLY a JSON array of short concept strings.\n` +
-    `Example: ["concept 1", "concept 2", "concept 3"]</s>\n` +
-    `<|assistant|>\n`;
+  const prompt = `<s>[INST] A student is taking a quiz on "${topicTitle}".
+They have answered these questions incorrectly so far:
+${wrongAnswers}
+
+List 2-3 specific science concepts the student likely struggles with based on these errors.
+Return ONLY a JSON array of short concept strings, e.g. ["concept 1", "concept 2"].
+No explanation, just the JSON array. [/INST]`;
 
   try {
     const result = await withTimeout(
@@ -234,7 +216,7 @@ export async function predictWeakAreas(
   }
 }
 
-// ── Adaptive difficulty ranking ───────────────────────────────────
+// ── Adaptive difficulty ───────────────────────────────────────────
 
 export async function rankQuestionsByDifficulty(
   questions: { id: string; questionText: string; difficulty: number }[],
@@ -263,7 +245,7 @@ export async function rankQuestionsByDifficulty(
   return scored.sort((a, b) => b.score - a.score).map((q) => q.id);
 }
 
-// ── Topic recommendations ─────────────────────────────────────────
+// ── Recommendations ───────────────────────────────────────────────
 
 export async function rankTopicRecommendations(
   topics: { id: string; title: string; description: string }[],
