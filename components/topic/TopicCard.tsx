@@ -1,11 +1,10 @@
 "use client";
-
 import Link from "next/link";
 import type { TopicSummary } from "@/lib/hooks/useTopics";
 import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export function TopicCard({ topic }: { topic: TopicSummary }) {
-  const { t } = useTranslation();
+  const { t, isIgbo } = useTranslation();
 
   const STATUS_CONFIG = {
     NOT_STARTED: {
@@ -30,6 +29,9 @@ export function TopicCard({ topic }: { topic: TopicSummary }) {
 
   const cfg = STATUS_CONFIG[topic.status];
 
+  const displayTitle = isIgbo && topic.titleIgbo ? topic.titleIgbo : topic.title;
+  const displayDescription = isIgbo && topic.descriptionIgbo ? topic.descriptionIgbo : topic.description;
+
   return (
     <Link href={`/topic/${topic.id}`}>
       <div className='glass-card rounded-2xl p-5 border border-white/5 cursor-pointer group hover:border-forest-500/25 hover:bg-white/[0.02] transition-all duration-200 h-full flex flex-col'>
@@ -44,15 +46,15 @@ export function TopicCard({ topic }: { topic: TopicSummary }) {
         </div>
 
         <h3 className='font-display text-lg text-ink-100 mb-1 group-hover:text-forest-300 transition-colors'>
-          {topic.title}
+          {displayTitle}
         </h3>
         <p className='text-xs text-ink-500 font-body leading-relaxed flex-1 mb-4'>
-          {topic.description}
+          {displayDescription}
         </p>
 
         <div className='flex items-center justify-between gap-2 flex-wrap'>
           <span className='text-xs text-ink-600 font-body'>
-            {topic.duration} · {topic.questionCount} q
+            {topic.duration} · {topic.questionCount} {isIgbo ? "Ajụjụ" : "q"}
           </span>
           <span
             className={`inline-flex items-center gap-1.5 text-xs font-body font-medium px-2.5 py-1 rounded-full ${cfg.badgeBg}`}
@@ -65,7 +67,7 @@ export function TopicCard({ topic }: { topic: TopicSummary }) {
         {topic.lastScore != null && (
           <div className='mt-3 pt-3 border-t border-white/5'>
             <div className='flex items-center justify-between mb-1'>
-              <span className='text-xs text-ink-600 font-body'>Last score</span>
+              <span className='text-xs text-ink-600 font-body'>{t("topic.lastScore")}</span>
               <span
                 className={`text-xs font-semibold font-body ${
                   topic.lastScore >= 80
