@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAppSelector, useAppDispatch } from "@/lib/store/hooks";
 import { toggleIgbo } from "@/lib/store/slices/igboSlice";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface KeyTerm {
   id: string;
@@ -17,6 +18,7 @@ interface Props {
 export function QuizKeyTermsPanel({ keyTerms }: Props) {
   const dispatch = useAppDispatch();
   const isIgboVisible = useAppSelector((s) => s.igbo.isVisible);
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -39,7 +41,7 @@ export function QuizKeyTermsPanel({ keyTerms }: Props) {
             </svg>
           </div>
           <span className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
-            Key Terms
+            {t("lesson.keyTerms")}
           </span>
           <span className='text-xs text-ink-600 font-body'>
             ({keyTerms.length})
@@ -67,7 +69,7 @@ export function QuizKeyTermsPanel({ keyTerms }: Props) {
               <span className='w-1.5 h-2.5 rounded-sm bg-white opacity-30' />
               <span className='w-1.5 h-2.5 rounded-sm bg-forest-600 opacity-80' />
             </span>
-            {isIgboVisible ? "Igbo: ON" : "Igbo: OFF"}
+            {isIgboVisible ? t("lesson.igboOn") : t("lesson.igboOff")}
           </button>
 
           <svg
@@ -135,7 +137,7 @@ export function QuizKeyTermsPanel({ keyTerms }: Props) {
                       >
                         <path d='M4 2l4 4-4 4' />
                       </svg>
-                      {expandedId === term.id ? "Hide" : "Nkọwa"}
+                      {expandedId === term.id ? t("lesson.hideExplanation") : t("lesson.showExplanation")}
                     </button>
 
                     <div
