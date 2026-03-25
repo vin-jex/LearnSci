@@ -1,10 +1,10 @@
 "use client";
-
 import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface Props {
   isCorrect: boolean;
   feedback: string;
+  feedbackIgbo?: string;
   onNext: () => void;
   isLast: boolean;
   isSubmitting: boolean;
@@ -13,11 +13,14 @@ interface Props {
 export function FeedbackPanel({
   isCorrect,
   feedback,
+  feedbackIgbo,
   onNext,
   isLast,
   isSubmitting,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, isIgbo } = useTranslation();
+
+  const displayFeedback = isIgbo && feedbackIgbo ? feedbackIgbo : feedback;
 
   return (
     <div
@@ -68,7 +71,7 @@ export function FeedbackPanel({
             {isCorrect ? t("quiz.correct") : t("quiz.incorrect")}
           </p>
           <p className='text-sm text-ink-400 font-body leading-relaxed'>
-            {feedback}
+            {displayFeedback}
           </p>
         </div>
       </div>
