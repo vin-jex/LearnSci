@@ -5,6 +5,7 @@ import { z } from "zod";
 
 const lessonSchema = z.object({
   content: z.string().min(10, "Lesson content must be at least 10 characters"),
+  igboContent: z.string().optional(),
   order: z.number().int().min(0).optional(),
 });
 
@@ -19,10 +20,7 @@ export async function POST(
   const parsed = lessonSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      {
-        error: "Validation failed",
-        details: parsed.error.flatten().fieldErrors,
-      },
+      { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
       { status: 400 },
     );
   }
@@ -36,6 +34,7 @@ export async function POST(
     data: {
       topicId: params.id,
       content: parsed.data.content,
+      igboContent: parsed.data.igboContent ?? null,
       order: parsed.data.order ?? (maxOrder._max.order ?? 0) + 1,
     },
   });
@@ -57,7 +56,11 @@ export async function PATCH(
 
   const lesson = await prisma.lesson.update({
     where: { id: lessonId, topicId: params.id },
-    data: { content: data.content, order: data.order },
+    data: {
+      content: data.content,
+      igboContent: data.igboContent ?? null,
+      order: data.order,
+    },
   });
 
   return NextResponse.json({ lesson });
