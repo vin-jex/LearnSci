@@ -32,22 +32,22 @@ export default function DashboardPage() {
   const statCards = [
     {
       label: t("dashboard.statTopics"),
-      value: stats ? String(stats.topicCount) : "—",
+      value: stats ? String(stats.topicCount) : "-",
       sub: t("dashboard.statTopicsSub"),
     },
     {
       label: t("dashboard.statQuizzes"),
-      value: stats ? String(stats.quizzesCompleted) : "—",
+      value: stats ? String(stats.quizzesCompleted) : "-",
       sub: t("dashboard.statQuizzesSub"),
     },
     {
       label: t("dashboard.statAvgScore"),
-      value: stats?.avgScore != null ? `${stats.avgScore}%` : "—",
+      value: stats?.avgScore != null ? `${stats.avgScore}%` : "-",
       sub: t("dashboard.statAvgScoreSub"),
     },
     {
       label: t("dashboard.statStreak"),
-      value: stats ? String(stats.streak) : "—",
+      value: stats ? String(stats.streak) : "-",
       sub:
         stats?.streak === 1
           ? t("dashboard.statStreakSubSingle")
@@ -77,7 +77,7 @@ export default function DashboardPage() {
           >
             <p
               className={`font-display text-2xl ${
-                value === "—" ? "text-ink-700" : "text-ink-100"
+                value === "-" ? "text-ink-700" : "text-ink-100"
               }`}
             >
               {value}

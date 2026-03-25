@@ -1,4 +1,4 @@
-# LearnSci — Computer-Assisted Learning System
+# LearnSci - Computer-Assisted Learning System
 
 A full-stack Next.js application for teaching basic science with Igbo terminology support and adaptive quiz feedback.
 
@@ -146,7 +146,7 @@ NEXTAUTH_URL="http://localhost:3000"
 NEXTAUTH_SECRET="..."    # openssl rand -base64 32
 ```
 
-> **Note:** Use a [Neon](https://neon.tech) PostgreSQL connection string. Do not add `channel_binding=require` — it is not supported by the `@prisma/adapter-pg` driver.
+> **Note:** Use a [Neon](https://neon.tech) PostgreSQL connection string. Do not add `channel_binding=require` - it is not supported by the `@prisma/adapter-pg` driver.
 
 ### 3. Database Setup
 ```bash
@@ -224,20 +224,20 @@ Each topic includes a full markdown lesson, 7–8 bilingual Igbo key terms with 
 
 ## Development Phases
 
-- [x] **Phase 1** — Database schema + Prisma setup
-- [x] **Phase 2** — Authentication (Register, Login, JWT, Middleware)
-- [x] **Phase 3** — Topic & Lesson rendering + Igbo Toggle
-- [x] **Phase 4** — Quiz Engine (MCQ, True/False, Short Answer)
-- [x] **Phase 5** — Rule-based Evaluation Engine (server-side, deterministic)
-- [x] **Phase 6** — Performance Summary (STRONG / MODERATE / WEAK + recommendations)
-- [x] **Phase 7** — Admin Panel (Topics, Lessons, Key Terms, Questions CRUD)
-- [x] **Phase 8** — Deployment (Vercel + Neon)
+- [x] **Phase 1** - Database schema + Prisma setup
+- [x] **Phase 2** - Authentication (Register, Login, JWT, Middleware)
+- [x] **Phase 3** - Topic & Lesson rendering + Igbo Toggle
+- [x] **Phase 4** - Quiz Engine (MCQ, True/False, Short Answer)
+- [x] **Phase 5** - Rule-based Evaluation Engine (server-side, deterministic)
+- [x] **Phase 6** - Performance Summary (STRONG / MODERATE / WEAK + recommendations)
+- [x] **Phase 7** - Admin Panel (Topics, Lessons, Key Terms, Questions CRUD)
+- [x] **Phase 8** - Deployment (Vercel + Neon)
 
 ---
 
 ## Igbo Support
 
-- **Global toggle** in the navigation bar — persists across all learner pages via Redux
+- **Global toggle** in the navigation bar - persists across all learner pages via Redux
 - `KeyTerm` model stores English term, Igbo term, and Igbo explanation per topic
 - Toggleable bilingual sidebar in lessons and quiz
 - UI labels translatable via `messages/en.json` and `messages/ig.json`
@@ -247,7 +247,7 @@ Each topic includes a full markdown lesson, 7–8 bilingual Igbo key terms with 
 
 ## AI Evaluation Engine (`lib/evaluate.ts`)
 
-The quiz uses a **rule-based, deterministic** evaluation engine — no external AI API calls.
+The quiz uses a **rule-based, deterministic** evaluation engine - no external AI API calls.
 
 For each question, the engine:
 1. Normalises the learner's answer (lowercase, trim)
@@ -257,9 +257,9 @@ For each question, the engine:
 5. After a full attempt: classifies performance and identifies weak areas
 
 **Classifications:**
-- `STRONG` — ≥ 80% → unlocks next topic
-- `MODERATE` — 50–79% → directed to weak areas
-- `WEAK` — < 50% → directed to review the full lesson
+- `STRONG` - ≥ 80% → unlocks next topic
+- `MODERATE` - 50–79% → directed to weak areas
+- `WEAK` - < 50% → directed to review the full lesson
 
 ---
 

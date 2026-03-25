@@ -54,7 +54,7 @@ export function QuestionGeneratorPanel({ topicId, onGenerated }: Props) {
         </p>
         <p className='text-xs text-ink-500 font-body leading-relaxed'>
           Generate quiz questions automatically from the lesson content using
-          Mistral-7B. Questions are saved as drafts — review and edit them in
+          Mistral-7B. Questions are saved as drafts - review and edit them in
           the Questions tab above.
         </p>
       </div>

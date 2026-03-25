@@ -88,7 +88,7 @@ function emailLayout(content: string): string {
                       color:#52525b;
                       line-height:1.6;
                     ">
-                      LearnSci — Computer-Assisted Learning for Science Education
+                      LearnSci - Computer-Assisted Learning for Science Education
                     </p>
                     <p style="
                       margin:0;

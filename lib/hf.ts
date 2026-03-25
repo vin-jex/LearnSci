@@ -64,8 +64,8 @@ export async function evaluateShortAnswerNLI(
         inputs: `Question: ${questionText} Answer: ${learnerAnswer}`,
         parameters: {
           candidate_labels: [
-            `correct — matches: ${correctAnswer}`,
-            "incorrect — does not match",
+            `correct - matches: ${correctAnswer}`,
+            "incorrect - does not match",
           ],
         },
       }),

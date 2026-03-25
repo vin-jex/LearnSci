@@ -52,7 +52,8 @@ export function LessonViewer({
   const { t, isIgbo } = useTranslation();
 
   const displayTitle = isIgbo && topicTitleIgbo ? topicTitleIgbo : topicTitle;
-  const displayDescription = isIgbo && topicDescriptionIgbo ? topicDescriptionIgbo : topicDescription;
+  const displayDescription =
+    isIgbo && topicDescriptionIgbo ? topicDescriptionIgbo : topicDescription;
 
   const classificationLabel =
     lastAttempt?.classification === "STRONG"
@@ -110,9 +111,7 @@ export function LessonViewer({
             `}
             >
               {t("lesson.lastScore")}: {Math.round(lastAttempt.score)}%
-              <span className='ml-2 opacity-70'>
-                ({classificationLabel})
-              </span>
+              <span className='ml-2 opacity-70'>({classificationLabel})</span>
             </div>
           )}
         </div>
@@ -132,9 +131,7 @@ export function LessonViewer({
             </div>
           ) : (
             <div className='glass-card rounded-2xl p-8 border border-white/5 text-center'>
-              <p className='text-ink-500 font-body'>
-                {t("lesson.noContent")}
-              </p>
+              <p className='text-ink-500 font-body'>{t("lesson.noContent")}</p>
             </div>
           )}
 
@@ -163,7 +160,8 @@ export function LessonViewer({
               href={`/quiz/${topicId}`}
               className='block w-full text-center text-sm font-semibold font-body bg-forest-600 hover:bg-forest-500 text-white py-3 rounded-xl transition-colors duration-200'
             >
-              {t("lesson.startQuiz")} — {questionCount} {isIgbo ? "Ajụjụ" : "Questions"} →
+              {t("lesson.startQuiz")} - {questionCount}{" "}
+              {isIgbo ? "Ajụjụ" : "Questions"} →
             </Link>
           </div>
         </main>

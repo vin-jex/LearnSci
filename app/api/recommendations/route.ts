@@ -15,7 +15,7 @@ export async function GET() {
     });
 
     if (!profile?.recommendedTopics) {
-      // No profile yet — return topics in default order
+      // No profile yet - return topics in default order
       const topics = await prisma.topic.findMany({
         where: { published: true },
         orderBy: { order: "asc" },

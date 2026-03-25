@@ -87,11 +87,16 @@ export function TopicSettingsEditor({ topic, onSaved }: Props) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className='space-y-5' noValidate>
-
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className='space-y-5'
+          noValidate
+        >
           {/* English fields */}
           <div className='space-y-4'>
-            <p className='text-xs font-semibold uppercase tracking-widest text-ink-600'>English</p>
+            <p className='text-xs font-semibold uppercase tracking-widest text-ink-600'>
+              English
+            </p>
             <FormInput
               label='Title'
               error={errors.title?.message}
@@ -107,7 +112,9 @@ export function TopicSettingsEditor({ topic, onSaved }: Props) {
                 {...register("description")}
               />
               {errors.description && (
-                <p className='text-xs text-red-400'>{errors.description.message}</p>
+                <p className='text-xs text-red-400'>
+                  {errors.description.message}
+                </p>
               )}
             </div>
           </div>
@@ -120,17 +127,19 @@ export function TopicSettingsEditor({ topic, onSaved }: Props) {
                 <span className='w-2 h-3 rounded-sm bg-white opacity-30' />
                 <span className='w-2 h-3 rounded-sm bg-forest-600 opacity-80' />
               </span>
-              <p className='text-xs font-semibold uppercase tracking-widest text-earth-500'>Igbo</p>
+              <p className='text-xs font-semibold uppercase tracking-widest text-earth-500'>
+                Igbo
+              </p>
             </div>
             <FormInput
-              label='Isiokwu (Title — Igbo)'
+              label='Isiokwu (Title - Igbo)'
               placeholder='Igbo title…'
               error={errors.titleIgbo?.message}
               {...register("titleIgbo")}
             />
             <div className='flex flex-col gap-1.5'>
               <label className='text-xs font-semibold uppercase tracking-widest text-ink-400'>
-                Nkọwa (Description — Igbo)
+                Nkọwa (Description - Igbo)
               </label>
               <textarea
                 rows={3}
@@ -160,13 +169,19 @@ export function TopicSettingsEditor({ topic, onSaved }: Props) {
           {/* Published toggle */}
           <div className='flex items-center justify-between py-3 border-t border-white/5'>
             <div>
-              <p className='text-sm font-semibold text-ink-200 font-body'>Published</p>
+              <p className='text-sm font-semibold text-ink-200 font-body'>
+                Published
+              </p>
               <p className='text-xs text-ink-500 font-body'>
                 Learners can see published topics on their dashboard.
               </p>
             </div>
             <label className='relative inline-flex cursor-pointer'>
-              <input type='checkbox' className='sr-only peer' {...register("published")} />
+              <input
+                type='checkbox'
+                className='sr-only peer'
+                {...register("published")}
+              />
               <div className="w-11 h-6 bg-ink-700 rounded-full peer peer-checked:bg-forest-600 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5" />
             </label>
           </div>

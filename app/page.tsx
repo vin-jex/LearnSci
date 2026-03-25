@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 
-// Note: This is a server component — Igbo toggle only applies to client components.
+// Note: This is a server component - Igbo toggle only applies to client components.
 // The landing page uses static bilingual content arrays so both languages are always shown,
 // OR you can wrap in a client component. Here we keep it as a clean server page and let
 // the user switch language once they enter the app.
@@ -78,17 +78,21 @@ export default async function HomePage() {
         </div>
 
         <h1 className='font-display text-5xl md:text-7xl text-ink-100 leading-tight max-w-3xl mb-3 animate-fade-up'>
-          Mụta Sayensị. <span className='text-forest-400'>Ghọta</span> ya nke ọma.
+          Mụta Sayensị. <span className='text-forest-400'>Ghọta</span> ya nke
+          ọma.
         </h1>
         <p className='font-display text-2xl md:text-3xl text-ink-400 leading-tight max-w-3xl mb-6 animate-fade-up'>
-          Learn Science. <span className='text-forest-500'>Understand</span> it deeply.
+          Learn Science. <span className='text-forest-500'>Understand</span> it
+          deeply.
         </p>
 
         <p className='text-base text-ink-500 font-body max-w-xl leading-relaxed mb-2 animate-fade-up'>
-          Ihe ọmụmụ na-arụ ọrụ, ọmụmụ ajụjụ nwere nzaaza ozugbo, na okwu Igbo — emere maka ụmụ akwụkwọ Naịjirịa.
+          Ihe ọmụmụ na-arụ ọrụ, ọmụmụ ajụjụ nwere nzaaza ozugbo, na okwu Igbo -
+          emere maka ụmụ akwụkwọ Naịjirịa.
         </p>
         <p className='text-sm text-ink-600 font-body max-w-xl leading-relaxed mb-10 animate-fade-up'>
-          Interactive lessons, quizzes with instant feedback, and Igbo terminology — designed for Nigerian secondary school learners.
+          Interactive lessons, quizzes with instant feedback, and Igbo
+          terminology - designed for Nigerian secondary school learners.
         </p>
 
         <div className='flex flex-col sm:flex-row gap-3 animate-fade-up'>
@@ -96,7 +100,7 @@ export default async function HomePage() {
             href='/register'
             className='px-8 py-3.5 bg-forest-600 hover:bg-forest-500 text-white font-body font-semibold rounded-xl transition-colors duration-200 text-sm'
           >
-            Bido Ọmụmụ — Ọ Bụ n&apos;Efu / Start Learning — It&apos;s Free
+            Bido Ọmụmụ - Ọ Bụ n&apos;Efu / Start Learning - It&apos;s Free
           </Link>
           <Link
             href='/login'

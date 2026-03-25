@@ -25,7 +25,6 @@
   "auth.demoCredentials": "Nzacha nlele",
   "auth.signingInBtn": "Ana m abanye…",
   "auth.creatingAccountBtn": "Ana m emepụta akaụntụ…",
-
   "quiz.start": "Malite Ọmụmụ Ajụjụ",
   "quiz.retry": "Gaa Ọmụmụ Ọzọ",
   "quiz.next": "Ajụjụ Na-esote",
@@ -37,7 +36,6 @@
   "quiz.complete": "Ọmụmụ Ajụjụ Mechara",
   "quiz.adaptive": "AI na-emeghari onwe ya",
   "quiz.areasToWatch": "Mpaghara ị kwesịrị ilele dabere na ọzaazị gị",
-
   "dashboard.title": "Ebe Nchịkọta",
   "dashboard.welcome": "Nnọọ ọzọ",
   "dashboard.notStarted": "Ebejụghị",
@@ -59,7 +57,6 @@
   "dashboard.availableTopics": "Isiokwu Dị Ezu",
   "dashboard.noTopicsYet": "Ọ dịghị isiokwu dị ugbu a.",
   "dashboard.checkBackSoon": "Laghachi n'oge ma ọ bụ jụọ onye nkuzi gị.",
-
   "lesson.keyTerms": "Okwu Isi",
   "lesson.igboToggle": "Gosi Igbo",
   "lesson.igboToggleOff": "Zụọ Igbo",
@@ -76,7 +73,6 @@
   "lesson.igboOn": "Igbo: NA",
   "lesson.igboOff": "Igbo: WEPỤ",
   "lesson.startQuizArrow": "Malite Ajụjụ →",
-
   "performance.strong": "Ike",
   "performance.moderate": "Etiti",
   "performance.weak": "Adịghị ike",
@@ -90,26 +86,22 @@
   "performance.total": "niile",
   "performance.recommendStrong": "Ọrụ dị mma! Ị opuputara n'isiokwu a. Meghee ihe ọmụmụ ọzọ ka i gaa n'ihu.",
   "performance.recommendModerate": "Ọrụ dị mma! Lelee akụkụ ihe ọmụmụ metụtara mpaghara adịghị ike gị, wee nwalekwa.",
-  "performance.recommendWeak": "Gaa n'ihu — sayensị na-achọ omume! Biko lelee ihe ọmụmụ niile tupu i laphịa ọmụmụ ajụjụ.",
-
+  "performance.recommendWeak": "Gaa n'ihu - sayensị na-achọ omume! Biko lelee ihe ọmụmụ niile tupu i laphịa ọmụmụ ajụjụ.",
   "nav.dashboard": "Ebe Nchịkọta",
   "nav.signOut": "Pụọ",
   "nav.admin": "Onye Nlekọta",
   "nav.preview": "Lelee ↗",
   "nav.allTopics": "← Isiokwu Niile",
   "nav.backDashboard": "← Ebe Nchịkọta",
-
   "recommendations.forYou": "Atụnye Maka Gị",
   "recommendations.suggested": "Isiokwu A Tụlere",
   "recommendations.aiPersonalised": "AI haziri maka gị",
   "recommendations.label": "Atụnye",
-
   "topic.lastScore": "Nkọwa ikpeazụ",
-
   "home.tagline": "Sayensị · Nkwado Okwu Igbo",
   "home.headline": "Mụta Sayensị. Ghọta ya nke ọma.",
-  "home.subtitle": "Ihe ọmụmụ na-arụ ọrụ, ọmụmụ ajụjụ nwere nzaaza ozugbo, na okwu Igbo — emere maka ụmụ akwụkwọ ọ bụla na Naịjirịa.",
-  "home.startFree": "Bido Ọmụmụ — Ọ Bụ n'Efu",
+  "home.subtitle": "Ihe ọmụmụ na-arụ ọrụ, ọmụmụ ajụjụ nwere nzaaza ozugbo, na okwu Igbo - emere maka ụmụ akwụkwọ ọ bụla na Naịjirịa.",
+  "home.startFree": "Bido Ọmụmụ - Ọ Bụ n'Efu",
   "home.signIn": "Banye",
   "home.feat1": "📚 Ihe Ọmụmụ Haziri",
   "home.feat2": "🧪 Ọmụmụ Ajụjụ Na-arụ Ọrụ",
