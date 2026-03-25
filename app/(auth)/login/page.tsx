@@ -10,21 +10,23 @@ import { FormInput } from "@/components/auth/FormInput";
 import { PasswordInput } from "@/components/auth/PasswordInput";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { setLoading, setError, setSuccess, clearMessages } from "@/lib/store/slices/authSlice";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const { isLoading, error, successMessage } = useAppSelector((s) => s.auth);
+  const { t } = useTranslation();
 
   const justRegistered = searchParams.get("registered") === "true";
 
   useEffect(() => {
     if (justRegistered) {
-      dispatch(setSuccess("Account created! Please sign in."));
+      dispatch(setSuccess(t("auth.createAccount") + "! " + t("auth.signingIn")));
     }
     return () => { dispatch(clearMessages()); };
-  }, [justRegistered, dispatch]);
+  }, [justRegistered, dispatch, t]);
 
   const {
     register,
@@ -56,7 +58,7 @@ export default function LoginPage() {
     }
 
     if (result?.ok) {
-      dispatch(setSuccess("Welcome back! Redirecting…"));
+      dispatch(setSuccess(t("auth.signingIn")));
       router.push("/dashboard");
       router.refresh();
     }
@@ -64,23 +66,20 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-md">
-      {/* Card */}
       <div className="glass-card rounded-2xl p-8 shadow-2xl animate-fade-up stagger">
 
-        {/* Heading */}
         <div className="mb-8 animate-fade-up">
           <p className="text-xs font-semibold uppercase tracking-widest text-forest-500 mb-1">
-            Welcome back
+            {t("auth.welcomeBack")}
           </p>
           <h1 className="font-display text-3xl text-ink-100 leading-tight">
-            Sign in to LearnSci
+            {t("auth.signInToLearnSci")}
           </h1>
           <p className="text-sm text-ink-400 mt-2 font-body">
-            Continue your learning journey.
+            {t("auth.continueJourney")}
           </p>
         </div>
 
-        {/* Success banner */}
         {successMessage && (
           <div className="mb-5 px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20
                           text-forest-400 text-sm font-body flex items-center gap-2 animate-fade-in">
@@ -91,7 +90,6 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Error banner */}
         {error && (
           <div className="mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20
                           text-red-400 text-sm font-body flex items-center gap-2 animate-fade-in">
@@ -102,11 +100,10 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 stagger" noValidate>
           <div className="animate-fade-up">
             <FormInput
-              label="Email Address"
+              label={t("auth.email")}
               type="email"
               placeholder="ada@example.com"
               autoComplete="email"
@@ -118,19 +115,18 @@ export default function LoginPage() {
           <div className="animate-fade-up">
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-xs font-semibold uppercase tracking-widest text-ink-400">
-                Password
+                {t("auth.password")}
               </label>
               <Link
                 href="/forgot-password"
-                className="text-xs text-ink-500 hover:text-ink-300 transition-colors
-                           underline underline-offset-2"
+                className="text-xs text-ink-500 hover:text-ink-300 transition-colors underline underline-offset-2"
               >
-                Forgot password?
+                {t("auth.forgotPassword")}
               </Link>
             </div>
             <PasswordInput
               label=""
-              placeholder="Your password"
+              placeholder={t("auth.password")}
               autoComplete="current-password"
               error={errors.password?.message}
               {...register("password")}
@@ -146,28 +142,26 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <div className="spinner" />
-                  Signing in…
+                  {t("auth.signingInBtn")}
                 </>
               ) : (
-                "Sign In"
+                t("auth.signIn")
               )}
             </button>
           </div>
         </form>
 
-        {/* Sign up link */}
         <p className="mt-6 text-center text-sm text-ink-500 font-body animate-fade-up">
-          Don&apos;t have an account?{" "}
+          {t("auth.noAccount")}{" "}
           <Link href="/register" className="btn-ghost text-forest-400 hover:text-forest-300">
-            Create one free
+            {t("auth.createFree")}
           </Link>
         </p>
       </div>
 
-      {/* Demo hint */}
       <div className="mt-4 glass-card rounded-xl px-4 py-3 animate-fade-up">
         <p className="text-xs text-ink-500 font-body text-center">
-          <span className="text-ink-400 font-semibold">Demo credentials:</span>{" "}
+          <span className="text-ink-400 font-semibold">{t("auth.demoCredentials")}:</span>{" "}
           admin@cal.edu · admin1234
         </p>
       </div>
