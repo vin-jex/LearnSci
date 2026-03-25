@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { KeyTermCard } from "./KeyTermCard";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface KeyTerm {
   id: string;
@@ -22,11 +23,13 @@ export function KeyTermsPanel({
   questionCount,
   lastScore,
 }: Props) {
+  const { t, isIgbo } = useTranslation();
+
   return (
     <aside className='flex flex-col gap-5'>
       <div className='glass-card rounded-2xl p-4 border border-white/5'>
         <p className='text-xs font-semibold uppercase tracking-widest text-ink-500 mb-3'>
-          Key Terms
+          {t("lesson.keyTerms")}
           <span className='ml-2 text-ink-600 normal-case tracking-normal font-normal'>
             ({keyTerms.length})
           </span>
@@ -34,7 +37,7 @@ export function KeyTermsPanel({
 
         {keyTerms.length === 0 ? (
           <p className='text-xs text-ink-600 font-body italic'>
-            No key terms for this topic yet.
+            {t("lesson.noKeyTerms")}
           </p>
         ) : (
           <div className='flex flex-col gap-2'>
@@ -47,16 +50,15 @@ export function KeyTermsPanel({
 
       <div className='glass-card rounded-2xl p-4 border border-forest-500/15 bg-forest-500/3'>
         <p className='text-xs font-semibold uppercase tracking-widest text-forest-600 mb-1'>
-          Ready to test yourself?
+          {t("lesson.readyToTest")}
         </p>
         <p className='text-xs text-ink-500 font-body mb-3'>
-          {questionCount} question{questionCount !== 1 ? "s" : ""} · Multiple
-          types
+          {questionCount} {isIgbo ? "Ajụjụ" : (questionCount !== 1 ? "questions" : "question")} · {isIgbo ? "Ụdị dị iche iche" : "Multiple types"}
         </p>
 
         {lastScore != null && (
           <p className='text-xs text-ink-500 font-body mb-3'>
-            Last score:{" "}
+            {t("lesson.lastScore")}:{" "}
             <span
               className={`font-semibold ${
                 lastScore >= 80
@@ -75,7 +77,7 @@ export function KeyTermsPanel({
           href={`/quiz/${topicId}`}
           className='block w-full text-center text-sm font-semibold font-body bg-forest-600 hover:bg-forest-500 text-white py-2.5 rounded-xl transition-colors duration-200'
         >
-          Start Quiz →
+          {t("lesson.startQuizArrow")}
         </Link>
       </div>
     </aside>
