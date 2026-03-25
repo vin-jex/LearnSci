@@ -5,7 +5,9 @@ import { z } from "zod";
 
 const updateSchema = z.object({
   title: z.string().min(2).optional(),
+  titleIgbo: z.string().optional(),
   description: z.string().min(10).optional(),
+  descriptionIgbo: z.string().optional(),
   duration: z.string().min(1).optional(),
   order: z.number().int().min(0).optional(),
   published: z.boolean().optional(),
@@ -42,10 +44,7 @@ export async function PATCH(
   const parsed = updateSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      {
-        error: "Validation failed",
-        details: parsed.error.flatten().fieldErrors,
-      },
+      { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
       { status: 400 },
     );
   }
