@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAppSelector } from "@/lib/store/hooks";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface Props {
   englishTerm: string;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
-  const isIgboVisible = useAppSelector((s) => s.igbo.isVisible);
+  const { isIgbo, t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -18,7 +18,7 @@ export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
       className={`
         rounded-xl border transition-all duration-200
         ${
-          isIgboVisible
+          isIgbo
             ? "bg-earth-400/5 border-earth-400/15"
             : "bg-ink-900/40 border-ink-800"
         }
@@ -34,14 +34,14 @@ export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
       <div
         className={`
           overflow-hidden transition-all duration-300
-          ${isIgboVisible ? "max-h-40 opacity-100 mt-1.5" : "max-h-0 opacity-0"}
+          ${isIgbo ? "max-h-40 opacity-100 mt-1.5" : "max-h-0 opacity-0"}
         `}
       >
         <p className='text-sm text-earth-300 font-body font-medium'>
           {igboTerm}
         </p>
 
-        {/* Igbo explanation (expandable tooltip) */}
+        {/* Igbo explanation (expandable) */}
         {igboExplanation && (
           <>
             <button
@@ -63,7 +63,7 @@ export function KeyTermCard({ englishTerm, igboTerm, igboExplanation }: Props) {
                   fill='none'
                 />
               </svg>
-              {expanded ? "Hide explanation" : "Nkọwa"}
+              {expanded ? t("lesson.hideExplanation") : t("lesson.showExplanation")}
             </button>
             <div
               className={`
