@@ -1,8 +1,8 @@
 "use client";
-
 import Link from "next/link";
 import { LessonContent } from "./LessonContent";
 import { KeyTermsPanel } from "./KeyTermsPanel";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface KeyTerm {
   id: string;
@@ -14,6 +14,7 @@ interface KeyTerm {
 interface Lesson {
   id: string;
   content: string;
+  igboContent?: string;
   order: number;
 }
 
@@ -25,7 +26,9 @@ interface Attempt {
 interface Props {
   topicId: string;
   topicTitle: string;
+  topicTitleIgbo?: string;
   topicDescription: string;
+  topicDescriptionIgbo?: string;
   topicDuration: string;
   lessons: Lesson[];
   keyTerms: KeyTerm[];
@@ -36,14 +39,27 @@ interface Props {
 export function LessonViewer({
   topicId,
   topicTitle,
+  topicTitleIgbo,
   topicDescription,
+  topicDescriptionIgbo,
   topicDuration,
   lessons,
   keyTerms,
   questionCount,
   lastAttempt,
 }: Props) {
-  const lesson = lessons[0]; // Currently renders first lesson; multi-lesson pagination is Phase 3+
+  const lesson = lessons[0];
+  const { t, isIgbo } = useTranslation();
+
+  const displayTitle = isIgbo && topicTitleIgbo ? topicTitleIgbo : topicTitle;
+  const displayDescription = isIgbo && topicDescriptionIgbo ? topicDescriptionIgbo : topicDescription;
+
+  const classificationLabel =
+    lastAttempt?.classification === "STRONG"
+      ? t("performance.strong")
+      : lastAttempt?.classification === "MODERATE"
+        ? t("performance.moderate")
+        : t("performance.weak");
 
   return (
     <div className='animate-fade-up'>
@@ -53,10 +69,10 @@ export function LessonViewer({
           href='/dashboard'
           className='hover:text-ink-400 transition-colors'
         >
-          Dashboard
+          {t("nav.dashboard")}
         </Link>
-        <span>›</span>
-        <span className='text-ink-400'>{topicTitle}</span>
+        <span>{">"}</span>
+        <span className='text-ink-400'>{displayTitle}</span>
       </nav>
 
       {/* Topic header */}
@@ -65,7 +81,7 @@ export function LessonViewer({
           <div>
             <div className='flex items-center gap-2 mb-2'>
               <span className='text-xs font-semibold uppercase tracking-widest text-forest-500'>
-                Lesson
+                {t("lesson.lessonLabel")}
               </span>
               <span className='text-ink-700'>·</span>
               <span className='text-xs text-ink-500 font-body'>
@@ -73,30 +89,29 @@ export function LessonViewer({
               </span>
             </div>
             <h1 className='font-display text-3xl md:text-4xl text-ink-100 leading-tight'>
-              {topicTitle}
+              {displayTitle}
             </h1>
             <p className='text-ink-400 font-body mt-2 max-w-xl'>
-              {topicDescription}
+              {displayDescription}
             </p>
           </div>
 
-          {/* Last attempt badge */}
           {lastAttempt && (
             <div
               className={`
-                px-4 py-2 rounded-xl text-xs font-body font-semibold border
-                ${
-                  lastAttempt.classification === "STRONG"
-                    ? "bg-forest-500/10 border-forest-500/20 text-forest-400"
-                    : lastAttempt.classification === "MODERATE"
-                      ? "bg-earth-400/10 border-earth-400/20 text-earth-400"
-                      : "bg-red-500/10 border-red-500/20 text-red-400"
-                }
-              `}
+              px-4 py-2 rounded-xl text-xs font-body font-semibold border
+              ${
+                lastAttempt.classification === "STRONG"
+                  ? "bg-forest-500/10 border-forest-500/20 text-forest-400"
+                  : lastAttempt.classification === "MODERATE"
+                    ? "bg-earth-400/10 border-earth-400/20 text-earth-400"
+                    : "bg-red-500/10 border-red-500/20 text-red-400"
+              }
+            `}
             >
-              Last score: {Math.round(lastAttempt.score)}%
+              {t("lesson.lastScore")}: {Math.round(lastAttempt.score)}%
               <span className='ml-2 opacity-70'>
-                ({lastAttempt.classification})
+                ({classificationLabel})
               </span>
             </div>
           )}
@@ -105,21 +120,24 @@ export function LessonViewer({
 
       {/* Two-column layout */}
       <div className='grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8'>
-        {/* Main lesson content */}
         <main>
           {lesson ? (
             <div className='glass-card rounded-2xl p-6 md:p-8 border border-white/5'>
-              <LessonContent content={lesson.content} title={topicTitle} />
+              <LessonContent
+                content={lesson.content}
+                igboContent={lesson.igboContent}
+                title={topicTitle}
+                igboTitle={topicTitleIgbo}
+              />
             </div>
           ) : (
             <div className='glass-card rounded-2xl p-8 border border-white/5 text-center'>
               <p className='text-ink-500 font-body'>
-                No lesson content available yet.
+                {t("lesson.noContent")}
               </p>
             </div>
           )}
 
-          {/* Lesson navigation (multi-lesson) */}
           {lessons.length > 1 && (
             <div className='mt-4 flex gap-3'>
               {lessons.map((l, i) => (
@@ -134,26 +152,22 @@ export function LessonViewer({
                     }
                   `}
                 >
-                  Part {i + 1}
+                  {t("lesson.part")} {i + 1}
                 </button>
               ))}
             </div>
           )}
 
-          {/* Bottom quiz CTA (mobile) */}
           <div className='mt-6 lg:hidden'>
             <Link
               href={`/quiz/${topicId}`}
-              className='block w-full text-center text-sm font-semibold font-body
-                         bg-forest-600 hover:bg-forest-500 text-white py-3 rounded-xl
-                         transition-colors duration-200'
+              className='block w-full text-center text-sm font-semibold font-body bg-forest-600 hover:bg-forest-500 text-white py-3 rounded-xl transition-colors duration-200'
             >
-              Start Quiz - {questionCount} Questions →
+              {t("lesson.startQuiz")} — {questionCount} {isIgbo ? "Ajụjụ" : "Questions"} →
             </Link>
           </div>
         </main>
 
-        {/* Side panel */}
         <div className='lg:sticky lg:top-24 lg:self-start'>
           <KeyTermsPanel
             keyTerms={keyTerms}
