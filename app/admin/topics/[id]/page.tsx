@@ -6,6 +6,7 @@ import { LessonEditor } from "@/components/admin/LessonEditor";
 import { KeyTermsEditor } from "@/components/admin/KeyTermsEditor";
 import { QuestionsEditor } from "@/components/admin/QuestionsEditor";
 import { TopicSettingsEditor } from "@/components/admin/TopicSettingsEditor";
+import { QuestionGeneratorPanel } from "@/components/admin/QuestionGeneratorPanel";
 
 type Tab = "settings" | "lesson" | "terms" | "questions";
 
@@ -16,7 +17,7 @@ interface TopicFull {
   duration: string;
   order: number;
   published: boolean;
-  lessons: { id: string; content: string; order: number }[];
+  lessons: { id: string; content: string; igboContent?: string; order: number }[];
   keyTerms: {
     id: string;
     englishTerm: string;
@@ -27,11 +28,13 @@ interface TopicFull {
     id: string;
     type: string;
     questionText: string;
+    questionTextIgbo?: string;
     options: string[] | null;
     correctAnswer: string;
     feedbackRules: {
       misconceptions: { pattern: string; feedback: string }[];
       defaultFeedback: string;
+      defaultFeedbackIgbo?: string;
     };
   }[];
 }
@@ -58,6 +61,7 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
   if (isLoading) {
@@ -153,7 +157,15 @@ export default function AdminTopicPage({ params }: { params: { id: string } }) {
 
       <div className='min-h-[400px]'>
         {activeTab === "settings" && (
-          <TopicSettingsEditor topic={topic} onSaved={load} />
+          <div className='space-y-6'>
+            <TopicSettingsEditor topic={topic} onSaved={load} />
+            <div className='space-y-4'>
+              <p className='text-xs font-semibold uppercase tracking-widest text-ink-600'>
+                AI Tools
+              </p>
+              <QuestionGeneratorPanel topicId={topic.id} onGenerated={load} />
+            </div>
+          </div>
         )}
         {activeTab === "lesson" && (
           <LessonEditor
