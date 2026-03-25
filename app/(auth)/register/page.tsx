@@ -16,12 +16,14 @@ import {
   setSuccess,
   clearMessages,
 } from "@/lib/store/slices/authSlice";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isLoading, error, successMessage } = useAppSelector((s) => s.auth);
   const [step, setStep] = useState<"form" | "success">("form");
+  const { t } = useTranslation();
 
   const {
     register,
@@ -52,7 +54,7 @@ export default function RegisterPage() {
         return;
       }
 
-      dispatch(setSuccess("Account created! Signing you in…"));
+      dispatch(setSuccess(t("auth.creatingAccount")));
       setStep("success");
 
       const signInResult = await signIn("credentials", {
@@ -76,73 +78,44 @@ export default function RegisterPage() {
 
   return (
     <div className='w-full max-w-md'>
-      {/* Card */}
       <div className='glass-card rounded-2xl p-8 shadow-2xl animate-fade-up stagger'>
-        {/* Heading */}
         <div className='mb-8 animate-fade-up'>
           <p className='text-xs font-semibold uppercase tracking-widest text-forest-500 mb-1'>
-            Get started
+            {t("auth.getStarted")}
           </p>
           <h1 className='font-display text-3xl text-ink-100 leading-tight'>
-            Create your account
+            {t("auth.createYourAccount")}
           </h1>
           <p className='text-sm text-ink-400 mt-2 font-body'>
-            Join LearnSci and start your science journey today.
+            {t("auth.joinToday")}
           </p>
         </div>
 
-        {/* Error banner */}
         {error && (
-          <div
-            className='mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20
-                          text-red-400 text-sm font-body flex items-center gap-2 animate-fade-in'
-          >
-            <svg
-              className='w-4 h-4 shrink-0'
-              viewBox='0 0 20 20'
-              fill='currentColor'
-            >
-              <path
-                fillRule='evenodd'
-                d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
-                clipRule='evenodd'
-              />
+          <div className='mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20
+                          text-red-400 text-sm font-body flex items-center gap-2 animate-fade-in'>
+            <svg className='w-4 h-4 shrink-0' viewBox='0 0 20 20' fill='currentColor'>
+              <path fillRule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
             </svg>
             {error}
           </div>
         )}
 
-        {/* Success banner */}
         {successMessage && (
-          <div
-            className='mb-5 px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20
-                          text-forest-400 text-sm font-body flex items-center gap-2 animate-fade-in'
-          >
-            <svg
-              className='w-4 h-4 shrink-0'
-              viewBox='0 0 20 20'
-              fill='currentColor'
-            >
-              <path
-                fillRule='evenodd'
-                d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
-                clipRule='evenodd'
-              />
+          <div className='mb-5 px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20
+                          text-forest-400 text-sm font-body flex items-center gap-2 animate-fade-in'>
+            <svg className='w-4 h-4 shrink-0' viewBox='0 0 20 20' fill='currentColor'>
+              <path fillRule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clipRule='evenodd' />
             </svg>
             {successMessage}
           </div>
         )}
 
         {step === "form" && (
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className='space-y-5 stagger'
-            noValidate
-          >
-            {/* Name */}
+          <form onSubmit={handleSubmit(onSubmit)} className='space-y-5 stagger' noValidate>
             <div className='animate-fade-up'>
               <FormInput
-                label='Full Name'
+                label={t("auth.name")}
                 type='text'
                 placeholder='Ada Okonkwo'
                 autoComplete='name'
@@ -151,10 +124,9 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Email */}
             <div className='animate-fade-up'>
               <FormInput
-                label='Email Address'
+                label={t("auth.email")}
                 type='email'
                 placeholder='ada@example.com'
                 autoComplete='email'
@@ -163,17 +135,15 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Password */}
             <div className='animate-fade-up'>
               <PasswordInput
-                label='Password'
+                label={t("auth.password")}
                 placeholder='Min. 8 characters'
                 autoComplete='new-password'
                 error={errors.password?.message}
                 hint='Must include an uppercase letter and a number.'
                 {...register("password")}
               />
-              {/* Strength bar */}
               {password.length > 0 && (
                 <div className='mt-2 space-y-1 animate-fade-in'>
                   <div className='flex gap-1'>
@@ -190,20 +160,16 @@ export default function RegisterPage() {
                       />
                     ))}
                   </div>
-                  <p
-                    className='text-xs'
-                    style={{ color: passwordStrength.color }}
-                  >
+                  <p className='text-xs' style={{ color: passwordStrength.color }}>
                     {passwordStrength.label}
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Confirm Password */}
             <div className='animate-fade-up'>
               <PasswordInput
-                label='Confirm Password'
+                label={t("auth.confirmPassword")}
                 placeholder='Repeat your password'
                 autoComplete='new-password'
                 error={errors.confirmPassword?.message}
@@ -211,7 +177,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Submit */}
             <div className='pt-2 animate-fade-up'>
               <button
                 type='submit'
@@ -221,35 +186,30 @@ export default function RegisterPage() {
                 {isLoading ? (
                   <>
                     <div className='spinner' />
-                    Creating account…
+                    {t("auth.creatingAccountBtn")}
                   </>
                 ) : (
-                  "Create Account"
+                  t("auth.createAccount")
                 )}
               </button>
             </div>
           </form>
         )}
 
-        {/* Divider + sign in link */}
         {step === "form" && (
           <p className='mt-6 text-center text-sm text-ink-500 font-body animate-fade-up'>
-            Already have an account?{" "}
-            <Link
-              href='/login'
-              className='btn-ghost text-forest-400 hover:text-forest-300'
-            >
-              Sign in
+            {t("auth.hasAccount")}{" "}
+            <Link href='/login' className='btn-ghost text-forest-400 hover:text-forest-300'>
+              {t("auth.login")}
             </Link>
           </p>
         )}
       </div>
 
-      {/* Terms note */}
       <p className='mt-4 text-center text-xs text-ink-600 font-body animate-fade-up'>
-        By creating an account, you agree to our{" "}
+        {t("auth.byCreating")}{" "}
         <span className='text-ink-500 underline underline-offset-2 cursor-pointer'>
-          Terms of Use
+          {t("auth.termsOfUse")}
         </span>
         .
       </p>
