@@ -13,7 +13,8 @@ interface Props {
   weakAreas: string[];
   topicId: string;
   topicTitle: string;
-  nextTopic: { id: string; title: string } | null;
+  topicTitleIgbo?: string;
+  nextTopic: { id: string; title: string; titleIgbo?: string } | null;
 }
 
 const CLASS_CONFIG: Record<
@@ -51,12 +52,15 @@ export function PerformanceSummary({
   weakAreas,
   topicId,
   topicTitle,
+  topicTitleIgbo,
   nextTopic,
 }: Props) {
-  const { t } = useTranslation();
+  const { t, isIgbo } = useTranslation();
   const cfg = CLASS_CONFIG[classification];
   const wrongCount = totalQuestions - correctCount;
   const scoreRounded = Math.round(score);
+
+  const displayTitle = isIgbo && topicTitleIgbo ? topicTitleIgbo : topicTitle;
 
   const classLabel = t(
     classification === "STRONG"
@@ -66,12 +70,20 @@ export function PerformanceSummary({
         : "performance.weak",
   );
 
-  const recommendation =
+  const recommendation = t(
     classification === "STRONG"
-      ? "Excellent work! You've mastered this topic. Unlock the next lesson to keep going."
+      ? "performance.recommendStrong"
       : classification === "MODERATE"
-        ? "Good effort! Review the lesson sections related to your weak areas, then try again."
-        : "Keep going - science takes practice! Please review the full lesson before retaking.";
+        ? "performance.recommendModerate"
+        : "performance.recommendWeak",
+  );
+
+  const nextTopicTitle =
+    nextTopic
+      ? isIgbo && nextTopic.titleIgbo
+        ? nextTopic.titleIgbo
+        : nextTopic.title
+      : "";
 
   return (
     <div className='max-w-2xl mx-auto animate-fade-up stagger'>
@@ -80,9 +92,9 @@ export function PerformanceSummary({
           {t("quiz.score")}
         </p>
         <h1 className='font-display text-4xl text-ink-100 mb-1'>
-          {topicTitle}
+          {displayTitle}
         </h1>
-        <p className='text-ink-500 font-body text-sm'>Quiz complete</p>
+        <p className='text-ink-500 font-body text-sm'>{t("quiz.complete")}</p>
       </div>
 
       <div
@@ -99,15 +111,15 @@ export function PerformanceSummary({
         <div className='flex items-center justify-center gap-6 text-sm font-body'>
           <div className='flex items-center gap-1.5'>
             <span className='w-2 h-2 rounded-full bg-forest-500' />
-            <span className='text-ink-400'>{correctCount} correct</span>
+            <span className='text-ink-400'>{correctCount} {t("performance.correct")}</span>
           </div>
           <div className='flex items-center gap-1.5'>
             <span className='w-2 h-2 rounded-full bg-red-500' />
-            <span className='text-ink-400'>{wrongCount} incorrect</span>
+            <span className='text-ink-400'>{wrongCount} {t("performance.incorrect")}</span>
           </div>
           <div className='flex items-center gap-1.5'>
             <span className='w-2 h-2 rounded-full bg-ink-600' />
-            <span className='text-ink-400'>{totalQuestions} total</span>
+            <span className='text-ink-400'>{totalQuestions} {t("performance.total")}</span>
           </div>
         </div>
 
@@ -128,7 +140,7 @@ export function PerformanceSummary({
       {/* Recommendation */}
       <div className='glass-card rounded-2xl p-5 border border-white/5 mb-5 animate-fade-up'>
         <p className='text-xs font-semibold uppercase tracking-widest text-ink-500 mb-2'>
-          Recommendation
+          {t("performance.recommendation")}
         </p>
         <p className='text-sm text-ink-300 font-body leading-relaxed'>
           {recommendation}
@@ -139,7 +151,7 @@ export function PerformanceSummary({
       {weakAreas.length > 0 && (
         <div className='glass-card rounded-2xl p-5 border border-red-500/15 mb-5 animate-fade-up'>
           <p className='text-xs font-semibold uppercase tracking-widest text-red-400 mb-3'>
-            Areas to Review
+            {t("performance.areasToReview")}
           </p>
           <ul className='space-y-2'>
             {Array.from(new Set(weakAreas)).map((area, i) => (
@@ -162,7 +174,7 @@ export function PerformanceSummary({
             href={`/topic/${nextTopic.id}`}
             className='flex-1 text-center py-3 rounded-xl bg-forest-600 hover:bg-forest-500 text-white text-sm font-semibold font-body transition-colors'
           >
-            {t("performance.nextTopic")}: {nextTopic.title} →
+            {t("performance.nextTopic")}: {nextTopicTitle} →
           </Link>
         )}
         <Link
@@ -189,7 +201,7 @@ export function PerformanceSummary({
           href='/dashboard'
           className='text-xs text-ink-600 hover:text-ink-400 font-body transition-colors'
         >
-          ← {t("dashboard.title")}
+          {t("nav.backDashboard")}
         </Link>
       </div>
     </div>
