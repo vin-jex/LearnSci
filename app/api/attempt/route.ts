@@ -9,6 +9,12 @@ import {
 } from "@/lib/evaluate";
 import { checkIdempotency, storeIdempotencyResult } from "@/lib/redis";
 import { getEmbedding, rankTopicRecommendations } from "@/lib/hf";
+import { z } from "zod";
+
+const attemptSchema = z.object({
+  topicId: z.string().min(1),
+  answers: z.record(z.string(), z.string()),
+});
 
 export async function POST(req: Request) {
   try {
@@ -26,13 +32,16 @@ export async function POST(req: Request) {
       }
     }
 
-    const { topicId, answers } = await req.json();
-    if (!topicId || !answers || typeof answers !== "object") {
+    const body = await req.json();
+    const parsed = attemptSchema.safeParse(body);
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Invalid request body" },
+        { error: "Invalid submission", details: parsed.error.flatten() },
         { status: 400 },
       );
     }
+
+    const { topicId, answers } = parsed.data;
 
     const questions = await prisma.question.findMany({
       where: { topicId },
@@ -48,19 +57,28 @@ export async function POST(req: Request) {
     // ── Evaluate all answers ──────────────────────────────────────
     const results = questions.map((q) => {
       const userAnswer = answers[q.id] ?? "";
-      const rules = q.feedbackRules as {
+      const feedbackRules = q.feedbackRules as {
         misconceptions: { pattern: string; feedback: string }[];
         defaultFeedback: string;
       };
-      return evaluateAnswer(userAnswer, q.correctAnswer, rules, q.questionText);
+      return {
+        questionId: q.id,
+        questionText: q.questionText,
+        userAnswer,
+        correctAnswer: q.correctAnswer,
+        ...evaluateAnswer(
+          userAnswer,
+          q.correctAnswer,
+          feedbackRules,
+          q.questionText,
+        ),
+      };
     });
 
-    const score =
-      (results.filter((r) => r.isCorrect).length / questions.length) * 100;
-    const classification = classifyScore(score);
-
     const summary = buildPerformanceSummary(results, questions.length);
+    const classification = classifyScore(summary.score);
 
+    // ── ML: update learner profile async (non-blocking) ───────────
     updateLearnerProfile(session.user.id, summary.weakAreas).catch(
       console.error,
     );
@@ -71,7 +89,7 @@ export async function POST(req: Request) {
         data: {
           userId: session.user.id,
           topicId,
-          score,
+          score: summary.score,
           classification,
           weakAreas: summary.weakAreas,
           idempotencyKey: idempotencyKey ?? undefined,
@@ -81,9 +99,11 @@ export async function POST(req: Request) {
 
     const responseBody = {
       attemptId: attempt.id,
-      score,
+      results,
+      summary,
+      score: summary.score,
       classification,
-      correctCount: results.filter((r) => r.isCorrect).length,
+      correctCount: summary.correctCount,
       totalQuestions: questions.length,
       weakAreas: summary.weakAreas,
     };
@@ -100,7 +120,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("[ATTEMPT_POST]", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Failed to submit attempt" },
       { status: 500 },
     );
   }
