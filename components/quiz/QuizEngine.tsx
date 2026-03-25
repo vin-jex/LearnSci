@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { MCQQuestion } from "./MCQQuestion";
@@ -14,7 +13,9 @@ interface Question {
   id: string;
   type: "MCQ" | "TRUE_FALSE" | "SHORT_ANSWER";
   questionText: string;
+  questionTextIgbo?: string;
   options?: string[] | null;
+  optionsIgbo?: string[] | null;
 }
 
 interface KeyTerm {
@@ -27,24 +28,30 @@ interface KeyTerm {
 interface Props {
   topicId: string;
   topicTitle: string;
+  topicTitleIgbo?: string;
   questions: Question[];
   keyTerms: KeyTerm[];
+  adaptive?: boolean;
 }
 
 interface PerQuestionResult {
   isCorrect: boolean;
   feedback: string;
+  feedbackIgbo?: string;
   weakArea?: string;
 }
 
 export function QuizEngine({
   topicId,
   topicTitle,
+  topicTitleIgbo,
   questions,
   keyTerms,
+  adaptive = false,
 }: Props) {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, isIgbo } = useTranslation();
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentInput, setCurrentInput] = useState("");
   const [feedback, setFeedback] = useState<PerQuestionResult | null>(null);
@@ -52,6 +59,7 @@ export function QuizEngine({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [termsOpen, setTermsOpen] = useState(false);
+  const [predictedWeakAreas, setPredictedWeakAreas] = useState<string[]>([]);
 
   const answersRef = useRef<Record<string, string>>({});
 
@@ -59,9 +67,11 @@ export function QuizEngine({
   const isLast = currentIndex === questions.length - 1;
   const correctSoFar = results.filter((r) => r.isCorrect).length;
 
+  const displayTitle = isIgbo && topicTitleIgbo ? topicTitleIgbo : topicTitle;
+
   const handleConfirm = useCallback(async () => {
-    if (!currentInput.trim() && current.type === "SHORT_ANSWER") return;
-    if (!currentInput && current.type !== "SHORT_ANSWER") return;
+    if (current.type === "SHORT_ANSWER" && !currentInput.trim()) return;
+    if (current.type !== "SHORT_ANSWER" && !currentInput) return;
 
     answersRef.current[current.id] = currentInput;
 
@@ -77,27 +87,32 @@ export function QuizEngine({
         const result: PerQuestionResult = {
           isCorrect: data.isCorrect,
           feedback: data.feedback,
+          feedbackIgbo: data.feedbackIgbo,
           weakArea: data.weakArea,
         };
         setFeedback(result);
         setResults((prev) => [...prev, result]);
+
+        if (data.predictedWeakAreas?.length > 0) {
+          setPredictedWeakAreas(data.predictedWeakAreas);
+        }
       } else {
-        const fallback = {
+        const fallback: PerQuestionResult = {
           isCorrect: false,
-          feedback: "Could not evaluate. Moving on.",
+          feedback: isIgbo ? "Enweghị ike ịnwale. Gaa n'ihu." : "Could not evaluate. Moving on.",
         };
         setFeedback(fallback);
-        setResults((prev) => [...prev, { isCorrect: false, feedback: "" }]);
+        setResults((prev) => [...prev, fallback]);
       }
     } catch {
-      const fallback = {
+      const fallback: PerQuestionResult = {
         isCorrect: false,
-        feedback: "Network error. Moving on.",
+        feedback: isIgbo ? "Njehie netwọkụ. Gaa n'ihu." : "Network error. Moving on.",
       };
       setFeedback(fallback);
-      setResults((prev) => [...prev, { isCorrect: false, feedback: "" }]);
+      setResults((prev) => [...prev, fallback]);
     }
-  }, [current, currentInput, topicId]);
+  }, [current, currentInput, topicId, isIgbo]);
 
   const handleNext = useCallback(async () => {
     if (!isLast) {
@@ -113,25 +128,27 @@ export function QuizEngine({
     try {
       const res = await fetch("/api/attempt", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        // Use the ref - guaranteed to have every answer including the last one
+        headers: {
+          "Content-Type": "application/json",
+          "x-idempotency-key": `${topicId}-${Date.now()}`,
+        },
         body: JSON.stringify({ topicId, answers: answersRef.current }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error ?? "Submission failed. Please try again.");
+        setSubmitError(data.error ?? (isIgbo ? "Izipu adighi. Nwaa ọzọ." : "Submission failed. Please try again."));
         setIsSubmitting(false);
         return;
       }
 
       router.push(`/result/${data.attemptId}`);
     } catch {
-      setSubmitError("Network error. Please try again.");
+      setSubmitError(isIgbo ? "Njehie netwọkụ. Nwaa ọzọ." : "Network error. Please try again.");
       setIsSubmitting(false);
     }
-  }, [isLast, topicId, router]);
+  }, [isLast, topicId, router, isIgbo]);
 
   const canConfirm =
     feedback === null &&
@@ -139,14 +156,51 @@ export function QuizEngine({
       ? currentInput.trim().length > 0
       : currentInput !== "");
 
+  const translatedQuestionText =
+    isIgbo && current.questionTextIgbo
+      ? current.questionTextIgbo
+      : current.questionText;
+
+  const translatedOptions =
+    isIgbo && current.optionsIgbo
+      ? current.optionsIgbo
+      : (current.options as string[]) ?? [];
+
   return (
     <div className='animate-fade-up'>
       <div className='mb-6'>
-        <p className='text-xs font-semibold uppercase tracking-widest text-forest-500 mb-1'>
-          {t("quiz.start")}
-        </p>
-        <h1 className='font-display text-3xl text-ink-100'>{topicTitle}</h1>
+        <div className='flex items-center gap-2 mb-1'>
+          <p className='text-xs font-semibold uppercase tracking-widest text-forest-500'>
+            {t("quiz.start")}
+          </p>
+          {adaptive && (
+            <span className='text-xs px-2 py-0.5 rounded-full bg-earth-400/10 border border-earth-400/20 text-earth-400 font-body'>
+              {t("quiz.adaptive")}
+            </span>
+          )}
+        </div>
+        <h1 className='font-display text-3xl text-ink-100'>
+          {displayTitle}
+        </h1>
       </div>
+
+      {predictedWeakAreas.length > 0 && (
+        <div className='mb-4 px-4 py-3 rounded-xl bg-earth-400/8 border border-earth-400/20 animate-fade-in'>
+          <p className='text-xs font-semibold text-earth-400 font-body mb-1.5'>
+            🔍 {t("quiz.areasToWatch")}
+          </p>
+          <div className='flex flex-wrap gap-1.5'>
+            {predictedWeakAreas.map((area, i) => (
+              <span
+                key={i}
+                className='text-xs px-2.5 py-1 rounded-full bg-ink-900/60 border border-ink-700 text-ink-400 font-body'
+              >
+                {area}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className='grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 items-start'>
         <div>
@@ -159,8 +213,8 @@ export function QuizEngine({
           <div className='glass-card rounded-2xl p-6 md:p-8 border border-white/5 mb-4'>
             {current.type === "MCQ" && (
               <MCQQuestion
-                questionText={current.questionText}
-                options={(current.options as string[]) ?? []}
+                questionText={translatedQuestionText}
+                options={translatedOptions}
                 selected={currentInput || null}
                 onSelect={setCurrentInput}
                 feedback={feedback}
@@ -170,7 +224,7 @@ export function QuizEngine({
             )}
             {current.type === "TRUE_FALSE" && (
               <TrueFalseQuestion
-                questionText={current.questionText}
+                questionText={translatedQuestionText}
                 selected={currentInput || null}
                 onSelect={setCurrentInput}
                 feedback={feedback}
@@ -180,7 +234,7 @@ export function QuizEngine({
             )}
             {current.type === "SHORT_ANSWER" && (
               <ShortAnswerQuestion
-                questionText={current.questionText}
+                questionText={translatedQuestionText}
                 value={currentInput}
                 onChange={setCurrentInput}
                 feedback={feedback}
@@ -205,6 +259,7 @@ export function QuizEngine({
               <FeedbackPanel
                 isCorrect={feedback.isCorrect}
                 feedback={feedback.feedback}
+                feedbackIgbo={feedback.feedbackIgbo}
                 onNext={handleNext}
                 isLast={isLast}
                 isSubmitting={isSubmitting}
@@ -233,7 +288,8 @@ export function QuizEngine({
                   </span>
                 </span>
                 <svg
-                  className={`w-4 h-4 text-ink-600 transition-transform duration-200 ${termsOpen ? "rotate-180" : ""}`}
+                  className={`w-4 h-4 text-ink-600 transition-transform duration-200
+                              ${termsOpen ? "rotate-180" : ""}`}
                   viewBox='0 0 20 20'
                   fill='currentColor'
                 >
