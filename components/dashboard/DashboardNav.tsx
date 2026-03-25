@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { toggleIgbo } from "@/lib/store/slices/igboSlice";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 interface Props {
   user: { name?: string | null; email?: string | null; role?: string };
@@ -14,6 +15,7 @@ export function DashboardNav({ user }: Props) {
   const [signingOut, setSigningOut] = useState(false);
   const dispatch = useAppDispatch();
   const isIgbo = useAppSelector((s) => s.igbo.isVisible);
+  const { t } = useTranslation();
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -65,7 +67,7 @@ export function DashboardNav({ user }: Props) {
                   clipRule='evenodd'
                 />
               </svg>
-              Admin
+              {t("nav.admin")}
             </Link>
           )}
         </div>
@@ -73,7 +75,7 @@ export function DashboardNav({ user }: Props) {
         <div className='flex items-center gap-2 shrink-0'>
           <button
             onClick={() => dispatch(toggleIgbo())}
-            title={isIgbo ? "Hide Igbo translations" : "Show Igbo translations"}
+            title={isIgbo ? "Hide Igbo" : "Show Igbo"}
             className={`
               inline-flex items-center gap-1.5 rounded-lg border transition-all duration-200
               px-2 py-1 sm:px-2.5 sm:py-1.5
@@ -91,7 +93,7 @@ export function DashboardNav({ user }: Props) {
             </span>
 
             <span className='block text-xs font-semibold font-body'>
-              {isIgbo ? "Igbo: ON" : "Igbo: OFF"}
+              {isIgbo ? t("lesson.igboOn") : t("lesson.igboOff")}
             </span>
 
             <span
@@ -122,7 +124,7 @@ export function DashboardNav({ user }: Props) {
           <button
             onClick={handleSignOut}
             disabled={signingOut}
-            title='Sign out'
+            title={t("nav.signOut")}
             className='text-xs text-ink-500 hover:text-red-400 transition-colors font-body disabled:opacity-50 flex items-center gap-1'
           >
             {signingOut ? (
@@ -140,7 +142,7 @@ export function DashboardNav({ user }: Props) {
                     clipRule='evenodd'
                   />
                 </svg>
-                <span className='hidden sm:block'>Sign out</span>
+                <span className='hidden sm:block'>{t("nav.signOut")}</span>
               </>
             )}
           </button>
