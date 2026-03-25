@@ -11,6 +11,7 @@ interface KeyTerm {
 interface Lesson {
   id: string;
   content: string;
+  igboContent?: string;
   order: number;
 }
 
@@ -24,7 +25,9 @@ interface Attempt {
 interface TopicDetail {
   id: string;
   title: string;
+  titleIgbo?: string;
   description: string;
+  descriptionIgbo?: string;
   duration: string;
   lessons: Lesson[];
   keyTerms: KeyTerm[];
