@@ -1,17 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import Image from "next/image";
+import { useAppSelector } from "@/lib/store/hooks";
+import { LandingLanguageToggle } from "@/components/landing/landing-language-toggle";
 
-// Note: This is a server component - Igbo toggle only applies to client components.
-// The landing page uses static bilingual content arrays so both languages are always shown,
-// OR you can wrap in a client component. Here we keep it as a clean server page and let
-// the user switch language once they enter the app.
-
-export default async function HomePage() {
-  const session = await getServerSession(authOptions);
-  if (session) redirect("/dashboard");
+export default function HomePage() {
+  const isIgbo = useAppSelector((s) => s.igbo.isVisible);
 
   const features = [
     { en: "📚 Structured Lessons", ig: "📚 Ihe Ọmụmụ Haziri" },
@@ -53,18 +48,22 @@ export default async function HomePage() {
             LearnSci
           </span>
         </Link>
+
         <div className='flex items-center gap-3'>
+          <LandingLanguageToggle />
+
           <Link
             href='/login'
             className='text-sm text-ink-400 hover:text-ink-200 font-body transition-colors'
           >
-            Banye / Sign in
+            {isIgbo ? "Banye" : "Sign in"}
           </Link>
+
           <Link
             href='/register'
-            className='text-sm bg-forest-600 hover:bg-forest-500 text-white font-body font-semibold px-4 py-2 rounded-lg transition-colors duration-200'
+            className='hidden md:block text-sm bg-forest-600 hover:bg-forest-500 text-white font-body font-semibold px-4 py-2 rounded-lg transition-colors duration-200'
           >
-            Bido / Get started
+            {isIgbo ? "Bido" : "Get started"}
           </Link>
         </div>
       </nav>
@@ -73,26 +72,30 @@ export default async function HomePage() {
         <div className='inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-500/10 border border-forest-500/20 mb-8 animate-fade-up'>
           <div className='w-1.5 h-1.5 rounded-full bg-forest-400 animate-pulse' />
           <span className='text-xs font-semibold text-forest-400 tracking-wide'>
-            Sayensị · Nkwado Okwu Igbo · Science · Igbo Terminology Support
+            {isIgbo
+              ? "Sayensị · Nkwado Okwu Igbo"
+              : "Science · Igbo Terminology Support"}
           </span>
         </div>
 
         <h1 className='font-display text-5xl md:text-7xl text-ink-100 leading-tight max-w-3xl mb-3 animate-fade-up'>
-          Mụta Sayensị. <span className='text-forest-400'>Ghọta</span> ya nke
-          ọma.
+          {isIgbo ? (
+            <>
+              Mụta Sayensị. <span className='text-forest-400'>Ghọta</span> ya
+              nke ọma.
+            </>
+          ) : (
+            <>
+              Learn Science. <span className='text-forest-400'>Understand</span>{" "}
+              it deeply.
+            </>
+          )}
         </h1>
-        <p className='font-display text-2xl md:text-3xl text-ink-400 leading-tight max-w-3xl mb-6 animate-fade-up'>
-          Learn Science. <span className='text-forest-500'>Understand</span> it
-          deeply.
-        </p>
 
-        <p className='text-base text-ink-500 font-body max-w-xl leading-relaxed mb-2 animate-fade-up'>
-          Ihe ọmụmụ na-arụ ọrụ, ọmụmụ ajụjụ nwere nzaaza ozugbo, na okwu Igbo -
-          emere maka ụmụ akwụkwọ Naịjirịa.
-        </p>
-        <p className='text-sm text-ink-600 font-body max-w-xl leading-relaxed mb-10 animate-fade-up'>
-          Interactive lessons, quizzes with instant feedback, and Igbo
-          terminology - designed for Nigerian secondary school learners.
+        <p className='text-base text-ink-500 font-body max-w-xl leading-relaxed mb-10 animate-fade-up'>
+          {isIgbo
+            ? "Ihe ọmụmụ na-arụ ọrụ, ọmụmụ ajụjụ nwere nzaaza ozugbo, na okwu Igbo - emere maka ụmụ akwụkwọ Naịjirịa."
+            : "Interactive lessons, quizzes with instant feedback, and Igbo terminology - designed for Nigerian secondary school learners."}
         </p>
 
         <div className='flex flex-col sm:flex-row gap-3 animate-fade-up'>
@@ -100,13 +103,14 @@ export default async function HomePage() {
             href='/register'
             className='px-8 py-3.5 bg-forest-600 hover:bg-forest-500 text-white font-body font-semibold rounded-xl transition-colors duration-200 text-sm'
           >
-            Bido Ọmụmụ - Ọ Bụ n&apos;Efu / Start Learning - It&apos;s Free
+            {isIgbo ? "Bido Ọmụmụ - Ọ Bụ n'Efu" : "Start Learning - It's Free"}
           </Link>
+
           <Link
             href='/login'
             className='px-8 py-3.5 glass-card hover:bg-white/5 text-ink-300 font-body font-semibold rounded-xl transition-colors duration-200 text-sm'
           >
-            Banye / Sign In
+            {isIgbo ? "Banye" : "Sign In"}
           </Link>
         </div>
 
@@ -116,7 +120,7 @@ export default async function HomePage() {
               key={f.en}
               className='px-4 py-2 rounded-full glass-card text-xs font-body text-ink-400 border border-white/5'
             >
-              {f.ig} / {f.en}
+              {isIgbo ? f.ig : f.en}
             </span>
           ))}
         </div>
