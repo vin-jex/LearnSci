@@ -2,9 +2,11 @@
 
 import { useTopics } from "@/lib/hooks/useTopics";
 import { TopicCard } from "./TopicCard";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export function TopicGrid() {
   const { topics, isLoading, error } = useTopics();
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -31,35 +33,34 @@ export function TopicGrid() {
   if (topics.length === 0) {
     return (
       <div className='py-16 text-center glass-card rounded-2xl border border-white/5'>
-        <p className='text-ink-400 font-body'>No topics available yet.</p>
+        <p className='text-ink-400 font-body'>{t("dashboard.noTopicsYet")}</p>
         <p className='text-ink-600 text-sm mt-1 font-body'>
-          Check back soon or ask your instructor.
+          {t("dashboard.checkBackSoon")}
         </p>
       </div>
     );
   }
 
-  // Split by status
   const inProgress = topics.filter((t) => t.status === "IN_PROGRESS");
   const notStarted = topics.filter((t) => t.status === "NOT_STARTED");
   const completed = topics.filter((t) => t.status === "COMPLETED");
 
-  const sections: { label: string; items: typeof topics }[] = [
+  const sections: { labelKey: "dashboard.continueLearning" | "dashboard.availableTopics" | "dashboard.completed"; items: typeof topics }[] = [
     ...(inProgress.length > 0
-      ? [{ label: "Continue Learning", items: inProgress }]
+      ? [{ labelKey: "dashboard.continueLearning" as const, items: inProgress }]
       : []),
     ...(notStarted.length > 0
-      ? [{ label: "Available Topics", items: notStarted }]
+      ? [{ labelKey: "dashboard.availableTopics" as const, items: notStarted }]
       : []),
-    ...(completed.length > 0 ? [{ label: "Completed", items: completed }] : []),
+    ...(completed.length > 0 ? [{ labelKey: "dashboard.completed" as const, items: completed }] : []),
   ];
 
   return (
     <div className='flex flex-col gap-8'>
-      {sections.map(({ label, items }) => (
-        <section key={label}>
+      {sections.map(({ labelKey, items }) => (
+        <section key={labelKey}>
           <h2 className='text-xs font-semibold uppercase tracking-widest text-ink-500 mb-3'>
-            {label}
+            {t(labelKey)}
           </h2>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
             {items.map((topic, i) => (
