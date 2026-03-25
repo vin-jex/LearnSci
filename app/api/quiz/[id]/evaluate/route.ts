@@ -8,14 +8,21 @@ import {
   augmentFeedback,
   predictWeakAreas,
 } from "@/lib/hf";
+import { z } from "zod";
 
+const schema = z.object({
+  questionId: z.string().min(1),
+  answer: z.string(),
+});
+
+// In-memory mid-quiz state keyed by userId:topicId
 const quizSessionState = new Map<
   string,
   { answered: { questionText: string; isCorrect: boolean; answer: string }[] }
 >();
 
 export async function POST(
-  req: Request,
+  request: Request,
   { params }: { params: { id: string } },
 ) {
   try {
@@ -24,10 +31,16 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { questionId, answer } = await req.json();
+    const body = await request.json();
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    }
 
-    const question = await prisma.question.findUnique({
-      where: { id: questionId },
+    const { questionId, answer } = parsed.data;
+
+    const question = await prisma.question.findFirst({
+      where: { id: questionId, topicId: params.id },
       include: { topic: { select: { title: true } } },
     });
 
@@ -38,27 +51,27 @@ export async function POST(
       );
     }
 
-    const rules = question.feedbackRules as {
+    const feedbackRules = question.feedbackRules as {
       misconceptions: { pattern: string; feedback: string }[];
       defaultFeedback: string;
+      defaultFeedbackIgbo?: string;
     };
 
     // ── Step 1: Rule-based evaluation ─────────────────────────────
     let result = evaluateAnswer(
       answer,
       question.correctAnswer,
-      rules,
-      question.type,
+      feedbackRules,
+      question.questionText,
     );
 
-    // ── Step 2: NLI for short answers (smarter matching) ──────────
+    // ── Step 2: NLI for short answers ─────────────────────────────
     if (question.type === "SHORT_ANSWER") {
       const nli = await evaluateShortAnswerNLI(
         question.questionText,
         question.correctAnswer,
         answer,
       );
-      // Use NLI result if it differs and confidence is high
       if (nli.confidence >= 0.65) {
         result = { ...result, isCorrect: nli.isCorrect };
       }
@@ -66,13 +79,13 @@ export async function POST(
 
     // ── Step 3: Augment feedback with HF if no misconception matched
     let feedback = result.feedback;
-    const usedDefaultFeedback = feedback === rules.defaultFeedback;
+    const usedDefaultFeedback = feedback === feedbackRules.defaultFeedback;
     if (!result.isCorrect && usedDefaultFeedback) {
       feedback = await augmentFeedback(
         question.questionText,
         question.correctAnswer,
         answer,
-        rules.defaultFeedback,
+        feedbackRules.defaultFeedback,
       );
     }
 
@@ -86,25 +99,26 @@ export async function POST(
     });
     quizSessionState.set(sessionKey, state);
 
-    let predictedWeakAreas: string[] = [];
+    let predictedWeakAreasList: string[] = [];
     if (state.answered.length >= 3 && state.answered.length % 3 === 0) {
-      predictedWeakAreas = await predictWeakAreas(
+      predictedWeakAreasList = await predictWeakAreas(
         question.topic.title,
         state.answered,
       );
     }
 
+    // Use stored Igbo feedback if available, otherwise fall back to English
+    const feedbackIgbo = feedbackRules.defaultFeedbackIgbo ?? undefined;
+
     return NextResponse.json({
       isCorrect: result.isCorrect,
       feedback,
+      feedbackIgbo,
       weakArea: result.weakArea,
-      predictedWeakAreas,
+      predictedWeakAreas: predictedWeakAreasList,
     });
   } catch (error) {
     console.error("[EVALUATE_POST]", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Evaluation failed" }, { status: 500 });
   }
 }
