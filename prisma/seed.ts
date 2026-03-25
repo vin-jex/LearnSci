@@ -1,6 +1,5 @@
-// prisma/seed.ts
 import "dotenv/config";
-import { PrismaClient, QuestionType } from "@prisma/client";
+import { PrismaClient, QuestionType, Role } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import bcrypt from "bcryptjs";
 import { Pool } from "pg";
@@ -15,14 +14,16 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: "admin@cal.edu" },
-    update: { role: "ADMIN" },
+    update: { role: Role.ADMIN },
     create: {
       name: "Admin User",
       email: "admin@cal.edu",
       password: hashedAdmin,
-      role: "ADMIN",
+      role: Role.ADMIN,
+      emailVerified: true,
     },
   });
+
   await prisma.user.upsert({
     where: { email: "learner@cal.edu" },
     update: {},
@@ -30,103 +31,143 @@ async function main() {
       name: "Ada Okonkwo",
       email: "learner@cal.edu",
       password: hashedLearner,
-      role: "LEARNER",
+      role: Role.LEARNER,
+      emailVerified: true,
     },
   });
 
   await seedTopic({
     id: "topic-photosynthesis",
     title: "Photosynthesis",
+    titleIgbo: "Ọrụ Anyanwụ (Photosynthesis)",
     description:
       "Learn how plants make their own food using sunlight, water, and carbon dioxide.",
+    descriptionIgbo:
+      "Mụta otu osisi si emepụta nri ha site n'ìhè anyanwụ, mmiri, na ikuku carbon dioxide.",
     duration: "20 mins",
     order: 1,
     lessonId: "lesson-photo-1",
     lessonContent: LESSON_PHOTOSYNTHESIS,
+    igboContent: LESSON_PHOTOSYNTHESIS_IGBO,
     keyTerms: KT_PHOTOSYNTHESIS,
     questions: Q_PHOTOSYNTHESIS,
   });
+
   await seedTopic({
     id: "topic-cell-structure",
     title: "Cell Structure",
+    titleIgbo: "Nhazi Mkpụrụ Ndụ (Cell Structure)",
     description:
       "Explore the building blocks of life and understand the role of each organelle.",
+    descriptionIgbo:
+      "Nyochaa ihe ndị mejupụtara ndụ ma ghọta ọrụ akụkụ ọ bụla n'ime mkpụrụ ndụ.",
     duration: "25 mins",
     order: 2,
     lessonId: "lesson-cell-1",
     lessonContent: LESSON_CELL_STRUCTURE,
+    igboContent: LESSON_CELL_STRUCTURE_IGBO,
     keyTerms: KT_CELL_STRUCTURE,
     questions: Q_CELL_STRUCTURE,
   });
+
   await seedTopic({
     id: "topic-digestion",
     title: "Human Digestive System",
+    titleIgbo: "Usoro Ịgbaze Nri (Human Digestive System)",
     description:
       "Trace the journey of food through the human body and understand how nutrients are absorbed.",
+    descriptionIgbo:
+      "Chọpụta otu nri si agafe n'ahụ mmadụ na otu ahụ si amịkọrọ ihe ndị na-edozi ahụ.",
     duration: "30 mins",
     order: 3,
     lessonId: "lesson-digestion-1",
     lessonContent: LESSON_DIGESTION,
+    igboContent: LESSON_DIGESTION_IGBO,
     keyTerms: KT_DIGESTION,
     questions: Q_DIGESTION,
   });
+
   await seedTopic({
     id: "topic-ecosystems",
     title: "Ecosystems and Food Chains",
+    titleIgbo: "Usoro Obibi na Nri (Ecosystems and Food Chains)",
     description:
       "Understand how living things interact with each other and their environment.",
+    descriptionIgbo:
+      "Ghọta otu ihe ndị dị ndụ si emekọrịta ihe n'etiti onwe ha na gburugburu ha.",
     duration: "25 mins",
     order: 4,
     lessonId: "lesson-eco-1",
     lessonContent: LESSON_ECOSYSTEMS,
+    igboContent: LESSON_ECOSYSTEMS_IGBO,
     keyTerms: KT_ECOSYSTEMS,
     questions: Q_ECOSYSTEMS,
   });
+
   await seedTopic({
     id: "topic-reproduction",
     title: "Human Reproductive System",
+    titleIgbo: "Usoro Ịmụ Nwa (Human Reproductive System)",
     description:
       "Learn about the organs and processes involved in human reproduction and development.",
+    descriptionIgbo:
+      "Mụta banyere akụkụ na usoro dị iche iche na-enyere mmadụ aka ịmụ nwa na itolite.",
     duration: "30 mins",
     order: 5,
     lessonId: "lesson-repro-1",
     lessonContent: LESSON_REPRODUCTION,
+    igboContent: LESSON_REPRODUCTION_IGBO,
     keyTerms: KT_REPRODUCTION,
     questions: Q_REPRODUCTION,
   });
+
   await seedTopic({
     id: "topic-states-matter",
     title: "States of Matter",
+    titleIgbo: "Ụdị Ihe Dị Iche Iche (States of Matter)",
     description:
       "Discover the properties of solids, liquids, and gases and how matter changes between states.",
+    descriptionIgbo:
+      "Chọpụta njirimara nke ihe siri ike, mmiri, na ikuku, na otu ihe si agbanwe site n'otu ụdị gaa na nke ọzọ.",
     duration: "20 mins",
     order: 6,
     lessonId: "lesson-matter-1",
     lessonContent: LESSON_STATES_OF_MATTER,
+    igboContent: LESSON_STATES_OF_MATTER_IGBO,
     keyTerms: KT_STATES_OF_MATTER,
     questions: Q_STATES_OF_MATTER,
   });
+
   await seedTopic({
     id: "topic-electricity",
     title: "Electricity and Circuits",
+    titleIgbo: "Ọkụ Eletrik na Uzọ Ya (Electricity and Circuits)",
     description:
       "Understand electric current, voltage, resistance, and how to build simple circuits.",
+    descriptionIgbo:
+      "Ghọta otu ọkụ eletrik si agba, ike ya, na otu esi emepụta usoro ọkụ dị mfe.",
     duration: "30 mins",
     order: 7,
     lessonId: "lesson-elec-1",
     lessonContent: LESSON_ELECTRICITY,
+    igboContent: LESSON_ELECTRICITY_IGBO,
     keyTerms: KT_ELECTRICITY,
     questions: Q_ELECTRICITY,
   });
+
   await seedTopic({
     id: "topic-genetics",
     title: "Genetics and Heredity",
+    titleIgbo: "Ihe Nketa na Mkpụrụ Ndụ (Genetics and Heredity)",
     description:
       "Explore how traits are inherited from parents to offspring through genes and chromosomes.",
+    descriptionIgbo:
+      "Nyochaa otu àgwà si esi n'aka nne na nna agafere n'aka ụmụ site na mkpụrụ ndụ ihe nketa na chromosomes.",
     duration: "35 mins",
     order: 8,
     lessonId: "lesson-gen-1",
     lessonContent: LESSON_GENETICS,
+    igboContent: LESSON_GENETICS_IGBO,
     keyTerms: KT_GENETICS,
     questions: Q_GENETICS,
   });
@@ -140,48 +181,70 @@ async function main() {
 async function seedTopic(opts: {
   id: string;
   title: string;
+  titleIgbo: string;
   description: string;
+  descriptionIgbo: string;
   duration: string;
   order: number;
   lessonId: string;
   lessonContent: string;
+  igboContent: string;
   keyTerms: {
     id: string;
     englishTerm: string;
     igboTerm: string;
-    igboExplanation: string;
+    igboExplanation: string | null;
   }[];
   questions: {
     id: string;
     type: QuestionType;
     questionText: string;
+    questionTextIgbo: string;
     options: string[] | null;
+    optionsIgbo: string[] | null;
     correctAnswer: string;
     feedbackRules: object;
+    difficulty?: number;
   }[];
 }) {
   const topic = await prisma.topic.upsert({
     where: { id: opts.id },
-    update: { published: true },
+    update: {
+      title: opts.title,
+      titleIgbo: opts.titleIgbo,
+      description: opts.description,
+      descriptionIgbo: opts.descriptionIgbo,
+      duration: opts.duration,
+      order: opts.order,
+      published: true,
+    },
     create: {
       id: opts.id,
       title: opts.title,
+      titleIgbo: opts.titleIgbo,
       description: opts.description,
+      descriptionIgbo: opts.descriptionIgbo,
       duration: opts.duration,
       order: opts.order,
       published: true,
     },
   });
+
   await prisma.lesson.upsert({
     where: { id: opts.lessonId },
-    update: { content: opts.lessonContent },
+    update: {
+      content: opts.lessonContent,
+      igboContent: opts.igboContent,
+    },
     create: {
       id: opts.lessonId,
       topicId: topic.id,
       order: 1,
       content: opts.lessonContent,
+      igboContent: opts.igboContent,
     },
   });
+
   for (const t of opts.keyTerms) {
     await prisma.keyTerm.upsert({
       where: { id: t.id },
@@ -190,30 +253,47 @@ async function seedTopic(opts: {
         igboTerm: t.igboTerm,
         igboExplanation: t.igboExplanation,
       },
-      create: { ...t, topicId: topic.id },
+      create: {
+        id: t.id,
+        topicId: topic.id,
+        englishTerm: t.englishTerm,
+        igboTerm: t.igboTerm,
+        igboExplanation: t.igboExplanation,
+      },
     });
   }
+
   for (const q of opts.questions) {
     await prisma.question.upsert({
       where: { id: q.id },
       update: {
         type: q.type,
         questionText: q.questionText,
+        questionTextIgbo: q.questionTextIgbo,
         options: q.options ?? [],
+        optionsIgbo: q.optionsIgbo ?? [],
         correctAnswer: q.correctAnswer,
         feedbackRules: q.feedbackRules,
+        difficulty: q.difficulty ?? 0.5,
       },
       create: {
-        ...q,
+        id: q.id,
         topicId: topic.id,
-        options: q.options === null ? undefined : q.options,
+        type: q.type,
+        questionText: q.questionText,
+        questionTextIgbo: q.questionTextIgbo,
+        options: q.options ?? [],
+        optionsIgbo: q.optionsIgbo ?? [],
+        correctAnswer: q.correctAnswer,
+        feedbackRules: q.feedbackRules,
+        difficulty: q.difficulty ?? 0.5,
       },
     });
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// LESSON CONTENT
+// LESSON CONTENT (ENGLISH & IGBO VERSIONS)
 // ═══════════════════════════════════════════════════════════════════
 
 const LESSON_PHOTOSYNTHESIS = `## What is Photosynthesis?
@@ -252,6 +332,43 @@ Photosynthesis takes place in the **chloroplast** - a specialised organelle foun
 - **Carbon dioxide concentration** - higher CO₂ increases the rate
 - **Temperature** - enzymes work best around 25–35°C; too hot denatures them
 - **Water availability** - shortage causes stomata to close, limiting CO₂ intake`;
+
+const LESSON_PHOTOSYNTHESIS_IGBO = `## Gịnị bụ Ọrụ Anyanwụ (Photosynthesis)?
+
+Photosynthesis bụ usoro **osisi ndụ**, algae, na ụfọdụ bacteria na-eji ìhè anyanwụ agbanwe ikuku carbon dioxide na mmiri ka ọ ghọọ shuga (glucose) na ikuku ndụ (oxygen). Ọ bụ otu n'ime usoro kachasị mkpa n'ụwa - ọ bụ ntọala nke ihe fọrọ nke nta ka ọ bụrụ usoro nri niile ma na-emepụta oxygen anyị na-ekuru.
+
+### Akara Ngosi Ọrụ Anyanwụ (Equation)
+
+> 6CO₂ + 6H₂O + ike ọkụ anyanwụ → C₆H₁₂O₆ + 6O₂
+
+### Ebe Ọ Na-eme?
+
+Photosynthesis na-eme n'ime **chloroplast** - akụkụ pụrụ iche a na-ahụ naanị na mkpụrụ ndụ osisi. N'ime chloroplast, e nwere agba ndụ a na-akpọ **chlorophyll**, nke na-amịkọrọ ìhè uhie na anụnụ iji nye ike maka usoro a.
+
+### Usoro Abụọ ahụ
+
+1. **Mmeghachi omume dabere na ìhè (Light-dependent)** - na-eme na thylakoid membranes. Ike anyanwụ na-agbaji mmiri, na-ewepụta oxygen ma na-emepụta ihe na-ebu ike (ATP na NADPH).
+2. **Mmeghachi omume na-adabereghị na ìhè (Calvin Cycle)** - na-eme na stroma. A na-eji ike sitere n'usoro nke mbụ emepụta glucose site na carbon dioxide.
+
+### Ihe Na-abata na Ihe Na-apụta
+
+| Ihe Na-abata (Input) | Ebe O si bịa |
+|---|---|
+| Carbon dioxide (CO₂) | Ikuku - na-esi na stomata abata |
+| Mmiri (H₂O) | Ala - mgbọrọgwụ na-amịkọrọ ya |
+| Ike ọkụ | Anyanwụ |
+
+| Ihe Na-apụta (Output) | Ihe Ọ na-aghọ |
+|---|---|
+| Glucose (C₆H₁₂O₆) | A na-eji ya eme ihe maka ike ma ọ bụ chekwaa ya dị ka starch |
+| Oxygen (O₂) | A na-ahapụ ya n'ikuku |
+
+### Ihe Ndị Na-emetụta Ọsọ nke Photosynthesis
+
+- **Ike ìhè (Light intensity)** - ìhè ka ukwuu na-eme ka ọ gbaa ọsọ ruo n'ókè ụfọdụ
+- **Ntinye uche nke carbon dioxide** - carbon dioxide ka ukwuu na-eme ka ọ gbaa ọsọ
+- **Okpomọkụ** - enzymes na-arụ ọrụ kacha mma n'agbata 25–35°C; okpomọkụ karịrị akarị na-emebi ha
+- **Inweta mmiri** - ụkọ mmiri na-eme ka stomata mechie, na-egbochi mbata carbon dioxide`;
 
 const LESSON_CELL_STRUCTURE = `## What is a Cell?
 
@@ -300,6 +417,53 @@ A **cell** is the basic structural and functional unit of all living organisms. 
 - **Nerve cells** - long axons for transmitting electrical signals
 - **Root hair cells** - large surface area for absorbing water and minerals`;
 
+const LESSON_CELL_STRUCTURE_IGBO = `## Gịnị bụ Mkpụrụ Ndụ (Cell)?
+
+**Mkpụrụ ndụ** bụ ntọala nhazi na ọrụ nke ihe niile dị ndụ. Ihe ọ bụla dị ndụ bụ mkpụrụ ndụ mejupụtara ya. Ụfọdụ ihe dị ndụ nwere naanị otu mkpụrụ ndụ (unicellular), ebe ụmụ mmadụ nwere ọtụtụ ijeri (multicellular).
+
+### Ozizi Mkpụrụ Ndụ (Cell Theory)
+
+1. Ihe niile dị ndụ nwere otu mkpụrụ ndụ ma ọ bụ karịa
+2. Mkpụrụ ndụ bụ ntọala nke ndụ
+3. Mkpụrụ ndụ ọhụrụ na-esi n'ime mkpụrụ ndụ dịbu adị pụta
+
+### Akụkụ Ndị Dị Mkpa (Organelles)
+
+**Nucleus** - isi njikwa. Ọ nwere DNA n'ime chromosomes. Akpụkpọ nwere oghere na-agba ya gburugburu.
+
+**Mgbidi Mkpụrụ Ndụ (Cell Membrane)** - akwa oyi akwa na-ahọrọ ihe na-abata. Ọ na-achịkwa ihe na-abata na ihe na-apụ apụ na mkpụrụ ndụ.
+
+**Cytoplasm** - mmiri na-agba agba na-ejupụta mkpụrụ ndụ. Ọtụtụ mmeghachi omume kemịkal na-eme ebe a.
+
+**Mitochondria** - ebe a na-emepụta ike site na ikuku oxygen. Ọ na-ewepụta ike ATP. Ọ nwere akpụkpọ dị n'ime gbakọrọ agbakọ iji mụbaa ohere ọrụ.
+
+**Ribosomes** - ebe a na-emepụta protein. A na-ahụ ha na rough endoplasmic reticulum ma ọ bụ na ha nọ n'efu na cytoplasm.
+
+**Golgi Apparatus** - ọ na-ejikọta ma na-eziga protein ebe ha kwesịrị ịga.
+
+**Vacuole** - akụkụ nchekwa. Ọ na-ebu ibu ma dị n'etiti na mkpụrụ ndụ osisi; ọ dị obere na mkpụrụ ndụ anụmanụ.
+
+**Mgbidi Cell (Cell Wall)** - naanị na mkpụrụ ndụ osisi. Ejiri cellulose mee ya. Ọ na-eme ka mkpụrụ ndụ sie ike ma nwee ọdịdị.
+
+**Chloroplasts** - naanị na mkpụrụ ndụ osisi. Ebe photosynthesis na-eme. Ọ nwere chlorophyll.
+
+### Ntụle Mkpụrụ Ndụ Osisi na Anụmanụ
+
+| Njirimara | Mkpụrụ Ndụ Anụmanụ | Mkpụrụ Ndụ Osisi |
+|---|---|---|
+| Cell wall | ✗ | ✓ (cellulose) |
+| Chloroplasts | ✗ | ✓ |
+| Large vacuole | ✗ | ✓ |
+| Cell membrane | ✓ | ✓ |
+| Nucleus | ✓ | ✓ |
+| Mitochondria | ✓ | ✓ |
+
+### Mkpụrụ Ndụ Pụrụ Iche
+
+- **Mkpụrụ ndụ ọbara uhie** - enweghị nucleus, nwee ọdịdị biconcave, na-ebu haemoglobin maka oxygen
+- **Mkpụrụ ndụ akwara (Nerve cells)** - nwere axons ogologo maka iziga ozi eletrik
+- **Root hair cells** - nwere ohere mbara maka ịmịkọrọ mmiri na mineral`;
+
 const LESSON_DIGESTION = `## The Human Digestive System
 
 The digestive system breaks down food into small molecules that can be absorbed into the blood. This involves **mechanical digestion** (physical breakdown) and **chemical digestion** (enzyme action).
@@ -334,9 +498,43 @@ The ileum is adapted for absorption by:
 - **Rich blood supply** - maintains concentration gradient
 - **Thin walls** - short diffusion distance`;
 
+const LESSON_DIGESTION_IGBO = `## Usoro Ịgbaze Nri (Human Digestive System)
+
+Usoro ịgbaze nri na-agbaji nri ka ọ bụrụ irighiri ihe nwere ike ịbanye n'ime ọbara. Nke a na-agụnye **ịgbaze nri n'ụzọ anụ ahụ** (mechanical digestion) na **ịgbaze nri n'ụzọ kemịkal** (enzyme action).
+
+### Ụzọ Nri Na-agbaso
+
+**Ọnụ** - Eze na-apịa nri. Amylase nke mmiri ọnụ na-amalite ịgbaze starch.
+
+**Oesophagus** - Eriri akwara. A na-eji **peristalsis** (akwara na-agbakọ dịka ebili mmiri) akwaba nri na ya.
+
+**Afọ (Stomach)** - Ọ na-agwakọta nri n'ụzọ anụ ahụ. Gastric glands na-ewepụta hydrochloric acid (pH 2) na pepsin (enzyme na-agbaze protein).
+
+**Eriri afọ Nta (Small Intestine)** - Isi ebe nri na-agbaze MA na-abanye n'ọbara. Imeju na-emepụta bile (nke a na-echekwa na gallbladder) nke na-eme ka abụba gbazee. Pancreas na-emepụta amylase, lipase, na protease. Villi na microvilli na-emepụta ohere buru ibu maka nri ịbanye n'ọbara.
+
+**Eriri afọ Ukwu (Large Intestine)** - Ọ na-amịkọrọ mmiri site na nri na-agbazereghị. Ihe fọdụrụ na-aghọ nsị.
+
+**Rectum na Anus** - Ọ na-echekwa ma na-ewepụta nsị.
+
+### Nchịkọta Enzymes
+
+| Enzyme | Ihe ọ na-arụrụ ọrụ (Substrate) | Ihe ọ na-emepụta (Product) | Ebe ọ nọ |
+|---|---|---|---|
+| Amylase | Starch | Maltose | Ọnụ, eriri afọ nta |
+| Pepsin (protease) | Proteins | Peptides | Afọ |
+| Lipase | Abụba (Fats) | Fatty acids + glycerol | Eriri afọ nta |
+
+### Amịkọrọ Nri na Eriri afọ Nta
+
+A haziri ileum maka amịkọrọ nri site na:
+- **Villi** - ihe ndị dị ka mkpịsị aka na-amụba ohere mbara
+- **Microvilli** - obere ihe na-apụta n'elu mkpụrụ ndụ villus
+- **Ọtụtụ ọbara** - na-enyere nri aka ịbanye n'ọbara ngwa ngwa
+- **Mgbidi dị mkpa** - na-eme ka ụzọ nri ga-esi abanye n'ọbara dị nso`;
+
 const LESSON_ECOSYSTEMS = `## Ecosystems and Food Chains
 
-An **ecosystem** is a community of living organisms interacting with each other and their non-living environment.
+An **ecosystem** is a community of living organisms interacting with each other and their environment.
 
 ### Key Terms
 
@@ -377,6 +575,50 @@ Only about **10% of energy** passes from one trophic level to the next. The rest
 - **Pollution** - air, water, and soil pollution harm organisms
 - **Overfishing** - disrupts marine food webs
 - **Invasive species** - outcompete native species`;
+
+const LESSON_ECOSYSTEMS_IGBO = `## Usoro Obibi na Nri (Ecosystems and Food Chains)
+
+**Ecosystem** bụ obodo nke ihe ndị dị ndụ na-emekọrịta ihe n'etiti onwe ha na gburugburu ha.
+
+### Okwu Ndị Dị Mkpa
+
+- **Ebe Obibi (Habitat)** - ebe pụrụ iche otu ihe dị ndụ na-ebi
+- **Ndị bi ebe ahụ (Population)** - ndị otu ụdị ihe dị ndụ bi n'otu ebe
+- **Obodo (Community)** - ụdị ihe dị ndụ dị iche iche bi n'otu ebe
+- **Ecosystem** - obodo na gburugburu ya na-adịghị ndụ (abiotic)
+
+### Usoro Nri (Food Chains)
+
+> Ahịhịa → Ukpala → Nkata → Agwọ → Ugo
+
+- **Onye Emepụta (Producer)** - na-emepụta nri site na photosynthesis (osisi, algae)
+- **Onye na-eri nri mbụ (Primary consumer)** - na-eri osisi (anụ na-eri ahịhịa)
+- **Onye na-eri nri abụọ (Secondary consumer)** - na-eri ndị na-eri osisi
+- **Dike anụ (Apex predator)** - onye nọ n'elu, nke anụ ọzọ na-adịghị eri
+- **Onye na-emebi ihe (Decomposer)** - na-agbaji ihe nwụrụ anwụ (bacteria, fungi)
+
+### Ntụfe Ike
+
+Naanị ihe dị ka **10% nke ike** na-esi n'otu ọkwa nri agafe na nke ọzọ. Ihe fọdụrụ na-efu dị ka ọkụ, ma ọ bụ jiri ya mee ihe n'iku ume, ma ọ bụ n'ihe mkpofu. Nke a bụ ya mere usoro nri anaghị adịkarị agafe ọkwa 4–5.
+
+### Okirikiri Nri (Nutrient Cycles)
+
+**Okirikiri Carbon**
+- Photosynthesis na-ewepụ CO₂ n'ikuku
+- Iku ume, ọkụ, na imebi ihe na-eweghachi CO₂ n'ikuku
+
+**Okirikiri Nitrogen**
+- Bacteria pụrụ iche na-agbanwe N₂ ka ọ bụrụ nitrates n'ala
+- Osisi na-amị nitrates site na mgbọrọgwụ
+- Ndị na-emebi ihe na-eweghachi nitrogen site na ihe nwụrụ anwụ n'ala
+- Bacteria ndị ọzọ na-agbanwe nitrates laghachi na N₂
+
+### Mmetụta Mmadụ na Ecosystems
+
+- **Ibi osisi (Deforestation)** - na-emebi ebe obibi, na-ebelata ụdị ihe dị ndụ
+- **Mmetọ (Pollution)** - mmetọ ikuku, mmiri, na ala na-emere ihe dị ndụ ihe ọjọọ
+- **Igbu azụ karịrị akarị** - na-emebi usoro nri n'ime mmiri
+- **Invasive species** - anụ ma ọ bụ osisi ndị bịara abịa na-achụpụ ndị nwe ebe ahụ`;
 
 const LESSON_REPRODUCTION = `## The Human Reproductive System
 
@@ -430,6 +672,58 @@ Human reproduction is **sexual** - it requires the fusion of male and female gam
 | Progesterone | Corpus luteum | Maintains uterus lining |
 | Testosterone | Testes | Sperm production |`;
 
+const LESSON_REPRODUCTION_IGBO = `## Usoro Ịmụ Nwa (Human Reproductive System)
+
+Ịmụ nwa n'etiti mmadụ bụ **sexual** - ọ na-achọ njikọ nke mkpụrụ ndụ nwoke (sperm) na nke nwaanyị (egg).
+
+### Usoro Ịmụ Nwa nke Nwoke
+
+**Akwụ (Testes)** - na-emepụta mkpụrụ ndụ nwoke (sperm) na testosterone. Ọ dị n'ime scrotum.
+
+**Epididymis** - ebe mkpụrụ ndụ nwoke na-aka ma na-echekwa ha.
+
+**Vas Deferens** - eriri na-ebu mkpụrụ ndụ nwoke site na epididymis gaa na urethra.
+
+**Seminal Vesicles na Prostate Gland** - na-emepụta mmiri na-emezi semen.
+
+**Otu (Penis)** - na-ebuga semen n'ime ahụ nwaanyị.
+
+### Usoro Ịmụ Nwa nke Nwaanyị
+
+**Ovaries** - na-emepụta akwa na hormones oestrogen na progesterone.
+
+**Fallopian Tubes** - na-ebu akwa site na ovaries gaa n'ụlọ nwa. Njikọ (fertilisation) na-emekarị ebe a.
+
+**Ụlọ nwa (Uterus)** - ebe nwa na-anọ etolite.
+
+**Vagina** - ebe penis na-abata; ụzọ nwa na-esi apụta.
+
+### Okirikiri Ahụ Nwaanyị (The Menstrual Cycle - ụbọchị 28)
+
+- **Ụbọchị 1–5**: Ịhụ nsọ (Menstruation) - ime ụlọ nwa na-adapụ
+- **Ụbọchị 6–13**: Follicular phase - akwa na-etolite; oestrogen na-ewughachi ime ụlọ nwa
+- **Ụbọchị 14**: Mwepụta akwa (Ovulation) - a tọhapụrụ akwa (nke LH na-ebute)
+- **Ụbọchị 15–28**: Luteal phase - progesterone na-echekwa ime ụlọ nwa; ọ bụrụ na njikọ emeghị, cycle na-amalite ọzọ
+
+### Njikọ na Otu Nwa si Etolite
+
+1. Mkpụrụ ndụ nwoke na-aga na fallopian tube
+2. Otu mkpụrụ ndụ nwoke na akwa na-ezukọ → **zygote**
+3. Zygote na-ekewa → **embryo**
+4. Embryo na-arapara n'ime mgbidi ụlọ nwa
+5. **Placenta** na-etolite - ọ na-atụgharị nri, oxygen, na ihe mkpofu n'etiti nne na nwa
+6. Ime: ihe dị ka izu iri anọ (40 weeks)
+
+### Hormones Ndị Dị Mkpa
+
+| Hormone | Ebe O si bịa | Ọrụ ya |
+|---|---|---|
+| FSH | Pituitary | Na-akpali uto akwa |
+| LH | Pituitary | Na-ebute mwepụta akwa |
+| Oestrogen | Ovaries | Na-ewughachi ime ụlọ nwa |
+| Progesterone | Corpus luteum | Na-echekwa ime ụlọ nwa |
+| Testosterone | Testes | Mmepụta mkpụrụ ndụ nwoke |`;
+
 const LESSON_STATES_OF_MATTER = `## States of Matter
 
 Matter exists in three main states: **solid**, **liquid**, and **gas**. All are made of tiny particles in constant motion.
@@ -473,6 +767,50 @@ Water: melting point = 0°C, boiling point = 100°C (at standard pressure).
 - **Solvent** - the substance doing the dissolving (e.g. water)
 - **Solution** - the resulting mixture
 - **Solubility** increases with temperature for most solids`;
+
+const LESSON_STATES_OF_MATTER_IGBO = `## Ụdị Ihe Dị Iche Iche (States of Matter)
+
+Ihe ọ bụla dị n'ụwa dị n'ụdị atọ: **ihe siri ike (solid)**, **mmiri (liquid)**, na **ikuku (gas)**. Ihe niile bụ obere irighiri ihe na-agbagharị agbagharị mejupụtara ha.
+
+### Njirimara nke Ụdị Ọ bụla
+
+| Njirimara | Ihe siri ike | Mmiri (Liquid) | Ikuku (Gas) |
+|---|---|---|---|
+| Ọdịdị (Shape) | Anaghị agbanwe | Na-adị ka arịa ọ nọ na ya | Enweghị ọdịdị pụrụ iche |
+| Volume | Anaghị agbanwe | Anaghị agbanwe | Na-agbanwe agbanwe |
+| Nhazi irighiri ihe | Haziri nke ọma | nọ nso, n'enweghị nhazi | nọ n'ebe dị anya |
+| Ntugharị irighiri ihe | Na-ama jijiji n'otu ebe | Na-amị n'akụkụ onwe ha | Na-agagharị n'efu n'ọsọ ukwu |
+| Mpikọ (Compressibility) | Dị nnọọ ala | Dị nnọọ ala | Dị elu |
+
+### Mgbanwe nke Ụdị Ihe
+
+| Mgbanwe | Usoro | Ike (Energy) |
+|---|---|---|
+| Solid → Liquid | Ịgbaze (Melting) | Amịkọrọ ya |
+| Liquid → Solid | Ịkpọkọ (Freezing) | Ahapụrụ ya |
+| Liquid → Gas | Ịghọ ikuku (Evaporation) | Amịkọrọ ya |
+| Gas → Liquid | Ịghọ mmiri (Condensation) | Ahapụrụ ya |
+| Solid → Gas | Sublimation | Amịkọrọ ya |
+
+Mmiri: ebe ọ na-agbazere = 0°C, ebe ọ na-esi = 100°C.
+
+### Ozizi Irighiri Ihe (Particle Theory)
+
+1. Ihe niile bụ obere irighiri ihe mejupụtara ha
+2. Irighiri ihe na-agagharị mgbe niile
+3. Okpomọkụ bụ ihe atụ nke ike kinetic nke irighiri ihe
+4. Inye ihe ọkụ na-enye irighiri ihe ike - ha na-agba ọsọ ma na-emewanye ka ha nọrọ n'ebe dị anya
+
+### Diffusion
+
+**Diffusion** bụ usoro irighiri ihe si ebe ha nọ n'ìgwè agaa ebe ha na-anọghị n'ìgwè. Ọ chọghị ike, ọ na-agba ọsọ n'okpomọkụ, ma na-agba ọsọ n'ikuku karịa na mmiri.
+
+### Solutions
+
+- **Solute** - ihe a na-agbazere (dịka nnu)
+- **Solvent** - ihe eji agbazere ihe (dịka mmiri)
+- **Solution** - ngwakọta sitere na ha
+- **Solubility** na-abawanye n'okpomọkụ maka ọtụtụ ihe siri ike`;
 
 const LESSON_ELECTRICITY = `## Electricity and Circuits
 
@@ -529,6 +867,61 @@ Measured in watts (W). A 60W bulb at 230V draws about 0.26A.
 Static electricity results from the build-up of charge on an insulating material due to friction (electron transfer).
 - Like charges repel; unlike charges attract`;
 
+const LESSON_ELECTRICITY_IGBO = `## Ọkụ Eletrik na Uzọ Ya (Electricity and Circuits)
+
+Ọkụ eletrik bụ usoro electrons na-agba n'ime ihe na-eduzi ọkụ.
+
+### Onu ogugu ndi di mkpa
+
+**Current (I)** - ọsịsọ ọkụ na-agba. A na-atụ ya na **amperes (A)** site n'iji ammeter.
+
+**Voltage (V)** - ike ọkụ (potential difference). A na-atụ ya na **volts (V)** site n'iji voltmeter.
+
+**Resistance (R)** - ihe mgbochi ọkụ. A na-atụ ya na **ohms (Ω)**.
+
+### Iwu Ohm (Ohm's Law)
+
+> V = I × R
+
+Ihe na-eduzi ọkụ na-asọpụrụ Iwu Ohm ma ọ bụrụ na ọsịsọ ọkụ (current) na ike (voltage) na-agakwa n'otu ọkwa.
+
+### Series vs Parallel Circuits
+
+**Series Circuit**
+- Otu ọsịsọ ọkụ na-agba n'akụkụ niile
+- Ike (Voltage) niile = nchikota nke ike ọ bụla
+- Ngụkọta mgbochi (Resistance) = nchikota nke mgbochi niile
+- Ọ bụrụ na otu akụkụ emebie, ọkụ niile na-anyụ
+
+**Parallel Circuit**
+- Ike (Voltage) n'ụzọ ọ bụla bụ otu
+- Ngụkọta ọsịsọ ọkụ = nchikota ọsịsọ n'ụzọ niile
+- Ngụkọta mgbochi dị obere karịa nke kacha nta
+- Ọ bụrụ na otu ụzọ emebie, ndị ọzọ na-anọgide na-arụ ọrụ
+
+### Ike (Power)
+
+> P = I × V
+
+A na-atụ ya na watts (W).
+
+### Akụkụ Uzọ Ọkụ (Circuit Components)
+
+| Akụkụ | Ọrụ ya |
+|---|---|
+| Cell/Battery | Na-enye ike ọkụ |
+| Resistor | Na-egbochi ọsịsọ ọkụ |
+| Lamp | Na-agbanwe eletrik ka ọ bụrụ ìhè |
+| Switch | Na-emechi ma ọ bụ na-emeghe ụzọ ọkụ |
+| Diode | Na-ekwe ka ọkụ gbaa n'otu ụzọ naanị |
+| Ammeter | Na-atụ ọsịsọ ọkụ (current) |
+| Voltmeter | Na-atụ ike ọkụ (voltage) |
+
+### Static Electricity
+
+Static electricity na-apụta mgbe ebubo eletrik gbakọtara n'otu ebe n'ihi esemokwu (friction).
+- Ebubo ndị yiri onwe ha na-achụghachi onwe ha; ndị na-adịghị ka onwe ha na-adọta onwe ha`;
+
 const LESSON_GENETICS = `## Genetics and Heredity
 
 Genetics is the study of genes, heredity, and variation in living organisms.
@@ -580,6 +973,58 @@ A **mutation** is a change in DNA sequence. Can be caused by radiation, mutagens
 - **Cystic fibrosis** - recessive gene mutation
 - **Huntington's disease** - dominant gene mutation
 - **Down syndrome** - extra chromosome 21 (trisomy 21)`;
+
+const LESSON_GENETICS_IGBO = `## Ihe Nketa na Mkpụrụ Ndụ (Genetics and Heredity)
+
+Genetics bụ ọmụmụ banyere mkpụrụ ndụ ihe nketa, otu àgwà si agafe site n'aka nne na nna gaa n'ụmụ, na mgbanwe n'etiti ihe dị ndụ.
+
+### DNA na Chromosomes
+
+**DNA** bụ eriri abụọ gbakọrọ agbakọ (double helix). Ihe mejupụtara ya bụ nucleotides.
+
+**Iwu njikọ (Base pairing):** A na T na-ezukọ, C na G na-ezukọ.
+
+Ụmụ mmadụ nwere **chromosomes 46** (ụzọ 23) na mkpụrụ ndụ ahụ ọ bụla. Chromosome ọ bụla nwere puku kwuru puku **genes**. Gene bụ akụkụ nke DNA nke na-enye ntụziaka maka otu protein pụrụ iche.
+
+### Nkọwa Okwu Ndị Dị Mkpa
+
+| Okwu | Nkọwa ya |
+|---|---|
+| Allele | Ụdị dị iche iche nke otu gene |
+| Dominant | Àgwà na-apụta ọbụna ma ọ bụrụ na ọ bụ naanị otu (leta ukwu) |
+| Recessive | Àgwà na-apụta naanị ma ọ bụrụ na ha abụọ adị (leta obere) |
+| Homozygous | Mgbe allele abụọ ahụ yiri (TT ma ọ bụ tt) |
+| Heterozygous | Mgbe allele abụọ ahụ dị iche (Tt) |
+| Genotype | Nhazi mkpụrụ ndụ ihe nketa (dịka Tt) |
+| Phenotype | Àgwà a na-ahụ anya (dịka ogologo) |
+
+### Usoro Mendelian (Inheritance)
+
+Punnett square maka Tt × Tt (ogologo × ogologo, T kacha t):
+
+| | T | t |
+|---|---|---|
+| T | TT | Tt |
+| t | Tt | tt |
+
+Ihe ọ pụtara: 3 ogologo : 1 mkpụmkpụ (3:1 ratio)
+
+### Mkpebi Nwoke ma ọ bụ Nwaanyị
+
+Akwa nwaanyị niile nwere X. Mkpụrụ ndụ nwoke na-ebu X ma ọ bụ Y.
+- XX = nwaanyị; XY = nwoke
+- Mkpụrụ ndụ nwoke (sperm) na-ekpebi ma nwa ọ bụ nwoke ma ọ bụ nwaanyị
+
+### Codominance
+
+Mgbe allele abụọ ahụ pụtara n'otu oge. Ọmụmaatụ: Ụdị ọbara ABO.
+
+### Mmụgharị (Mutations)
+
+**Mutation** bụ mgbanwe na nhazi DNA. Ọ nwere ike isi na radiation ma ọ bụ mmejọ n'oge mmeputakwa pụta. Ọmụmaatụ:
+- **Cystic fibrosis** - recessive gene mutation
+- **Huntington's disease** - dominant gene mutation
+- **Down syndrome** - chromosome 21 dị mma (trisomy 21)`;
 
 // ═══════════════════════════════════════════════════════════════════
 // KEY TERMS
@@ -1039,409 +1484,486 @@ const Q_PHOTOSYNTHESIS = [
   {
     id: "q-p-1",
     type: QuestionType.MCQ,
-    questionText: "Where does photosynthesis primarily take place in a plant?",
-    options: ["Mitochondria", "Nucleus", "Chloroplast", "Cell Wall"],
-    correctAnswer: "Chloroplast",
+    questionText: "What is photosynthesis?",
+    questionTextIgbo: "Gịnị bụ fotosinthesis?",
+    options: [
+      "The process of breaking down food to release energy",
+      "The process by which plants make their own food using light",
+      "The movement of water in plants",
+      "The process of respiration in animals",
+    ],
+    optionsIgbo: [
+      "Imebi nri iji wepụta ike",
+      "Usoro osisi si emepụta nri ha site n’ìhè",
+      "Mmegharị mmiri n’osisi",
+      "Usoro iku ume n’anụmanụ",
+    ],
+    correctAnswer:
+      "The process by which plants make their own food using light",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Mitochondria",
+          pattern: "The process of breaking down food to release energy",
           feedback:
-            "Mitochondria (Ụlọ Ike Ndụ) produces energy through respiration, not photosynthesis. Photosynthesis happens in the chloroplast (Ụlọ Mgbara Osisi).",
-        },
-        {
-          pattern: "Nucleus",
-          feedback:
-            "The nucleus controls the cell. Photosynthesis occurs in the chloroplast (Ụlọ Mgbara Osisi).",
+            "That is respiration. Photosynthesis is about MAKING food, not breaking it down.",
         },
       ],
       defaultFeedback:
-        "Photosynthesis takes place in the chloroplast (Ụlọ Mgbara Osisi), which contains chlorophyll (Mgbara Ndụ Osisi).",
+        "Photosynthesis is the process plants use to make glucose using sunlight, carbon dioxide, and water.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-2",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Photosynthesis produces carbon dioxide as its main output.",
+    questionText: "Photosynthesis occurs in the chloroplast.",
+    questionTextIgbo: "Fotosinthesis na-eme n’ime chloroplast?",
     options: ["True", "False"],
-    correctAnswer: "False",
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "True",
+          pattern: "False",
           feedback:
-            "Plants take IN carbon dioxide (Ikuku Carbon) and release oxygen (Ikuku Ndụ) and glucose (Shuga Osisi).",
+            "Wrong. Chloroplasts contain chlorophyll and are the site of photosynthesis.",
         },
       ],
       defaultFeedback:
-        "Photosynthesis outputs are oxygen (Ikuku Ndụ) and glucose (Shuga Osisi). Carbon dioxide is an INPUT.",
+        "Correct. Photosynthesis occurs in chloroplasts which contain chlorophyll to trap light energy.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-3",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "Name the green pigment that absorbs light energy for photosynthesis.",
+    questionText: "What pigment absorbs light energy for photosynthesis?",
+    questionTextIgbo: "Kedu pigment na-anata ìhè maka fotosinthesis?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "chlorophyll",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "chloroplast",
           feedback:
-            "Chloroplast (Ụlọ Mgbara Osisi) is the organelle. The green pigment inside it is chlorophyll (Mgbara Ndụ Osisi).",
+            "Chloroplast is the organelle. The pigment inside it that absorbs light is chlorophyll.",
         },
       ],
       defaultFeedback:
-        "The answer is chlorophyll (Mgbara Ndụ Osisi), found inside chloroplasts.",
+        "Chlorophyll is the green pigment that absorbs light energy for photosynthesis.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-4",
     type: QuestionType.MCQ,
-    questionText: "Which gas is absorbed by plants during photosynthesis?",
-    options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
-    correctAnswer: "Carbon Dioxide",
+    questionText: "Which gas is taken in by plants during photosynthesis?",
+    questionTextIgbo: "Kedu gas osisi na-ewe n’ime fotosinthesis?",
+    options: ["Oxygen", "Carbon dioxide", "Nitrogen", "Hydrogen"],
+    optionsIgbo: ["Oxygen", "Carbon dioxide", "Nitrogen", "Hydrogen"],
+    correctAnswer: "Carbon dioxide",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Oxygen",
           feedback:
-            "Oxygen (Ikuku Ndụ) is released during photosynthesis. Plants absorb carbon dioxide (Ikuku Carbon).",
+            "Oxygen is released, not taken in. Carbon dioxide is the gas plants absorb.",
         },
       ],
       defaultFeedback:
-        "Plants absorb carbon dioxide (Ikuku Carbon - CO₂) through their stomata (Ọnụ Ọgụgọ Osisi).",
+        "Plants take in carbon dioxide from the air through stomata for photosynthesis.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-5",
     type: QuestionType.MCQ,
-    questionText:
-      "Which of the following is a raw material (input) for photosynthesis?",
-    options: ["Oxygen", "Glucose", "Water", "Starch"],
-    correctAnswer: "Water",
+    questionText: "What is the main product of photosynthesis used as food?",
+    questionTextIgbo: "Gịnị bụ isi nri a na-emepụta na fotosinthesis?",
+    options: ["Oxygen", "Glucose", "Water", "Carbon dioxide"],
+    optionsIgbo: ["Oxygen", "Glucose", "Water", "Carbon dioxide"],
+    correctAnswer: "Glucose",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Oxygen",
           feedback:
-            "Oxygen (Ikuku Ndụ) is a product of photosynthesis, not a raw material.",
-        },
-        {
-          pattern: "Glucose",
-          feedback:
-            "Glucose (Shuga Osisi) is produced by photosynthesis - it is an output.",
+            "Oxygen is a by-product. Glucose is the actual food produced.",
         },
       ],
       defaultFeedback:
-        "The raw materials are water (H₂O) from roots and carbon dioxide (Ikuku Carbon) from air.",
+        "Glucose is produced and used by plants as food or stored as starch.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-6",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Photosynthesis can occur in total darkness if water and CO₂ are present.",
+    questionText: "Sunlight is required for photosynthesis.",
+    questionTextIgbo: "Ìhè anyanwụ dị mkpa maka fotosinthesis?",
     options: ["True", "False"],
-    correctAnswer: "False",
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "True",
+          pattern: "False",
           feedback:
-            "Light energy is essential - it powers the splitting of water molecules. Without light, photosynthesis cannot proceed.",
+            "No light means no photosynthesis. Light provides the energy for the process.",
         },
       ],
       defaultFeedback:
-        "Light is a required input for photosynthesis: CO₂ + H₂O + LIGHT → glucose + oxygen.",
+        "Correct. Light energy is essential for photosynthesis to occur.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-7",
     type: QuestionType.MCQ,
     questionText:
-      "In which part of the chloroplast does the Calvin Cycle take place?",
-    options: ["Thylakoid", "Stroma", "Outer membrane", "Vacuole"],
-    correctAnswer: "Stroma",
+      "Which part of the plant allows gas exchange for photosynthesis?",
+    questionTextIgbo:
+      "Kedu akụkụ osisi na-enye ohere mgbanwe gas maka fotosinthesis?",
+    options: ["Roots", "Stem", "Stomata", "Flowers"],
+    optionsIgbo: ["Mgbọrọgwụ", "Osisi ogwe", "Stomata", "Ifuru"],
+    correctAnswer: "Stomata",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Thylakoid",
+          pattern: "Roots",
           feedback:
-            "The thylakoid membranes are the site of LIGHT-DEPENDENT reactions. The Calvin Cycle occurs in the stroma.",
+            "Roots absorb water, not gases. Gas exchange happens through stomata.",
         },
       ],
       defaultFeedback:
-        "The Calvin Cycle takes place in the stroma - the fluid inside the chloroplast.",
+        "Stomata are tiny pores on leaves that allow carbon dioxide in and oxygen out.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-8",
     type: QuestionType.SHORT_ANSWER,
     questionText:
-      "What are the tiny pores on the underside of leaves through which CO₂ enters?",
+      "What is the name of the process by which plants lose water vapour through stomata?",
+    questionTextIgbo:
+      "Gịnị ka a na-akpọ usoro osisi si tufuo mmiri site na stomata?",
     options: null,
-    correctAnswer: "stomata",
+    optionsIgbo: null,
+    correctAnswer: "transpiration",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "roots",
+          pattern: "evaporation",
           feedback:
-            "Roots absorb water. CO₂ enters through stomata (Ọnụ Ọgụgọ Osisi) in the leaves.",
+            "Evaporation is general water loss. In plants, the specific process is called transpiration.",
         },
       ],
       defaultFeedback:
-        "The pores are called stomata (Ọnụ Ọgụgọ Osisi), controlled by guard cells.",
+        "The process is transpiration - loss of water vapour through stomata.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-9",
+    type: QuestionType.MCQ,
+    questionText: "Which factor does NOT affect the rate of photosynthesis?",
+    questionTextIgbo: "Kedu ihe anaghị emetụta ọsọ fotosinthesis?",
+    options: [
+      "Light intensity",
+      "Temperature",
+      "Carbon dioxide concentration",
+      "Sound",
+    ],
+    optionsIgbo: ["Ike ìhè", "Okpomọkụ", "Ogologo carbon dioxide", "Ụda"],
+    correctAnswer: "Sound",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Temperature",
+          feedback:
+            "Temperature affects enzyme activity, so it DOES affect photosynthesis.",
+        },
+      ],
+      defaultFeedback:
+        "Sound has no role in photosynthesis. Light, CO₂, and temperature all affect the rate.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-10",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Plants only photosynthesise during the day but respire both day and night.",
+    questionText: "Oxygen is produced as a by-product of photosynthesis.",
+    questionTextIgbo: "Oxygen na-apụta dịka ihe fọdụrụ na fotosinthesis?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
           feedback:
-            "This is true. Photosynthesis needs light; it only occurs by day. Respiration is continuous.",
+            "Incorrect. Oxygen is released during photosynthesis when water is split.",
         },
       ],
       defaultFeedback:
-        "Correct! Photosynthesis requires light and occurs only during daylight. Respiration occurs 24 hours a day.",
+        "Correct. Oxygen is released as a by-product of photosynthesis.",
     },
+    difficulty: 0.5,
   },
-  {
-    id: "q-p-10",
-    type: QuestionType.MCQ,
-    questionText:
-      "What is the main product of the light-dependent reactions of photosynthesis?",
-    options: ["Glucose", "Starch", "ATP and NADPH", "Oxygen only"],
-    correctAnswer: "ATP and NADPH",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Glucose",
-          feedback:
-            "Glucose is made in the light-INDEPENDENT reactions (Calvin Cycle). The light-dependent reactions produce ATP and NADPH.",
-        },
-        {
-          pattern: "Oxygen only",
-          feedback:
-            "Oxygen is released as a byproduct, but the main useful products of the light-dependent reactions are the energy carriers ATP and NADPH.",
-        },
-      ],
-      defaultFeedback:
-        "The light-dependent reactions produce ATP and NADPH - energy carriers used to power the Calvin Cycle to make glucose.",
-    },
-  },
+
   {
     id: "q-p-11",
     type: QuestionType.MCQ,
-    questionText:
-      "How does increasing light intensity affect the rate of photosynthesis initially?",
-    options: ["Decreases it", "Has no effect", "Increases it", "Stops it"],
-    correctAnswer: "Increases it",
+    questionText: "Which equation correctly represents photosynthesis?",
+    questionTextIgbo: "Kedu equation ziri ezi maka fotosinthesis?",
+    options: [
+      "Glucose + Oxygen → Carbon dioxide + Water",
+      "Carbon dioxide + Water → Glucose + Oxygen",
+      "Oxygen + Water → Carbon dioxide + Glucose",
+      "Water + Oxygen → Glucose + Carbon dioxide",
+    ],
+    optionsIgbo: [
+      "Glucose + Oxygen → Carbon dioxide + Water",
+      "Carbon dioxide + Water → Glucose + Oxygen",
+      "Oxygen + Water → Carbon dioxide + Glucose",
+      "Water + Oxygen → Glucose + Carbon dioxide",
+    ],
+    correctAnswer: "Carbon dioxide + Water → Glucose + Oxygen",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Decreases it",
-          feedback:
-            "More light means more energy available to drive the reaction. Increasing light intensity increases the rate of photosynthesis (Ọrụ Anyanwụ) until another factor limits it.",
+          pattern: "Glucose + Oxygen → Carbon dioxide + Water",
+          feedback: "That is respiration, not photosynthesis.",
         },
       ],
       defaultFeedback:
-        "Increasing light intensity increases the rate of photosynthesis (Ọrụ Anyanwụ) up to a saturation point - beyond that, CO₂ or temperature becomes limiting.",
+        "Photosynthesis converts carbon dioxide and water into glucose and oxygen using light energy.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-p-12",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Starch is stored in plant cells as a direct result of photosynthesis.",
+    questionText: "Photosynthesis can occur in the absence of chlorophyll.",
+    questionTextIgbo: "Fotosinthesis nwere ike ime na-enweghị chlorophyll?",
     options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "This is true. Glucose (Shuga Osisi) produced in photosynthesis is converted to starch for storage in leaves, roots, and seeds.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Glucose (Shuga Osisi) from photosynthesis is converted to insoluble starch for storage - it can later be converted back to glucose when energy is needed.",
-    },
-  },
-  {
-    id: "q-p-13",
-    type: QuestionType.MCQ,
-    questionText: "What is the correct overall equation for photosynthesis?",
-    options: [
-      "CO₂ + H₂O → C₆H₁₂O₆ + O₂",
-      "6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂",
-      "C₆H₁₂O₆ + O₂ → CO₂ + H₂O",
-      "6O₂ + light → 6CO₂ + 6H₂O",
-    ],
-    correctAnswer: "6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "C₆H₁₂O₆ + O₂ → CO₂ + H₂O",
-          feedback:
-            "That is the equation for respiration - the reverse process. Photosynthesis (Ọrụ Anyanwụ) uses CO₂ and water to make glucose.",
-        },
-      ],
-      defaultFeedback:
-        "The balanced equation is: 6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂. Six CO₂ and six water molecules produce one glucose and six oxygen molecules.",
-    },
-  },
-  {
-    id: "q-p-14",
-    type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "Which substance carries hydrogen atoms from the light-dependent reactions to the Calvin Cycle?",
-    options: null,
-    correctAnswer: "NADPH",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "ATP",
-          feedback:
-            "ATP carries energy, not hydrogen. NADPH is the hydrogen carrier that delivers reducing power to the Calvin Cycle.",
-        },
-      ],
-      defaultFeedback:
-        "NADPH is the hydrogen carrier produced in the light-dependent reactions and used in the Calvin Cycle to reduce CO₂ to glucose (Shuga Osisi).",
-    },
-  },
-  {
-    id: "q-p-15",
-    type: QuestionType.MCQ,
-    questionText: "Which factor would NOT limit the rate of photosynthesis?",
-    options: [
-      "Low CO₂",
-      "High oxygen concentration",
-      "Low temperature",
-      "Low light intensity",
-    ],
-    correctAnswer: "High oxygen concentration",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Low CO₂",
-          feedback:
-            "Low CO₂ is a classic limiting factor - less carbon dioxide means less raw material for the Calvin Cycle, slowing photosynthesis (Ọrụ Anyanwụ).",
-        },
-        {
-          pattern: "Low temperature",
-          feedback:
-            "Low temperature reduces enzyme activity (chlorophyll-related enzymes), which slows photosynthesis (Ọrụ Anyanwụ).",
-        },
-      ],
-      defaultFeedback:
-        "High oxygen concentration does NOT limit photosynthesis (Ọrụ Anyanwụ). The main limiting factors are light intensity, CO₂ concentration, and temperature.",
-    },
-  },
-  {
-    id: "q-p-16",
-    type: QuestionType.TRUE_FALSE,
-    questionText: "Algae can also carry out photosynthesis.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "Algae contain chlorophyll and carry out photosynthesis (Ọrụ Anyanwụ) just like plants. In fact, algae produce a significant portion of Earth's oxygen.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Algae, like plants, contain chlorophyll (Mgbara Ndụ Osisi) and carry out photosynthesis. They are responsible for a large proportion of Earth's oxygen production.",
-    },
-  },
-  {
-    id: "q-p-17",
-    type: QuestionType.MCQ,
-    questionText: "Where is water absorbed for use in photosynthesis?",
-    options: ["Leaves", "Stem", "Roots", "Flowers"],
-    correctAnswer: "Roots",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Leaves",
-          feedback:
-            "Leaves absorb light and take in CO₂ through stomata (Ọnụ Ọgụgọ Osisi). Water is absorbed from the soil through root hair cells.",
-        },
-      ],
-      defaultFeedback:
-        "Water (H₂O) is absorbed from the soil through the roots - specifically root hair cells - and transported up to the leaves for photosynthesis (Ọrụ Anyanwụ).",
-    },
-  },
-  {
-    id: "q-p-18",
-    type: QuestionType.SHORT_ANSWER,
-    questionText: "What do guard cells control?",
-    options: null,
-    correctAnswer: "stomata",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "water",
-          feedback:
-            "Guard cells do regulate water loss indirectly, but their specific function is to open and close stomata (Ọnụ Ọgụgọ Osisi).",
-        },
-      ],
-      defaultFeedback:
-        "Guard cells control the opening and closing of stomata (Ọnụ Ọgụgọ Osisi). When guard cells are full of water, stomata open; when dehydrated, they close.",
-    },
-  },
-  {
-    id: "q-p-19",
-    type: QuestionType.TRUE_FALSE,
-    questionText:
-      "The rate of photosynthesis increases indefinitely as temperature rises.",
-    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "True",
           feedback:
-            "Beyond an optimal temperature (about 30–35°C), enzymes involved in photosynthesis (Ọrụ Anyanwụ) begin to denature and the rate falls sharply.",
+            "Without chlorophyll, light energy cannot be absorbed. No photosynthesis happens.",
         },
       ],
       defaultFeedback:
-        "False - above the optimum temperature, enzymes are denatured and the rate of photosynthesis (Ọrụ Anyanwụ) drops. Temperature is a limiting factor only within a range.",
+        "Chlorophyll is essential for absorbing light energy. Without it, photosynthesis cannot occur.",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-p-20",
-    type: QuestionType.MCQ,
+    id: "q-p-13",
+    type: QuestionType.SHORT_ANSWER,
     questionText:
-      "Which wavelengths of light does chlorophyll absorb most effectively?",
-    options: [
-      "Green and yellow",
-      "Red and blue",
-      "Ultraviolet and infrared",
-      "Orange and violet",
-    ],
-    correctAnswer: "Red and blue",
+      "What form of energy is converted into chemical energy during photosynthesis?",
+    questionTextIgbo:
+      "Kedu ụdị ike na-agbanwe gaa na chemical energy n’ime fotosinthesis?",
+    options: null,
+    optionsIgbo: null,
+    correctAnswer: "light energy",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Green and yellow",
+          pattern: "heat",
           feedback:
-            "Green and yellow light is mostly REFLECTED by chlorophyll - that is why plants look green! Chlorophyll (Mgbara Ndụ Osisi) absorbs red and blue light.",
+            "Heat is not used directly. Photosynthesis specifically uses light energy.",
         },
       ],
       defaultFeedback:
-        "Chlorophyll (Mgbara Ndụ Osisi) absorbs red and blue light most efficiently for photosynthesis. Green light is reflected, which is why plants appear green.",
+        "Light energy from the sun is converted into chemical energy stored in glucose.",
     },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-14",
+    type: QuestionType.MCQ,
+    questionText: "Where does the water used in photosynthesis come from?",
+    questionTextIgbo: "Ebee ka mmiri eji eme fotosinthesis si abịa?",
+    options: ["Air", "Soil", "Sunlight", "Leaves"],
+    optionsIgbo: ["Ikuku", "Ala", "Ìhè", "Akwụkwọ"],
+    correctAnswer: "Soil",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Air",
+          feedback:
+            "Water is absorbed from the soil by the roots, not from the air.",
+        },
+      ],
+      defaultFeedback:
+        "Water is absorbed from the soil by roots and transported to leaves.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-15",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "Plants only carry out photosynthesis during the day.",
+    questionTextIgbo: "Osisi na-eme fotosinthesis naanị n’ehihie?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback:
+            "Photosynthesis requires light, so it happens only when light is available.",
+        },
+      ],
+      defaultFeedback:
+        "Correct. Photosynthesis requires light, so it mainly occurs during the day.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-16",
+    type: QuestionType.MCQ,
+    questionText: "Which part of the leaf contains the most chloroplasts?",
+    questionTextIgbo: "Kedu akụkụ akwụkwọ nwere chloroplast kachasị?",
+    options: [
+      "Upper epidermis",
+      "Palisade mesophyll",
+      "Spongy mesophyll",
+      "Cuticle",
+    ],
+    optionsIgbo: [
+      "Epidermis elu",
+      "Palisade mesophyll",
+      "Spongy mesophyll",
+      "Cuticle",
+    ],
+    correctAnswer: "Palisade mesophyll",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Spongy mesophyll",
+          feedback:
+            "Spongy mesophyll has fewer chloroplasts. Palisade mesophyll is packed with them.",
+        },
+      ],
+      defaultFeedback:
+        "Palisade mesophyll cells contain the highest number of chloroplasts for maximum light absorption.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-17",
+    type: QuestionType.SHORT_ANSWER,
+    questionText:
+      "What carbohydrate is glucose often converted into for storage in plants?",
+    questionTextIgbo:
+      "Kedu carbohydrate ka glucose na-agbanwe gaa iji chekwaa ya n’osisi?",
+    options: null,
+    optionsIgbo: null,
+    correctAnswer: "starch",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "cellulose",
+          feedback:
+            "Cellulose is for structure, not storage. Starch is the storage form.",
+        },
+      ],
+      defaultFeedback:
+        "Glucose is converted into starch for storage in plants.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-18",
+    type: QuestionType.TRUE_FALSE,
+    questionText:
+      "Increasing carbon dioxide concentration always increases photosynthesis rate indefinitely.",
+    questionTextIgbo:
+      "Ibulite carbon dioxide na-eme ka fotosinthesis na-abawanye ruo mgbe ebighị ebi?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "False",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "True",
+          feedback:
+            "Wrong. Other factors like light or temperature become limiting.",
+        },
+      ],
+      defaultFeedback:
+        "Photosynthesis is limited by the least available factor. Increasing CO₂ only helps up to a point.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-19",
+    type: QuestionType.MCQ,
+    questionText:
+      "Which structure controls the opening and closing of stomata?",
+    questionTextIgbo: "Kedu akụkụ na-achịkwa mmeghe na mmechi stomata?",
+    options: ["Root cells", "Guard cells", "Xylem", "Phloem"],
+    optionsIgbo: ["Sel mgbọrọgwụ", "Guard cells", "Xylem", "Phloem"],
+    correctAnswer: "Guard cells",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Xylem",
+          feedback:
+            "Xylem transports water. Guard cells control stomatal opening.",
+        },
+      ],
+      defaultFeedback:
+        "Guard cells regulate the opening and closing of stomata.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-p-20",
+    type: QuestionType.MCQ,
+    questionText: "Which of the following is NOT required for photosynthesis?",
+    questionTextIgbo: "Kedu n’ime ndị a anaghị achọ maka fotosinthesis?",
+    options: ["Light", "Water", "Oxygen", "Carbon dioxide"],
+    optionsIgbo: ["Ìhè", "Mmiri", "Oxygen", "Carbon dioxide"],
+    correctAnswer: "Oxygen",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Water",
+          feedback: "Water is essential. Oxygen is produced, not required.",
+        },
+      ],
+      defaultFeedback:
+        "Oxygen is a product of photosynthesis, not a requirement.",
+    },
+    difficulty: 0.5,
   },
 ];
 
@@ -1454,7 +1976,9 @@ const Q_CELL_STRUCTURE = [
     id: "q-c-1",
     type: QuestionType.MCQ,
     questionText: "Which organelle is known as the control centre of the cell?",
+    questionTextIgbo: "Kedu akụkụ sel a na-akpọ ebe njikwa ya?",
     options: ["Mitochondria", "Nucleus", "Cell Membrane", "Vacuole"],
+    optionsIgbo: ["Mitochondria", "Nucleus", "Akpụkpọ Sel", "Vacuole"],
     correctAnswer: "Nucleus",
     feedbackRules: {
       misconceptions: [
@@ -1467,12 +1991,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The nucleus (Isi Mkpụrụ Ndụ) controls the cell. It contains DNA which carries instructions for all cell activities.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-2",
     type: QuestionType.TRUE_FALSE,
     questionText: "Both plant and animal cells have a cell wall.",
+    questionTextIgbo: "Sel osisi na sel anụmanụ abụọ nwere mgbidi sel?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -1485,13 +2013,18 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The cell wall (Ọnọdụ Mkpụrụ Ndụ Osisi) is found ONLY in plant cells. It is made of cellulose.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-3",
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What is the jelly-like fluid that fills the cell and surrounds the organelles?",
+    questionTextIgbo:
+      "Kedu ihe mmiri dị ka jelii na-eju sel ma gbaa akụkụ ya gburugburu?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "cytoplasm",
     feedbackRules: {
       misconceptions: [
@@ -1504,12 +2037,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The answer is cytoplasm (Mmiri Mkpụrụ Ndụ), where most chemical reactions occur.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-4",
     type: QuestionType.MCQ,
     questionText: "Which organelle is the site of protein synthesis?",
+    questionTextIgbo: "Kedu akụkụ sel ebe a na-emepụta protein?",
     options: ["Mitochondria", "Ribosome", "Golgi apparatus", "Vacuole"],
+    optionsIgbo: ["Mitochondria", "Ribosome", "Golgi apparatus", "Vacuole"],
     correctAnswer: "Ribosome",
     feedbackRules: {
       misconceptions: [
@@ -1527,16 +2064,25 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Ribosomes (Ụlọ Mmepụta Protein) are the sites of protein synthesis.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-5",
     type: QuestionType.MCQ,
     questionText: "What is the function of mitochondria?",
+    questionTextIgbo: "Gịnị bụ ọrụ mitochondria?",
     options: [
       "Produce proteins",
       "Store water",
       "Produce energy (ATP)",
       "Control cell division",
+    ],
+    optionsIgbo: [
+      "Imepụta protein",
+      "Idobe mmiri",
+      "Imepụta ike (ATP)",
+      "Ijikwa nkewa sel",
     ],
     correctAnswer: "Produce energy (ATP)",
     feedbackRules: {
@@ -1550,12 +2096,17 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Mitochondria (Ụlọ Ike Ndụ) produce ATP - the cell's energy currency - through aerobic respiration.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-6",
     type: QuestionType.TRUE_FALSE,
     questionText: "The cell membrane is selectively permeable.",
+    questionTextIgbo:
+      "Akpụkpọ sel na-ahapụ ụfọdụ ihe ka ha gafee ma gbochie ndị ọzọ?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -1568,12 +2119,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Correct! The cell membrane (Akpụkpọ Mkpụrụ Ndụ) is selectively permeable - allowing some substances through while blocking others.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-7",
     type: QuestionType.MCQ,
     questionText: "Which organelle is found ONLY in plant cells?",
+    questionTextIgbo: "Kedu akụkụ sel dị naanị n’ime sel osisi?",
     options: ["Mitochondria", "Nucleus", "Ribosome", "Chloroplast"],
+    optionsIgbo: ["Mitochondria", "Nucleus", "Ribosome", "Chloroplast"],
     correctAnswer: "Chloroplast",
     feedbackRules: {
       misconceptions: [
@@ -1586,12 +2141,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Chloroplasts (Ụlọ Mgbara Osisi) are found ONLY in plant cells. They are the site of photosynthesis.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-8",
     type: QuestionType.SHORT_ANSWER,
     questionText: "How many chromosomes does a normal human body cell contain?",
+    questionTextIgbo: "Ole chromosomes ka sel ahụ mmadụ nkịtị nwere?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "46",
     feedbackRules: {
       misconceptions: [
@@ -1604,17 +2163,26 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Normal human body cells contain 46 chromosomes, in 23 pairs. Gametes (sperm/eggs) have only 23.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-9",
     type: QuestionType.MCQ,
     questionText:
       "What is the role of the large central vacuole in plant cells?",
+    questionTextIgbo: "Gịnị bụ ọrụ nnukwu vacuole dị n’etiti sel osisi?",
     options: [
       "Photosynthesis",
       "Protein synthesis",
       "Maintain shape and store cell sap",
       "Energy production",
+    ],
+    optionsIgbo: [
+      "Fotosinthesis",
+      "Imepụta protein",
+      "Idobe udi sel na idobe mmiri sel",
+      "Imepụta ike",
     ],
     correctAnswer: "Maintain shape and store cell sap",
     feedbackRules: {
@@ -1628,12 +2196,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The large central vacuole (Ebe Nchekwa Mkpụrụ Ndụ) stores water and cell sap, creating turgor pressure that maintains plant cell shape.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-10",
     type: QuestionType.TRUE_FALSE,
     questionText: "Mature red blood cells have no nucleus.",
+    questionTextIgbo: "Sel ọbara uhie tozuru etozu enweghị nucleus?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -1646,12 +2218,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Correct! Mature red blood cells have no nucleus. This makes them biconcave and maximises space for haemoglobin.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-11",
     type: QuestionType.MCQ,
     questionText: "What is the cell wall in plant cells made of?",
+    questionTextIgbo: "Gịnị ka e ji mee mgbidi sel osisi?",
     options: ["Protein", "Lipid", "Starch", "Cellulose"],
+    optionsIgbo: ["Protein", "Lipid", "Starch", "Cellulose"],
     correctAnswer: "Cellulose",
     feedbackRules: {
       misconceptions: [
@@ -1664,12 +2240,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The cell wall (Ọnọdụ Mkpụrụ Ndụ Osisi) is made of cellulose - a fibrous carbohydrate that gives plant cells their rigid, boxy shape.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "All living cells contain DNA.",
+    questionTextIgbo: "Sel niile dị ndụ nwere DNA?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -1682,13 +2262,18 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Correct! All living cells contain DNA (Ihe Nketa Ndụ). In eukaryotes it is in the nucleus; in prokaryotes (bacteria) it floats freely in the cytoplasm.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-13",
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What name is given to the long extension of a nerve cell that transmits electrical signals?",
+    questionTextIgbo:
+      "Kedu aha a na-akpọ ogologo akụkụ sel akwara nke na-ebufe akara eletrik?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "axon",
     feedbackRules: {
       misconceptions: [
@@ -1701,13 +2286,18 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The long extension is called an axon. Nerve cells (neurons) have very long axons to transmit electrical impulses quickly over distances.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-14",
     type: QuestionType.MCQ,
     questionText:
       "Which cell type has a large surface area to absorb water and minerals from the soil?",
+    questionTextIgbo:
+      "Kedu ụdị sel nwere nnukwu ebe elu iji were mmiri na mineral si n’ala?",
     options: ["Nerve cell", "Red blood cell", "Root hair cell", "Sperm cell"],
+    optionsIgbo: ["Sel akwara", "Sel ọbara uhie", "Sel mgbọrọgwụ", "Sel sperm"],
     correctAnswer: "Root hair cell",
     feedbackRules: {
       misconceptions: [
@@ -1720,13 +2310,17 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Root hair cells have a long, thin extension that greatly increases their surface area for absorbing water and dissolved minerals from the soil.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-15",
     type: QuestionType.TRUE_FALSE,
     questionText:
       "The smooth endoplasmic reticulum has ribosomes on its surface.",
+    questionTextIgbo: "Smooth endoplasmic reticulum nwere ribosomes n’elu ya?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -1739,16 +2333,25 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The ROUGH ER has ribosomes (Ụlọ Mmepụta Protein) on its surface and processes proteins. The SMOOTH ER has no ribosomes and handles lipids.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-16",
     type: QuestionType.MCQ,
     questionText: "What does the Golgi apparatus do?",
+    questionTextIgbo: "Gịnị ka Golgi apparatus na-eme?",
     options: [
       "Produce energy",
       "Package and dispatch proteins",
       "Carry out photosynthesis",
       "Store genetic information",
+    ],
+    optionsIgbo: [
+      "Imepụta ike",
+      "Ikpuchi na izipu protein",
+      "Ime fotosinthesis",
+      "Idobe ozi mkpụrụ ndụ",
     ],
     correctAnswer: "Package and dispatch proteins",
     feedbackRules: {
@@ -1762,13 +2365,17 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "The Golgi apparatus packages proteins made at ribosomes (Ụlọ Mmepụta Protein) and dispatches them to where they are needed - inside or outside the cell.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-17",
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What type of cell surrounds the stomates (stomata) in plant leaves?",
+    questionTextIgbo: "Kedu ụdị sel gbara stomata gburugburu n’akwụkwọ osisi?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "guard cells",
     feedbackRules: {
       misconceptions: [
@@ -1781,12 +2388,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Guard cells surround each stoma (Ọnụ Ọgụgọ Osisi). When they absorb water and swell, the stoma opens; when they lose water, it closes.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-18",
     type: QuestionType.TRUE_FALSE,
     questionText: "Prokaryotic cells (like bacteria) do not have a nucleus.",
+    questionTextIgbo: "Sel prokaryotic (dị ka bacteria) enweghị nucleus?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -1799,12 +2410,16 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Correct! Prokaryotes (bacteria) have no nucleus. Their DNA is circular and floats in the cytoplasm (Mmiri Mkpụrụ Ndụ). This distinguishes them from eukaryotes.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-19",
     type: QuestionType.MCQ,
     questionText: "Which structure is found in both plant and animal cells?",
+    questionTextIgbo: "Kedu akụkụ dị na sel osisi na sel anụmanụ abụọ?",
     options: ["Cell wall", "Chloroplast", "Mitochondria", "Central vacuole"],
+    optionsIgbo: ["Mgbidi sel", "Chloroplast", "Mitochondria", "Vacuole etiti"],
     correctAnswer: "Mitochondria",
     feedbackRules: {
       misconceptions: [
@@ -1822,13 +2437,18 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Mitochondria (Ụlọ Ike Ndụ) are present in both plant and animal cells - all eukaryotic cells need ATP energy from respiration.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-c-20",
     type: QuestionType.MCQ,
     questionText:
       "What is the term for cells that are genetically identical and have a specific function?",
+    questionTextIgbo:
+      "Gịnị ka a na-akpọ sel ndị yiri ibe ha ma nwee ọrụ pụrụ iche?",
     options: ["Stem cells", "Specialised cells", "Prokaryotes", "Gametes"],
+    optionsIgbo: ["Stem cells", "Sel pụrụ iche", "Prokaryotes", "Gametes"],
     correctAnswer: "Specialised cells",
     feedbackRules: {
       misconceptions: [
@@ -1841,6 +2461,7 @@ const Q_CELL_STRUCTURE = [
       defaultFeedback:
         "Specialised cells (like red blood cells, nerve cells, root hair cells) have differentiated to carry out a specific function. Their structure reflects their role.",
     },
+    difficulty: 0.5,
   },
 ];
 
@@ -1852,442 +2473,493 @@ const Q_DIGESTION = [
   {
     id: "q-d-1",
     type: QuestionType.MCQ,
-    questionText: "Where does chemical digestion of starch begin?",
-    options: ["Stomach", "Small intestine", "Mouth", "Large intestine"],
+    questionText: "Where does digestion begin in the human body?",
+    questionTextIgbo: "Ebee ka mgbaze nri na-amalite n’ahụ mmadụ?",
+    options: ["Stomach", "Mouth", "Small intestine", "Oesophagus"],
+    optionsIgbo: ["Afo", "Ọnụ", "Afọ obere", "Ọkpọkpọ nri"],
     correctAnswer: "Mouth",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Stomach",
           feedback:
-            "The stomach (Afo) digests proteins, not starch. Starch digestion begins in the mouth with salivary amylase (Ihe Mmezi Ụkwa).",
+            "Wrong. Digestion starts in the mouth with chewing and salivary amylase.",
         },
       ],
       defaultFeedback:
-        "Starch digestion begins in the mouth. Saliva contains amylase (Ihe Mmezi Ụkwa) which breaks starch into maltose.",
+        "Digestion begins in the mouth where food is mechanically and chemically broken down.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-2",
     type: QuestionType.MCQ,
-    questionText: "What is the role of bile in digestion?",
-    options: [
-      "Digest proteins",
-      "Kill bacteria",
-      "Emulsify fats",
-      "Absorb glucose",
-    ],
-    correctAnswer: "Emulsify fats",
+    questionText: "Which enzyme breaks down starch in the mouth?",
+    questionTextIgbo: "Kedu enzyme na-agbaji starch n’ọnụ?",
+    options: ["Pepsin", "Amylase", "Lipase", "Protease"],
+    optionsIgbo: ["Pepsin", "Amylase", "Lipase", "Protease"],
+    correctAnswer: "Amylase",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Kill bacteria",
+          pattern: "Pepsin",
           feedback:
-            "Hydrochloric acid kills bacteria. Bile (Mmiri Ọjị Imebi Abuba) emulsifies fats, increasing surface area for lipase.",
+            "Pepsin works in the stomach for protein digestion, not starch.",
         },
       ],
       defaultFeedback:
-        "Bile (Mmiri Ọjị Imebi Abuba) emulsifies fats - breaking large fat droplets into smaller ones for lipase to digest.",
+        "Salivary amylase begins the breakdown of starch into simpler sugars.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-3",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Peristalsis moves food along the digestive tract.",
+    questionText: "The stomach mainly digests proteins.",
+    questionTextIgbo: "Afo na-agbaji protein nke ukwuu?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
           feedback:
-            "True. Peristalsis (Mgbachi Ngọngọ Ihe Oriri) is the wave-like muscle contractions that push food through the digestive tract.",
+            "Incorrect. The stomach uses pepsin and acid to digest proteins.",
         },
       ],
       defaultFeedback:
-        "Correct! Peristalsis (Mgbachi Ngọngọ Ihe Oriri) is rhythmic muscle contractions that propel food in one direction.",
+        "The stomach digests proteins using pepsin in an acidic environment.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-4",
     type: QuestionType.SHORT_ANSWER,
-    questionText: "What is the enzyme that digests proteins in the stomach?",
+    questionText: "What acid is found in the stomach?",
+    questionTextIgbo: "Kedu acid dị n’ime afo?",
     options: null,
-    correctAnswer: "pepsin",
+    optionsIgbo: null,
+    correctAnswer: "hydrochloric acid",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "amylase",
+          pattern: "sulfuric acid",
           feedback:
-            "Amylase (Ihe Mmezi Ụkwa) digests starch, not proteins. The protein-digesting enzyme in the stomach (Afo) is pepsin.",
+            "Wrong acid. The stomach uses hydrochloric acid, not industrial acids.",
         },
       ],
       defaultFeedback:
-        "Pepsin is the protease enzyme in the stomach (Afo). It breaks proteins into shorter peptide chains in the acidic environment.",
+        "Hydrochloric acid creates the acidic environment needed for enzyme activity.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-5",
     type: QuestionType.MCQ,
-    questionText: "What is the main site of nutrient absorption?",
-    options: ["Stomach", "Large intestine", "Small intestine", "Oesophagus"],
+    questionText: "Where does most nutrient absorption occur?",
+    questionTextIgbo: "Ebee ka ọtụtụ nri na-amịkọrọ?",
+    options: ["Stomach", "Small intestine", "Large intestine", "Oesophagus"],
+    optionsIgbo: ["Afo", "Afọ obere", "Afọ nnukwu", "Ọkpọkpọ nri"],
     correctAnswer: "Small intestine",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Stomach",
-          feedback:
-            "The stomach (Afo) digests but absorbs very little. The small intestine (Afọ Obere) is the main absorption site.",
-        },
-        {
           pattern: "Large intestine",
-          feedback:
-            "The large intestine absorbs mainly water. Most nutrients are absorbed in the small intestine (Afọ Obere).",
+          feedback: "Large intestine mainly absorbs water, not nutrients.",
         },
       ],
       defaultFeedback:
-        "The small intestine (Afọ Obere) is the main absorption site. Its villi (Mkpọrọgwụ Afọ Obere) create a vast surface area.",
+        "Most nutrients are absorbed in the small intestine due to its large surface area.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-6",
     type: QuestionType.MCQ,
-    questionText: "Which organ produces bile?",
-    options: ["Pancreas", "Stomach", "Liver", "Gallbladder"],
-    correctAnswer: "Liver",
+    questionText: "What is the role of bile?",
+    questionTextIgbo: "Gịnị bụ ọrụ bile?",
+    options: [
+      "Digest proteins",
+      "Break down starch",
+      "Emulsify fats",
+      "Absorb glucose",
+    ],
+    optionsIgbo: [
+      "Igbaji protein",
+      "Igbaji starch",
+      "Ime ka abụba dị ntakịrị",
+      "Imịkọrọ glucose",
+    ],
+    correctAnswer: "Emulsify fats",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Gallbladder",
+          pattern: "Digest proteins",
           feedback:
-            "The gallbladder STORES bile. The liver PRODUCES bile (Mmiri Ọjị Imebi Abuba).",
-        },
-        {
-          pattern: "Pancreas",
-          feedback:
-            "The pancreas produces digestive enzymes. Bile (Mmiri Ọjị Imebi Abuba) is produced by the liver.",
+            "Bile does not digest proteins. It breaks fat into smaller droplets.",
         },
       ],
       defaultFeedback:
-        "The liver produces bile (Mmiri Ọjị Imebi Abuba). It is stored in the gallbladder and released into the duodenum when fatty food arrives.",
+        "Bile emulsifies fats, increasing surface area for lipase.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-7",
     type: QuestionType.TRUE_FALSE,
-    questionText: "The large intestine's main role is to digest carbohydrates.",
+    questionText: "Peristalsis helps move food along the digestive system.",
+    questionTextIgbo:
+      "Peristalsis na-enyere aka ịkwaga nri n’ime usoro mgbaze?",
     options: ["True", "False"],
-    correctAnswer: "False",
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "True",
+          pattern: "False",
           feedback:
-            "Carbohydrate digestion happens in the mouth and small intestine. The large intestine absorbs water from waste.",
+            "Wrong. Peristalsis is essential for pushing food through the system.",
         },
       ],
       defaultFeedback:
-        "The large intestine primarily absorbs water. Carbohydrate digestion occurs in the mouth and small intestine (Afọ Obere).",
+        "Peristalsis is the wave-like muscle contraction that moves food.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-8",
     type: QuestionType.MCQ,
-    questionText: "What does lipase break down?",
-    options: ["Carbohydrates", "Proteins", "Fats", "Vitamins"],
-    correctAnswer: "Fats",
+    questionText: "Which enzyme digests proteins?",
+    questionTextIgbo: "Kedu enzyme na-agbaji protein?",
+    options: ["Amylase", "Lipase", "Protease", "Maltase"],
+    optionsIgbo: ["Amylase", "Lipase", "Protease", "Maltase"],
+    correctAnswer: "Protease",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Carbohydrates",
-          feedback:
-            "Carbohydrates are broken down by amylase (Ihe Mmezi Ụkwa). Lipase breaks down fats into fatty acids and glycerol.",
-        },
-        {
-          pattern: "Proteins",
-          feedback:
-            "Proteins are broken down by proteases. Lipase digests fats (lipids) into fatty acids and glycerol.",
+          pattern: "Amylase",
+          feedback: "Amylase digests starch, not protein.",
         },
       ],
-      defaultFeedback:
-        "Lipase breaks down fats (lipids) into fatty acids and glycerol, mainly in the small intestine (Afọ Obere).",
+      defaultFeedback: "Protease enzymes break proteins into amino acids.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-9",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What finger-like projections line the small intestine wall to increase absorption surface area?",
+    questionText: "What structure increases absorption in the small intestine?",
+    questionTextIgbo: "Kedu ihe na-eme ka absorption bawanye n’afọ obere?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "villi",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "microvilli",
           feedback:
-            "Microvilli are even smaller projections on top of villi. The larger projections themselves are called villi (Mkpọrọgwụ Afọ Obere).",
+            "Close but incomplete. Villi are the main structures; microvilli are smaller extensions.",
         },
       ],
       defaultFeedback:
-        "Villi (Mkpọrọgwụ Afọ Obere) are finger-like projections. Each is covered in microvilli - together they create an enormous absorption surface area.",
+        "Villi increase surface area for efficient nutrient absorption.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-10",
     type: QuestionType.TRUE_FALSE,
-    questionText: "The stomach produces hydrochloric acid.",
+    questionText: "The large intestine absorbs water.",
+    questionTextIgbo: "Afọ nnukwu na-amịkọrọ mmiri?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
           feedback:
-            "True. The stomach (Afo) secretes hydrochloric acid (pH ≈ 2), which kills bacteria and activates pepsin for protein digestion.",
+            "Wrong. Water absorption is the main role of the large intestine.",
         },
       ],
-      defaultFeedback:
-        "Correct! The stomach (Afo) secretes hydrochloric acid, creating the acidic environment needed for pepsin to digest proteins.",
+      defaultFeedback: "The large intestine absorbs water and forms faeces.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-11",
     type: QuestionType.MCQ,
-    questionText: "What are the products of fat digestion?",
-    options: [
-      "Glucose and water",
-      "Amino acids",
-      "Fatty acids and glycerol",
-      "Maltose and fructose",
-    ],
-    correctAnswer: "Fatty acids and glycerol",
+    questionText: "Which organ produces bile?",
+    questionTextIgbo: "Kedu akụkụ na-emepụta bile?",
+    options: ["Pancreas", "Liver", "Stomach", "Gallbladder"],
+    optionsIgbo: ["Pancreas", "Imeju", "Afo", "Gallbladder"],
+    correctAnswer: "Liver",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Glucose and water",
-          feedback:
-            "Glucose comes from carbohydrate digestion. Fat (lipid) digestion by lipase produces fatty acids and glycerol.",
+          pattern: "Gallbladder",
+          feedback: "Gallbladder stores bile, it does not produce it.",
         },
       ],
       defaultFeedback:
-        "Lipase breaks fats into fatty acids and glycerol, which are absorbed through the walls of the small intestine (Afọ Obere).",
+        "The liver produces bile which is stored in the gallbladder.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-12",
     type: QuestionType.MCQ,
-    questionText: "Which of the following is mechanical digestion?",
-    options: [
-      "Enzymes breaking down food",
-      "Chewing food into smaller pieces",
-      "Absorbing nutrients into blood",
-      "Bile emulsifying fat",
-    ],
-    correctAnswer: "Chewing food into smaller pieces",
+    questionText: "What do enzymes act as?",
+    questionTextIgbo: "Gịnị ka enzymes bụ?",
+    options: ["Hormones", "Catalysts", "Cells", "Energy sources"],
+    optionsIgbo: ["Hormones", "Catalysts", "Sel", "Isi ike"],
+    correctAnswer: "Catalysts",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Enzymes breaking down food",
-          feedback:
-            "Enzyme action is CHEMICAL digestion. Mechanical digestion is physical - chewing and churning.",
+          pattern: "Hormones",
+          feedback: "Hormones regulate processes. Enzymes speed up reactions.",
         },
       ],
       defaultFeedback:
-        "Mechanical digestion is the physical breakdown of food (chewing, churning). It increases surface area for enzymes (Ihe Mmezi Nri) to act on.",
+        "Enzymes are biological catalysts that speed up digestion.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-13",
     type: QuestionType.SHORT_ANSWER,
-    questionText: "Which enzyme in saliva begins the digestion of starch?",
+    questionText: "What is the end product of protein digestion?",
+    questionTextIgbo: "Gịnị bụ ihe ikpeazụ protein na-agbanwe gaa?",
     options: null,
-    correctAnswer: "amylase",
+    optionsIgbo: null,
+    correctAnswer: "amino acids",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "pepsin",
+          pattern: "peptides",
           feedback:
-            "Pepsin is in the stomach and digests proteins. Saliva contains amylase (Ihe Mmezi Ụkwa) which digests starch.",
+            "Peptides are intermediate. Final products are amino acids.",
         },
       ],
-      defaultFeedback:
-        "Salivary amylase (Ihe Mmezi Ụkwa) in saliva begins the digestion of starch, breaking it into maltose.",
+      defaultFeedback: "Proteins are broken down into amino acids.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-14",
     type: QuestionType.TRUE_FALSE,
-    questionText: "The pancreas produces both digestive enzymes and hormones.",
+    questionText: "Lipase breaks down fats.",
+    questionTextIgbo: "Lipase na-agbaji abụba?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True! The pancreas has two roles: it produces digestive enzymes (amylase, lipase, protease) and it produces hormones like insulin and glucagon to regulate blood sugar.",
+          feedback: "Wrong. Lipase specifically targets fats.",
         },
       ],
-      defaultFeedback:
-        "Correct! The pancreas produces digestive enzymes (amylase, lipase, protease) that enter the small intestine (Afọ Obere), and hormones like insulin for blood sugar control.",
+      defaultFeedback: "Lipase breaks fats into fatty acids and glycerol.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-d-15",
     type: QuestionType.MCQ,
-    questionText: "What is the pH of the stomach?",
-    options: [
-      "7 (neutral)",
-      "10 (alkaline)",
-      "2 (acidic)",
-      "5 (slightly acidic)",
-    ],
-    correctAnswer: "2 (acidic)",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "7 (neutral)",
-          feedback:
-            "pH 7 is neutral. The stomach (Afo) is highly acidic - around pH 2 - due to hydrochloric acid secretion.",
-        },
-      ],
-      defaultFeedback:
-        "The stomach (Afo) has a pH of approximately 2 - strongly acidic due to hydrochloric acid. This kills bacteria and activates pepsin.",
-    },
-  },
-  {
-    id: "q-d-16",
-    type: QuestionType.MCQ,
-    questionText:
-      "Where is bile stored before being released into the small intestine?",
-    options: ["Liver", "Pancreas", "Gallbladder", "Stomach"],
-    correctAnswer: "Gallbladder",
+    questionText: "Which organ produces digestive enzymes and hormones?",
+    questionTextIgbo: "Kedu akụkụ na-emepụta enzymes na hormones?",
+    options: ["Liver", "Pancreas", "Stomach", "Intestine"],
+    optionsIgbo: ["Imeju", "Pancreas", "Afo", "Afọ"],
+    correctAnswer: "Pancreas",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Liver",
           feedback:
-            "The liver PRODUCES bile. It is then stored in the gallbladder until fat-containing food arrives in the duodenum.",
+            "Liver produces bile, not digestive enzymes in this context.",
         },
       ],
       defaultFeedback:
-        "Bile (Mmiri Ọjị Imebi Abuba) is stored in the gallbladder. When fatty food enters the duodenum, the gallbladder releases bile into the small intestine (Afọ Obere).",
+        "The pancreas produces enzymes and hormones like insulin.",
     },
+    difficulty: 0.5,
   },
+
+  {
+    id: "q-d-16",
+    type: QuestionType.MCQ,
+    questionText: "Where is bile stored?",
+    questionTextIgbo: "Ebee ka a na-echekwa bile?",
+    options: ["Liver", "Gallbladder", "Pancreas", "Stomach"],
+    optionsIgbo: ["Imeju", "Gallbladder", "Pancreas", "Afo"],
+    correctAnswer: "Gallbladder",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Liver",
+          feedback: "Liver produces bile but does not store it.",
+        },
+      ],
+      defaultFeedback: "Bile is stored in the gallbladder until needed.",
+    },
+    difficulty: 0.5,
+  },
+
   {
     id: "q-d-17",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Absorption of water mainly occurs in the small intestine.",
+    questionText: "Carbohydrates are broken down into glucose.",
+    questionTextIgbo: "Carbohydrates na-agbanwe gaa na glucose?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Wrong. Final digestion of carbohydrates produces glucose.",
+        },
+      ],
+      defaultFeedback:
+        "Carbohydrates are broken down into simple sugars like glucose.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-d-18",
+    type: QuestionType.SHORT_ANSWER,
+    questionText:
+      "What is the name of the muscular tube that carries food to the stomach?",
+    questionTextIgbo: "Gịnị ka a na-akpọ ụzọ nri si aga n’ime afo?",
+    options: null,
+    optionsIgbo: null,
+    correctAnswer: "oesophagus",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "trachea",
+          feedback: "Trachea is for air, not food.",
+        },
+      ],
+      defaultFeedback:
+        "The oesophagus carries food from the mouth to the stomach.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-d-19",
+    type: QuestionType.MCQ,
+    questionText: "What is mechanical digestion?",
+    questionTextIgbo: "Gịnị bụ mechanical digestion?",
+    options: [
+      "Breaking food with enzymes",
+      "Breaking food physically",
+      "Absorbing nutrients",
+      "Producing bile",
+    ],
+    optionsIgbo: [
+      "Igbaji nri site na enzyme",
+      "Igbaji nri n’ahụ",
+      "Imịkọrọ nri",
+      "Ime bile",
+    ],
+    correctAnswer: "Breaking food physically",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Breaking food with enzymes",
+          feedback: "That is chemical digestion, not mechanical.",
+        },
+      ],
+      defaultFeedback:
+        "Mechanical digestion is the physical breakdown of food.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-d-20",
+    type: QuestionType.MCQ,
+    questionText: "Which nutrient is NOT digested?",
+    questionTextIgbo: "Kedu nutrient anaghị agbaji?",
+    options: ["Carbohydrates", "Proteins", "Vitamins", "Fats"],
+    optionsIgbo: ["Carbohydrates", "Proteins", "Vitamins", "Fats"],
+    correctAnswer: "Vitamins",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Fats",
+          feedback: "Fats are digested by lipase.",
+        },
+      ],
+      defaultFeedback:
+        "Vitamins do not need digestion; they are absorbed directly.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-d-21",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "Digestion only occurs in the stomach.",
+    questionTextIgbo: "Mgbaze nri na-eme naanị n’ime afo?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "True",
           feedback:
-            "Water is mainly absorbed in the LARGE intestine, not the small intestine. The small intestine (Afọ Obere) absorbs nutrients like glucose and amino acids.",
+            "Completely wrong. Digestion occurs in the mouth, stomach, and intestines.",
         },
       ],
       defaultFeedback:
-        "Water is mainly absorbed in the LARGE intestine. The small intestine (Afọ Obere) is the main site for absorbing digested nutrients.",
+        "Digestion happens in multiple organs, not just the stomach.",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-d-18",
+    id: "q-d-22",
     type: QuestionType.SHORT_ANSWER,
     questionText:
-      "What term describes the transport of digested nutrients from the small intestine into the bloodstream?",
+      "What is the process of taking digested nutrients into the bloodstream called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ usoro nri si abanye n’ime ọbara?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "absorption",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "digestion",
           feedback:
-            "Digestion (Ịgbaze Nri) is the breaking down of food. Once food is small enough to enter the blood, the process is absorption.",
+            "Digestion breaks food down. Absorption moves it into the blood.",
         },
       ],
       defaultFeedback:
-        "Absorption is the movement of digested nutrients from the small intestine (Afọ Obere) into the blood and lymphatic system.",
+        "Absorption is the movement of nutrients into the bloodstream.",
     },
-  },
-  {
-    id: "q-d-19",
-    type: QuestionType.MCQ,
-    questionText: "What is the first part of the small intestine called?",
-    options: ["Ileum", "Jejunum", "Duodenum", "Caecum"],
-    correctAnswer: "Duodenum",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Ileum",
-          feedback:
-            "The ileum is the final part of the small intestine. The first part, where bile and pancreatic juice enter, is the duodenum.",
-        },
-      ],
-      defaultFeedback:
-        "The duodenum is the first section of the small intestine (Afọ Obere). Bile and pancreatic enzymes (Ihe Mmezi Nri) enter here to continue digestion.",
-    },
-  },
-  {
-    id: "q-d-20",
-    type: QuestionType.TRUE_FALSE,
-    questionText: "Enzymes are reusable biological catalysts.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "True! Enzymes (Ihe Mmezi Nri) are biological catalysts that speed up reactions without being used up. They can be used again and again.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Enzymes (Ihe Mmezi Nri) are biological catalysts - they speed up chemical reactions and are not consumed in the process, so they can be reused.",
-    },
-  },
-  {
-    id: "q-d-21",
-    type: QuestionType.MCQ,
-    questionText: "What happens to undigested food in the large intestine?",
-    options: [
-      "It is digested by bile",
-      "Nutrients are absorbed from it",
-      "Water is absorbed and it forms faeces",
-      "It is returned to the stomach",
-    ],
-    correctAnswer: "Water is absorbed and it forms faeces",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Nutrients are absorbed from it",
-          feedback:
-            "Most nutrient absorption occurs earlier in the small intestine (Afọ Obere). The large intestine mainly absorbs water and forms faeces.",
-        },
-      ],
-      defaultFeedback:
-        "In the large intestine, water is absorbed from undigested material. The remaining solid waste forms faeces, stored in the rectum before elimination.",
-    },
-  },
-  {
-    id: "q-d-22",
-    type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What are the building blocks of proteins produced when proteases digest them?",
-    options: null,
-    correctAnswer: "amino acids",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "glucose",
-          feedback:
-            "Glucose comes from carbohydrate digestion. Proteases break proteins down into amino acids - the building blocks of proteins.",
-        },
-      ],
-      defaultFeedback:
-        "Proteases (like pepsin) digest proteins into amino acids - small molecules that are absorbed into the bloodstream through the small intestine (Afọ Obere).",
-    },
+    difficulty: 0.5,
   },
 ];
 
@@ -2299,448 +2971,484 @@ const Q_ECOSYSTEMS = [
   {
     id: "q-e-1",
     type: QuestionType.MCQ,
-    questionText:
-      "What is an organism that makes its own food through photosynthesis called?",
-    options: ["Consumer", "Decomposer", "Producer", "Predator"],
-    correctAnswer: "Producer",
+    questionText: "What is an ecosystem?",
+    questionTextIgbo: "Gịnị bụ ecosystem?",
+    options: [
+      "Only living organisms in an area",
+      "Only non-living components",
+      "Living and non-living things interacting",
+      "A single species population",
+    ],
+    optionsIgbo: [
+      "Nanị ihe dị ndụ",
+      "Nanị ihe na-adịghị ndụ",
+      "Ihe dị ndụ na ihe na-adịghị ndụ na-emekọrịta",
+      "Ụdị otu anụmanụ",
+    ],
+    correctAnswer: "Living and non-living things interacting",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Consumer",
+          pattern: "Only living organisms in an area",
           feedback:
-            "Consumers (Onye Iri Nri) eat other organisms. Organisms that make their own food via photosynthesis are producers (Onye Emepụta Nri).",
+            "That's a community. Ecosystems include both living and non-living components.",
         },
       ],
       defaultFeedback:
-        "Producers (Onye Emepụta Nri) make their own food using photosynthesis. They form the base of every food chain.",
+        "An ecosystem includes organisms and their physical environment interacting together.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-2",
+    type: QuestionType.MCQ,
+    questionText: "What is a producer?",
+    questionTextIgbo: "Gịnị bụ producer?",
+    options: [
+      "An organism that eats others",
+      "An organism that makes its own food",
+      "An organism that decomposes waste",
+      "An organism that hunts prey",
+    ],
+    optionsIgbo: [
+      "Ihe na-eri ndị ọzọ",
+      "Ihe na-emepụta nri ya",
+      "Ihe na-emebi ihe nwụrụ",
+      "Ihe na-achụ anụ",
+    ],
+    correctAnswer: "An organism that makes its own food",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "An organism that eats others",
+          feedback:
+            "That's a consumer. Producers make their own food via photosynthesis.",
+        },
+      ],
+      defaultFeedback: "Producers like plants make food using sunlight.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-e-3",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Only about 10% of energy is passed from one trophic level to the next.",
+    questionText: "Energy decreases at each trophic level.",
+    questionTextIgbo: "Ike na-ebelata n’ọkwa trophic ọ bụla?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True - about 90% of energy is lost as heat, through respiration, and in waste. Only ~10% transfers to the next level.",
+          feedback: "Wrong. Energy is lost at each level mainly as heat.",
         },
       ],
       defaultFeedback:
-        "Correct! The 10% rule explains why food chains rarely exceed 4–5 levels - too little energy remains at higher levels.",
+        "Only a small percentage of energy transfers to the next level.",
     },
+    difficulty: 0.5,
   },
-  {
-    id: "q-e-3",
-    type: QuestionType.MCQ,
-    questionText: "What is the role of decomposers in an ecosystem?",
-    options: [
-      "Hunt prey",
-      "Produce food from sunlight",
-      "Break down dead organisms and return nutrients",
-      "Compete with plants for light",
-    ],
-    correctAnswer: "Break down dead organisms and return nutrients",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Hunt prey",
-          feedback:
-            "Hunting prey is the role of predators (Anụmanụ Ọchụ). Decomposers (Onye Emebi Ihe Ọdịdị) break down dead matter.",
-        },
-      ],
-      defaultFeedback:
-        "Decomposers (Onye Emebi Ihe Ọdịdị) - bacteria and fungi - recycle nutrients by breaking down dead organisms and returning them to the soil.",
-    },
-  },
+
   {
     id: "q-e-4",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What term describes all populations of different species living together in one area?",
+    questionText: "What do we call organisms that break down dead matter?",
+    questionTextIgbo: "Gịnị ka a na-akpọ ihe na-emebi ihe nwụrụ?",
     options: null,
-    correctAnswer: "community",
+    optionsIgbo: null,
+    correctAnswer: "decomposers",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "ecosystem",
+          pattern: "scavengers",
           feedback:
-            "An ecosystem (Ọdịnala Ndụ) includes the community AND the non-living environment. The living part alone is a community.",
+            "Scavengers eat dead animals. Decomposers chemically break them down.",
         },
       ],
       defaultFeedback:
-        "A community is all populations of different species living and interacting in the same area.",
+        "Decomposers recycle nutrients by breaking down dead organisms.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-5",
     type: QuestionType.MCQ,
-    questionText:
-      "In the food chain Grass → Rabbit → Fox → Eagle, what is the rabbit?",
-    options: [
-      "Producer",
-      "Primary consumer",
-      "Secondary consumer",
-      "Decomposer",
-    ],
-    correctAnswer: "Primary consumer",
+    questionText: "Which is a primary consumer?",
+    questionTextIgbo: "Kedu bụ primary consumer?",
+    options: ["Lion", "Grass", "Rabbit", "Fungus"],
+    optionsIgbo: ["Lion", "Ahịhịa", "Ọkụkọ ọhịa", "Fungus"],
+    correctAnswer: "Rabbit",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Producer",
+          pattern: "Lion",
           feedback:
-            "The grass is the producer. The rabbit eats the producer, making it the primary consumer.",
-        },
-        {
-          pattern: "Secondary consumer",
-          feedback:
-            "The fox is the secondary consumer. The rabbit eats the producer (grass) so it is the primary consumer.",
+            "Lion is a higher-level consumer. Primary consumers eat producers.",
         },
       ],
       defaultFeedback:
-        "The rabbit is the primary consumer - it eats the producer (grass). The fox is secondary consumer and eagle is tertiary.",
+        "Primary consumers feed directly on producers like plants.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-6",
     type: QuestionType.TRUE_FALSE,
-    questionText: "A food web is more realistic than a single food chain.",
+    questionText: "A food web is more complex than a food chain.",
+    questionTextIgbo: "Food web karịrị food chain mgbagwoju anya?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. A food web (Usoro Nri Ndụ) shows multiple overlapping chains, reflecting the real diversity of feeding relationships.",
+          feedback: "Food webs include multiple interconnected food chains.",
         },
       ],
-      defaultFeedback:
-        "Correct! A food web shows multiple interconnected food chains. Most organisms eat several different things.",
+      defaultFeedback: "Food webs better represent real feeding relationships.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-7",
     type: QuestionType.MCQ,
-    questionText:
-      "Which process removes CO₂ from the atmosphere in the carbon cycle?",
+    questionText: "Which process removes carbon dioxide from the atmosphere?",
+    questionTextIgbo: "Kedu usoro na-ewe carbon dioxide n’ime ikuku?",
     options: ["Respiration", "Combustion", "Photosynthesis", "Decomposition"],
+    optionsIgbo: ["Respiration", "Ịkụ ọkụ", "Fotosinthesis", "Mmebi"],
     correctAnswer: "Photosynthesis",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Respiration",
-          feedback:
-            "Respiration RELEASES CO₂. Photosynthesis (Ọrụ Anyanwụ) removes CO₂ from the atmosphere.",
+          feedback: "Respiration releases CO₂, not removes it.",
         },
       ],
       defaultFeedback:
-        "Photosynthesis (Ọrụ Anyanwụ) removes CO₂ from the atmosphere, converting it into glucose. This is a crucial part of the carbon cycle.",
+        "Photosynthesis removes CO₂ and converts it into glucose.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-8",
     type: QuestionType.MCQ,
-    questionText:
-      "Which bacteria convert atmospheric nitrogen into compounds plants can absorb?",
-    options: [
-      "Decomposing bacteria",
-      "Nitrifying bacteria",
-      "Nitrogen-fixing bacteria",
-      "Denitrifying bacteria",
-    ],
+    questionText: "Which organisms fix nitrogen from the atmosphere?",
+    questionTextIgbo: "Kedu ihe na-eme nitrogen fixation?",
+    options: ["Plants", "Animals", "Nitrogen-fixing bacteria", "Fungi"],
+    optionsIgbo: ["Osisi", "Anụmanụ", "Bacteria", "Fungi"],
     correctAnswer: "Nitrogen-fixing bacteria",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Denitrifying bacteria",
+          pattern: "Plants",
           feedback:
-            "Denitrifying bacteria do the OPPOSITE - they convert nitrates back to N₂. Nitrogen-fixing bacteria convert N₂ into usable compounds.",
+            "Plants rely on bacteria to convert nitrogen into usable forms.",
         },
       ],
       defaultFeedback:
-        "Nitrogen-fixing bacteria convert atmospheric N₂ into ammonia or nitrates in the soil, which plant roots can absorb.",
+        "Nitrogen-fixing bacteria convert N₂ into usable compounds.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-9",
     type: QuestionType.TRUE_FALSE,
     questionText: "Deforestation increases biodiversity.",
+    questionTextIgbo: "Ịkpụ osisi na-abawanye biodiversity?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "True",
-          feedback:
-            "Deforestation actually REDUCES biodiversity (Ọtụtụ Ụdị Ndụ). Forests contain the richest diversity on Earth. Clearing them destroys habitats.",
+          feedback: "Deforestation destroys habitats and reduces biodiversity.",
         },
       ],
-      defaultFeedback:
-        "Deforestation reduces biodiversity (Ọtụtụ Ụdị Ndụ). Forest habitats (Ebe Obibi Ihe Ndụ) support enormous numbers of species.",
+      defaultFeedback: "Biodiversity decreases when habitats are destroyed.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-10",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What term describes the specific place where an organism lives?",
+    questionText: "What is the place where an organism lives called?",
+    questionTextIgbo: "Kedu ebe ihe dị ndụ bi ka a na-akpọ?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "habitat",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "ecosystem",
           feedback:
-            "An ecosystem (Ọdịnala Ndụ) is the entire system. A habitat (Ebe Obibi Ihe Ndụ) is the specific place where one organism lives.",
+            "Ecosystem is broader. Habitat is the specific living place.",
         },
       ],
-      defaultFeedback:
-        "A habitat (Ebe Obibi Ihe Ndụ) is the specific environment where an organism naturally lives, e.g. a rainforest or coral reef.",
+      defaultFeedback: "A habitat is the natural home of an organism.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-11",
     type: QuestionType.MCQ,
-    questionText:
-      "What term describes all the individuals of one species in an area?",
-    options: ["Community", "Ecosystem", "Population", "Habitat"],
-    correctAnswer: "Population",
+    questionText: "What is a population?",
+    questionTextIgbo: "Gịnị bụ population?",
+    options: [
+      "Different species together",
+      "One species in an area",
+      "All ecosystems combined",
+      "Only plants",
+    ],
+    optionsIgbo: [
+      "Ụdị dị iche iche",
+      "Ụdị otu n’otu ebe",
+      "Ecosystem niile",
+      "Nanị osisi",
+    ],
+    correctAnswer: "One species in an area",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Community",
-          feedback:
-            "A community includes ALL species in an area. A population is all individuals of ONE species in that area.",
+          pattern: "Different species together",
+          feedback: "That describes a community, not a population.",
         },
       ],
       defaultFeedback:
-        "A population is all individuals of a single species living in a defined area - e.g. all the lions in the Serengeti.",
+        "A population is all individuals of one species in an area.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-12",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Producers are at the base of every food chain.",
+    questionText: "Producers form the base of food chains.",
+    questionTextIgbo: "Producers bụ isi food chain?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Producers (Onye Emepụta Nri) - plants and algae - capture energy from sunlight and form the foundation of all food chains.",
+          feedback: "Without producers, no energy enters the system.",
         },
       ],
-      defaultFeedback:
-        "Correct! Producers (Onye Emepụta Nri) capture solar energy through photosynthesis, making them the energy source for all consumers.",
+      defaultFeedback: "Producers capture energy and support all other levels.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-13",
     type: QuestionType.MCQ,
-    questionText:
-      "Which of the following is a biotic (living) factor in an ecosystem?",
-    options: ["Temperature", "Rainfall", "Predators", "Soil type"],
-    correctAnswer: "Predators",
+    questionText: "Which is a biotic factor?",
+    questionTextIgbo: "Kedu bụ biotic factor?",
+    options: ["Temperature", "Rainfall", "Predator", "Soil"],
+    optionsIgbo: ["Okpomọkụ", "Mmiri ozuzo", "Anụ ọhịa", "Ala"],
+    correctAnswer: "Predator",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Temperature",
-          feedback:
-            "Temperature is an abiotic (non-living) factor. Predators (Anụmanụ Ọchụ) are biotic - they are living organisms that affect other organisms.",
+          feedback: "Temperature is abiotic, not living.",
         },
       ],
-      defaultFeedback:
-        "Predators (Anụmanụ Ọchụ) are a biotic factor - they directly affect the populations of prey species in the ecosystem (Ọdịnala Ndụ).",
+      defaultFeedback: "Biotic factors are living components of ecosystems.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-14",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What is the name for organisms that eat both plants and animals?",
+    questionText: "What do we call animals that eat both plants and animals?",
+    questionTextIgbo: "Gịnị ka a na-akpọ anụmanụ na-eri osisi na anụmanụ?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "omnivores",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "herbivores",
-          feedback:
-            "Herbivores eat only plants. Animals that eat both plants and animals are omnivores.",
-        },
-        {
           pattern: "carnivores",
-          feedback:
-            "Carnivores eat only animals. Animals that eat both plants and animals are omnivores.",
+          feedback: "Carnivores eat only animals.",
         },
       ],
-      defaultFeedback:
-        "Omnivores eat both plants and animals - e.g. humans, bears, and pigs. They can occupy multiple levels in a food web (Usoro Nri Ndụ).",
+      defaultFeedback: "Omnivores eat both plants and animals.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-15",
     type: QuestionType.TRUE_FALSE,
-    questionText: "A pyramid of biomass always has a wider base than top.",
+    questionText: "Biomass decreases at higher trophic levels.",
+    questionTextIgbo: "Biomass na-ebelata ka trophic level na-arị elu?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True in most cases. The biomass decreases at each trophic level because energy is lost, so there is always less total mass higher up the chain.",
+          feedback: "Energy loss leads to reduced biomass at higher levels.",
         },
       ],
-      defaultFeedback:
-        "A pyramid of biomass shows decreasing total mass at each higher trophic level, always producing a pyramid shape widest at the base (producers).",
+      defaultFeedback: "Less energy means less biomass at higher levels.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-16",
     type: QuestionType.MCQ,
-    questionText:
-      "What is the main source of energy for almost all ecosystems?",
-    options: ["Wind", "The moon", "The sun", "Geothermal heat"],
-    correctAnswer: "The sun",
+    questionText: "What is the main source of energy in ecosystems?",
+    questionTextIgbo: "Kedu bụ isi ike na ecosystem?",
+    options: ["Wind", "Sun", "Water", "Soil"],
+    optionsIgbo: ["Ifufe", "Anyanwụ", "Mmiri", "Ala"],
+    correctAnswer: "Sun",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Wind",
-          feedback:
-            "Wind is a form of energy, but the PRIMARY energy input to most ecosystems (Ọdịnala Ndụ) is sunlight, captured by producers through photosynthesis.",
+          feedback: "Wind is secondary. The sun drives almost all ecosystems.",
         },
       ],
-      defaultFeedback:
-        "The sun is the ultimate energy source for almost all ecosystems (Ọdịnala Ndụ). Producers (Onye Emepụta Nri) capture solar energy through photosynthesis.",
+      defaultFeedback: "The sun provides energy for photosynthesis.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-17",
     type: QuestionType.MCQ,
-    questionText:
-      "What type of relationship is it when both species benefit from each other?",
-    options: ["Predation", "Parasitism", "Mutualism", "Competition"],
+    questionText: "What type of relationship benefits both organisms?",
+    questionTextIgbo: "Kedu mmekọrịta na-enyere ha abụọ aka?",
+    options: ["Parasitism", "Mutualism", "Predation", "Competition"],
+    optionsIgbo: ["Parasitism", "Mutualism", "Ịchụ anụ", "Asọmpi"],
     correctAnswer: "Mutualism",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Parasitism",
-          feedback:
-            "In parasitism, one organism benefits and the other is harmed. When BOTH species benefit, it is mutualism - e.g. bees and flowers.",
+          feedback: "Parasitism benefits one and harms the other.",
         },
       ],
-      defaultFeedback:
-        "Mutualism is a relationship where both species benefit - e.g. bees get nectar from flowers, and flowers get pollinated by bees.",
+      defaultFeedback: "Mutualism benefits both organisms involved.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-18",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Overfishing can disrupt marine food webs.",
+    questionText: "Overfishing can disrupt ecosystems.",
+    questionTextIgbo: "Ịkụ azụ nke ukwuu nwere ike imebi ecosystem?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Removing large numbers of a species from a food web (Usoro Nri Ndụ) cascades through the ecosystem - prey populations explode and predators starve.",
+          feedback: "Removing species disrupts food webs.",
         },
       ],
-      defaultFeedback:
-        "Correct! Overfishing removes key species from marine food webs. This creates cascade effects throughout the entire ecosystem (Ọdịnala Ndụ).",
+      defaultFeedback: "Overfishing affects balance in marine ecosystems.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-19",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What term describes the variety of species in an ecosystem?",
+    questionTextIgbo: "Gịnị ka a na-akpọ ọtụtụ ụdị ndụ?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "biodiversity",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "habitat",
-          feedback:
-            "Habitat (Ebe Obibi Ihe Ndụ) is where organisms live. The variety of species present is called biodiversity (Ọtụtụ Ụdị Ndụ).",
+          feedback: "Habitat is location, not variety.",
         },
       ],
-      defaultFeedback:
-        "Biodiversity (Ọtụtụ Ụdị Ndụ) refers to the variety of different species in an ecosystem. High biodiversity usually indicates a healthy ecosystem.",
+      defaultFeedback: "Biodiversity refers to the variety of species.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-20",
     type: QuestionType.MCQ,
-    questionText:
-      "What happens to the population of rabbits if all foxes are removed from an ecosystem?",
-    options: [
-      "Rabbit population decreases",
-      "Rabbit population stays the same",
-      "Rabbit population increases rapidly",
-      "Rabbits become extinct",
-    ],
-    correctAnswer: "Rabbit population increases rapidly",
+    questionText: "If predators are removed, what happens to prey?",
+    questionTextIgbo: "Ọ bụrụ na predators apụ, gịnị na-eme prey?",
+    options: ["Decrease", "Stay same", "Increase rapidly", "Disappear"],
+    optionsIgbo: ["Belata", "Nọgide otu", "Bawanye ngwa ngwa", "Laa n’iyi"],
+    correctAnswer: "Increase rapidly",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Rabbit population decreases",
-          feedback:
-            "Without predators (Anụmanụ Ọchụ), prey populations typically increase rapidly due to reduced predation pressure.",
+          pattern: "Decrease",
+          feedback: "No predators means less control, so prey increases.",
         },
       ],
-      defaultFeedback:
-        "Without foxes (predators/Anụmanụ Ọchụ), rabbits (prey) have no natural population control - their numbers increase rapidly, which can then lead to overgrazing.",
+      defaultFeedback: "Without predators, prey populations grow rapidly.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-21",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "In the carbon cycle, burning fossil fuels releases CO₂ into the atmosphere.",
+    questionText: "Burning fossil fuels releases carbon dioxide.",
+    questionTextIgbo: "Ịkụ fossil fuels na-ewepụta carbon dioxide?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Combustion of fossil fuels releases the carbon stored millions of years ago as CO₂, contributing to the greenhouse effect.",
+          feedback: "Combustion releases CO₂ into the atmosphere.",
         },
       ],
-      defaultFeedback:
-        "Correct! Burning fossil fuels (combustion) releases stored carbon as CO₂. This is a key driver of rising atmospheric CO₂ and climate change.",
+      defaultFeedback: "Burning fuels increases atmospheric CO₂.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-e-22",
     type: QuestionType.MCQ,
-    questionText:
-      "Which of the following correctly describes an abiotic factor?",
-    options: [
-      "A rabbit eating grass",
-      "Fungi decomposing a log",
-      "Rainfall amount",
-      "A lion hunting zebra",
-    ],
-    correctAnswer: "Rainfall amount",
+    questionText: "Which is an abiotic factor?",
+    questionTextIgbo: "Kedu bụ abiotic factor?",
+    options: ["Plant", "Animal", "Rainfall", "Fungi"],
+    optionsIgbo: ["Osisi", "Anụmanụ", "Mmiri ozuzo", "Fungi"],
+    correctAnswer: "Rainfall",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Fungi decomposing a log",
-          feedback:
-            "Fungi are living organisms - they are biotic factors. Rainfall is a non-living (abiotic) environmental factor.",
+          pattern: "Plant",
+          feedback: "Plants are living (biotic), not abiotic.",
         },
       ],
-      defaultFeedback:
-        "Abiotic factors are non-living components of an ecosystem (Ọdịnala Ndụ) - e.g. rainfall, temperature, light intensity, and soil pH.",
+      defaultFeedback: "Abiotic factors are non-living environmental factors.",
     },
+    difficulty: 0.5,
   },
 ];
 
@@ -2752,410 +3460,468 @@ const Q_REPRODUCTION = [
   {
     id: "q-r-1",
     type: QuestionType.MCQ,
-    questionText: "Where does fertilisation normally take place?",
+    questionText: "Where does fertilisation occur in humans?",
+    questionTextIgbo: "Ebee ka fertilisation na-eme n’ime mmadụ?",
     options: ["Uterus", "Ovary", "Fallopian tube", "Vagina"],
+    optionsIgbo: ["Ụlọ nwa", "Ovary", "Fallopian tube", "Vagina"],
     correctAnswer: "Fallopian tube",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Uterus",
           feedback:
-            "The uterus (Ụlọ Nwa) is where the fertilised egg implants and develops. Fertilisation (Njikọ Mkpụrụ Ndụ Nna na Nne) occurs in the fallopian tube.",
+            "Wrong. Implantation happens in the uterus. Fertilisation happens in the fallopian tube.",
         },
       ],
       defaultFeedback:
-        "Fertilisation (Njikọ Mkpụrụ Ndụ Nna na Nne) occurs in the fallopian tube. The fertilised egg then travels to the uterus (Ụlọ Nwa) for implantation.",
+        "Fertilisation occurs in the fallopian tube before the embryo moves to the uterus.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-2",
     type: QuestionType.TRUE_FALSE,
     questionText:
-      "The placenta allows the mother's and foetus's blood to mix directly.",
+      "The placenta allows direct mixing of mother’s and foetus’s blood.",
+    questionTextIgbo: "Placenta na-eme ka ọbara nne na nwa jikọọ ọnụ?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "True",
           feedback:
-            "The placenta (Ụgbọ Nri Nwa) keeps the two blood systems separate. Nutrients and gases are exchanged across the membrane, but blood never mixes.",
+            "Incorrect. The blood does NOT mix. Exchange happens across a membrane.",
         },
       ],
       defaultFeedback:
-        "They do NOT mix. The placenta (Ụgbọ Nri Nwa) allows exchange of nutrients and gases without the blood supplies ever meeting.",
+        "The placenta allows exchange of nutrients and gases without mixing blood.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-3",
     type: QuestionType.MCQ,
     questionText:
-      "On which day of the 28-day cycle does ovulation typically occur?",
+      "On which day of a 28-day cycle does ovulation typically occur?",
+    questionTextIgbo: "Kedu ụbọchị ovulation na-eme n’ime cycle 28 ụbọchị?",
     options: ["Day 1", "Day 7", "Day 14", "Day 28"],
+    optionsIgbo: ["Ụbọchị 1", "Ụbọchị 7", "Ụbọchị 14", "Ụbọchị 28"],
     correctAnswer: "Day 14",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Day 1",
-          feedback:
-            "Day 1 is the start of menstruation. Ovulation (Ịtọpụ Ákwá) occurs around Day 14 of a typical 28-day cycle.",
+          feedback: "Day 1 is menstruation. Ovulation is around day 14.",
         },
       ],
       defaultFeedback:
-        "Ovulation (Ịtọpụ Ákwá) typically occurs around Day 14, triggered by a surge in LH from the pituitary gland.",
+        "Ovulation usually occurs around day 14 in a 28-day cycle.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-4",
     type: QuestionType.SHORT_ANSWER,
     questionText:
-      "What is the term for the fertilised egg attaching to the uterus wall?",
+      "What is the process of the embryo attaching to the uterus called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ mgbe embryo na-ejikọta na uterus?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "implantation",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "fertilisation",
           feedback:
-            "Fertilisation (Njikọ Mkpụrụ Ndụ Nna na Nne) is the joining of sperm and egg. Implantation is when the embryo embeds into the uterus (Ụlọ Nwa) wall.",
+            "Fertilisation is sperm + egg. Implantation is attachment to uterus.",
         },
       ],
       defaultFeedback:
-        "Implantation is when the embryo (Nwa Ọhụrụ N'ime Ụlọ Nwa) embeds into the uterus wall, approximately 6–10 days after fertilisation.",
+        "Implantation is when the embryo attaches to the uterus lining.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-5",
     type: QuestionType.MCQ,
     questionText: "Which hormone triggers ovulation?",
+    questionTextIgbo: "Kedu hormone na-ebute ovulation?",
     options: ["Oestrogen", "Progesterone", "FSH", "LH"],
+    optionsIgbo: ["Oestrogen", "Progesterone", "FSH", "LH"],
     correctAnswer: "LH",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "FSH",
-          feedback:
-            "FSH stimulates egg development. The hormone that directly triggers the egg's release (Ịtọpụ Ákwá) is LH.",
-        },
-        {
-          pattern: "Oestrogen",
-          feedback:
-            "Oestrogen triggers the LH surge, but it is LH (luteinising hormone) that directly causes ovulation (Ịtọpụ Ákwá).",
+          feedback: "FSH develops the follicle. LH triggers ovulation.",
         },
       ],
-      defaultFeedback:
-        "LH (luteinising hormone) triggers ovulation (Ịtọpụ Ákwá). Its sudden surge around Day 14 causes the follicle to rupture and release the egg.",
+      defaultFeedback: "LH surge causes the release of the egg from the ovary.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-6",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Women produce new egg cells throughout their lives as men produce new sperm.",
+    questionText: "Females produce new eggs continuously throughout life.",
+    questionTextIgbo: "Ụmụ nwanyị na-emepụta ákwá ọhụrụ ndụ ha niile?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "True",
-          feedback:
-            "False. Women are born with all their eggs (ákwá) already present. Men continuously produce new sperm (Mkpụrụ Ndụ Nna) from puberty.",
+          feedback: "Wrong. Females are born with all their eggs.",
         },
       ],
-      defaultFeedback:
-        "Women are born with all their eggs (ákwá). Men continuously produce new sperm (Mkpụrụ Ndụ Nna) from puberty throughout their lives.",
+      defaultFeedback: "Females are born with a fixed number of eggs.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-7",
     type: QuestionType.MCQ,
     questionText: "What is the function of the testes?",
+    questionTextIgbo: "Gịnị bụ ọrụ testes?",
     options: [
       "Produce eggs",
       "Produce sperm and testosterone",
       "Store urine",
       "Produce oestrogen",
     ],
+    optionsIgbo: [
+      "I mepụta ákwá",
+      "I mepụta sperm na testosterone",
+      "I chekwaa mmamịrị",
+      "I mepụta oestrogen",
+    ],
     correctAnswer: "Produce sperm and testosterone",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Produce eggs",
-          feedback:
-            "Eggs (ákwá) are produced by the ovaries. The testes produce sperm (Mkpụrụ Ndụ Nna) and testosterone.",
+          feedback: "Eggs are produced by ovaries, not testes.",
         },
       ],
-      defaultFeedback:
-        "The testes produce sperm (Mkpụrụ Ndụ Nna) through spermatogenesis and the hormone testosterone.",
+      defaultFeedback: "Testes produce sperm and the hormone testosterone.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-8",
     type: QuestionType.SHORT_ANSWER,
-    questionText: "What structure nourishes the foetus during pregnancy?",
+    questionText: "What structure provides nutrients to the developing foetus?",
+    questionTextIgbo: "Kedu akụkụ na-enye nwa nri n’ime ime?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "placenta",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "uterus",
-          feedback:
-            "The uterus (Ụlọ Nwa) houses the foetus. The specific structure transferring nutrients and oxygen between mother and foetus is the placenta (Ụgbọ Nri Nwa).",
+          feedback: "Uterus houses the foetus. Placenta provides nutrients.",
         },
       ],
       defaultFeedback:
-        "The placenta (Ụgbọ Nri Nwa) transfers oxygen and nutrients from mother to foetus and removes waste in the other direction.",
+        "The placenta transfers nutrients and oxygen to the foetus.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-9",
     type: QuestionType.MCQ,
-    questionText: "What happens to progesterone if an egg is NOT fertilised?",
+    questionText:
+      "What happens to progesterone if fertilisation does not occur?",
+    questionTextIgbo: "Gịnị na-eme progesterone ma fertilisation emeghị?",
     options: [
-      "It rises sharply",
-      "It remains constant",
-      "It falls, triggering menstruation",
-      "It converts to oestrogen",
+      "Increases",
+      "Remains constant",
+      "Decreases",
+      "Changes to oestrogen",
     ],
-    correctAnswer: "It falls, triggering menstruation",
+    optionsIgbo: [
+      "Na-abawanye",
+      "Na-adị otu",
+      "Na-ebelata",
+      "Na-agbanwe gaa na oestrogen",
+    ],
+    correctAnswer: "Decreases",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "It rises sharply",
-          feedback:
-            "Progesterone rises only if implantation occurs. Without fertilisation, progesterone falls, causing the uterus lining to shed.",
+          pattern: "Increases",
+          feedback: "Progesterone rises only if pregnancy occurs.",
         },
       ],
-      defaultFeedback:
-        "Without fertilisation, progesterone falls sharply. This causes the uterus (Ụlọ Nwa) lining to shed - menstruation (Oge Mmiri Ọbara Nwaanyị), Day 1 of the new cycle.",
+      defaultFeedback: "Progesterone falls, leading to menstruation.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-10",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Human gestation lasts approximately 40 weeks.",
+    questionText: "Human pregnancy lasts about 40 weeks.",
+    questionTextIgbo: "Ime nwa mmadụ na-ewe ihe dị ka izu 40?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Human pregnancy lasts about 40 weeks (approximately 9 months).",
+          feedback: "Average gestation is about 40 weeks.",
         },
       ],
-      defaultFeedback:
-        "Correct! Human gestation is approximately 40 weeks from the last menstrual period (Oge Mmiri Ọbara Nwaanyị) to birth.",
+      defaultFeedback: "Human gestation lasts approximately 40 weeks.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-11",
     type: QuestionType.MCQ,
     questionText: "Which structure connects the foetus to the placenta?",
-    options: ["Fallopian tube", "Cervix", "Umbilical cord", "Vagina"],
+    questionTextIgbo: "Kedu ihe na-ejikọta nwa na placenta?",
+    options: ["Cervix", "Umbilical cord", "Vagina", "Ovary"],
+    optionsIgbo: ["Cervix", "Umbilical cord", "Vagina", "Ovary"],
     correctAnswer: "Umbilical cord",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Cervix",
           feedback:
-            "The cervix is the lower part of the uterus (Ụlọ Nwa). The umbilical cord connects the foetus to the placenta (Ụgbọ Nri Nwa).",
+            "Cervix is the opening of the uterus, not a connection to placenta.",
         },
       ],
       defaultFeedback:
-        "The umbilical cord connects the foetus to the placenta (Ụgbọ Nri Nwa), carrying blood vessels for nutrient and gas exchange.",
+        "The umbilical cord carries nutrients and oxygen to the foetus.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "FSH is produced by the pituitary gland.",
+    questionTextIgbo: "FSH sitere na pituitary gland?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. FSH (follicle-stimulating hormone) is produced by the pituitary gland in the brain. It stimulates follicle and egg development in the ovaries.",
+          feedback: "FSH is secreted by the pituitary gland.",
         },
       ],
       defaultFeedback:
-        "Correct! FSH is produced by the pituitary gland and travels in the blood to the ovaries, stimulating egg development.",
+        "FSH is produced by the pituitary gland to stimulate egg development.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-13",
     type: QuestionType.MCQ,
-    questionText: "What is the purpose of the scrotum?",
+    questionText: "What is the role of the scrotum?",
+    questionTextIgbo: "Gịnị bụ ọrụ scrotum?",
     options: [
+      "Produce sperm",
+      "Keep testes cool",
       "Store urine",
-      "Keep testes slightly below body temperature",
-      "Produce testosterone",
-      "Produce sperm directly",
+      "Produce hormones",
     ],
-    correctAnswer: "Keep testes slightly below body temperature",
+    optionsIgbo: [
+      "I mepụta sperm",
+      "I mee ka testes dị jụụ",
+      "I chekwaa mmamịrị",
+      "I mepụta hormones",
+    ],
+    correctAnswer: "Keep testes cool",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Produce testosterone",
-          feedback:
-            "Testosterone is produced by cells within the testes themselves. The scrotum is the external pouch that maintains testes at slightly below body temperature for optimal sperm production.",
+          pattern: "Produce sperm",
+          feedback: "Sperm is produced in the testes, not the scrotum.",
         },
       ],
       defaultFeedback:
-        "The scrotum keeps the testes at about 2–3°C below body temperature. This lower temperature is necessary for optimal sperm (Mkpụrụ Ndụ Nna) production.",
+        "The scrotum keeps testes slightly below body temperature.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-14",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What hormone maintains the uterus lining during the second half of the menstrual cycle?",
+    questionText: "Which hormone maintains the uterus lining after ovulation?",
+    questionTextIgbo:
+      "Kedu hormone na-echekwa uterus lining mgbe ovulation gasịrị?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "progesterone",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "oestrogen",
           feedback:
-            "Oestrogen rebuilds the uterus lining in the FIRST half of the cycle. Progesterone maintains it in the second half (luteal phase).",
+            "Oestrogen rebuilds lining earlier. Progesterone maintains it.",
         },
       ],
       defaultFeedback:
-        "Progesterone (produced by the corpus luteum) maintains the uterus (Ụlọ Nwa) lining after ovulation. If no fertilisation occurs, progesterone falls and menstruation begins.",
+        "Progesterone maintains the uterus lining after ovulation.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-15",
     type: QuestionType.MCQ,
     questionText: "What is a zygote?",
-    options: [
-      "An unfertilised egg",
-      "A mature sperm",
-      "A fertilised egg",
-      "An implanted embryo",
+    questionTextIgbo: "Gịnị bụ zygote?",
+    options: ["Unfertilised egg", "Fertilised egg", "Embryo", "Foetus"],
+    optionsIgbo: [
+      "Ákwá na-adịghị fertilised",
+      "Ákwá fertilised",
+      "Embryo",
+      "Foetus",
     ],
-    correctAnswer: "A fertilised egg",
+    correctAnswer: "Fertilised egg",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "An unfertilised egg",
-          feedback:
-            "An unfertilised egg is just an ovum (Ákwá Nwaanyị). Once fertilised by sperm, it becomes a zygote.",
-        },
-        {
-          pattern: "An implanted embryo",
-          feedback:
-            "An embryo forms after the zygote begins dividing. A zygote is specifically the cell formed immediately at fertilisation (Njikọ Mkpụrụ Ndụ Nna na Nne).",
+          pattern: "Embryo",
+          feedback: "Embryo develops after zygote starts dividing.",
         },
       ],
       defaultFeedback:
-        "A zygote is the single cell formed when a sperm (Mkpụrụ Ndụ Nna) fertilises an egg (Ákwá Nwaanyị). It contains DNA from both parents and will develop into an embryo.",
+        "A zygote is the cell formed immediately after fertilisation.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-r-16",
     type: QuestionType.TRUE_FALSE,
-    questionText: "The menstrual cycle is controlled entirely by one hormone.",
+    questionText: "The menstrual cycle is controlled by multiple hormones.",
+    questionTextIgbo:
+      "Menstrual cycle na-achịkwa site na hormones dị iche iche?",
     options: ["True", "False"],
-    correctAnswer: "False",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "True",
-          feedback:
-            "The menstrual cycle (Oge Mmiri Ọbara Nwaanyị) is controlled by at least four hormones working together: FSH, LH, oestrogen, and progesterone.",
-        },
-      ],
-      defaultFeedback:
-        "The menstrual cycle (Oge Mmiri Ọbara Nwaanyị) is regulated by four hormones: FSH and LH (from the pituitary) and oestrogen and progesterone (from the ovaries).",
-    },
-  },
-  {
-    id: "q-r-17",
-    type: QuestionType.MCQ,
-    questionText: "Where are sperm stored after production until ejaculation?",
-    options: ["Urethra", "Seminal vesicle", "Epididymis", "Prostate gland"],
-    correctAnswer: "Epididymis",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Seminal vesicle",
-          feedback:
-            "Seminal vesicles produce fluid that nourishes sperm. Sperm (Mkpụrụ Ndụ Nna) are stored and mature in the epididymis.",
-        },
-      ],
-      defaultFeedback:
-        "Sperm (Mkpụrụ Ndụ Nna) mature and are stored in the epididymis - a coiled tube attached to each testis - until ejaculation.",
-    },
-  },
-  {
-    id: "q-r-18",
-    type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What is the name for the stage of pregnancy from fertilisation to 8 weeks?",
-    options: null,
-    correctAnswer: "embryo",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "foetus",
-          feedback:
-            "A foetus is the term used from 8 weeks onwards. In the first 8 weeks after fertilisation (Njikọ Mkpụrụ Ndụ Nna na Nne), the developing organism is called an embryo (Nwa Ọhụrụ N'ime Ụlọ Nwa).",
-        },
-      ],
-      defaultFeedback:
-        "The developing organism is called an embryo (Nwa Ọhụrụ N'ime Ụlọ Nwa) from fertilisation to 8 weeks. After 8 weeks, it is called a foetus.",
-    },
-  },
-  {
-    id: "q-r-19",
-    type: QuestionType.MCQ,
-    questionText:
-      "What does oestrogen stimulate in the first half of the menstrual cycle?",
-    options: [
-      "Ovulation directly",
-      "Breaking down the uterus lining",
-      "Rebuilding the uterus lining",
-      "Sperm production",
-    ],
-    correctAnswer: "Rebuilding the uterus lining",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Ovulation directly",
-          feedback:
-            "Oestrogen triggers the LH surge, which causes ovulation (Ịtọpụ Ákwá). But oestrogen's direct action is rebuilding the uterus (Ụlọ Nwa) lining.",
-        },
-        {
-          pattern: "Breaking down the uterus lining",
-          feedback:
-            "That happens when progesterone falls at the end of the cycle. Oestrogen REBUILDS the uterus (Ụlọ Nwa) lining after menstruation.",
-        },
-      ],
-      defaultFeedback:
-        "Oestrogen rebuilds the uterus (Ụlọ Nwa) lining (endometrium) after menstruation and causes it to thicken in preparation for implantation.",
-    },
-  },
-  {
-    id: "q-r-20",
-    type: QuestionType.TRUE_FALSE,
-    questionText:
-      "The male reproductive system produces both sperm and hormones.",
-    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. The testes produce sperm (Mkpụrụ Ndụ Nna) through spermatogenesis AND testosterone through Leydig cells - both functions occur in the testes.",
+          feedback: "It involves FSH, LH, oestrogen, and progesterone.",
+        },
+      ],
+      defaultFeedback: "Multiple hormones regulate the menstrual cycle.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-r-17",
+    type: QuestionType.MCQ,
+    questionText: "Where are sperm stored after production?",
+    questionTextIgbo: "Ebee ka a na-echekwa sperm?",
+    options: ["Testes", "Epididymis", "Urethra", "Prostate"],
+    optionsIgbo: ["Testes", "Epididymis", "Urethra", "Prostate"],
+    correctAnswer: "Epididymis",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Testes",
+          feedback: "Testes produce sperm. Epididymis stores and matures them.",
+        },
+      ],
+      defaultFeedback: "Sperm are stored and mature in the epididymis.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-r-18",
+    type: QuestionType.SHORT_ANSWER,
+    questionText: "What is the stage from fertilisation to 8 weeks called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ oge site na fertilisation ruo izu 8?",
+    options: null,
+    optionsIgbo: null,
+    correctAnswer: "embryo",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "foetus",
+          feedback: "Foetus is after 8 weeks. Before that, it's embryo.",
+        },
+      ],
+      defaultFeedback: "The early stage is called an embryo.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-r-19",
+    type: QuestionType.MCQ,
+    questionText: "What does oestrogen do in the menstrual cycle?",
+    questionTextIgbo: "Gịnị ka oestrogen na-eme?",
+    options: [
+      "Triggers ovulation directly",
+      "Breaks uterus lining",
+      "Rebuilds uterus lining",
+      "Produces sperm",
+    ],
+    optionsIgbo: [
+      "Na-ebute ovulation ozugbo",
+      "Na-ebibi lining",
+      "Na-ewughachi lining",
+      "Na-emepụta sperm",
+    ],
+    correctAnswer: "Rebuilds uterus lining",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Triggers ovulation directly",
+          feedback: "LH triggers ovulation. Oestrogen prepares lining.",
         },
       ],
       defaultFeedback:
-        "Correct! The testes produce sperm (Mkpụrụ Ndụ Nna) and the hormone testosterone, which is responsible for male secondary sex characteristics.",
+        "Oestrogen rebuilds the uterus lining after menstruation.",
     },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-r-20",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "The male reproductive system produces sperm and hormones.",
+    questionTextIgbo: "Usoro ọmụmụ nwoke na-emepụta sperm na hormones?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Testes produce both sperm and testosterone.",
+        },
+      ],
+      defaultFeedback: "The testes produce sperm and testosterone.",
+    },
+    difficulty: 0.5,
   },
 ];
 
@@ -3165,446 +3931,427 @@ const Q_REPRODUCTION = [
 
 const Q_STATES_OF_MATTER = [
   {
-    id: "q-m-1",
+    id: "q-sm-1",
     type: QuestionType.MCQ,
-    questionText: "Which state of matter has fixed shape and fixed volume?",
-    options: ["Gas", "Liquid", "Solid", "Plasma"],
+    questionText: "Which state of matter has a fixed shape and fixed volume?",
+    questionTextIgbo: "Kedu ọnọdụ ihe nwere udi na olu kwụsie ike?",
+    options: ["Solid", "Liquid", "Gas", "Plasma"],
+    optionsIgbo: ["Sọlid", "Likuid", "Gas", "Plasma"],
     correctAnswer: "Solid",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Liquid",
-          feedback:
-            "A liquid (Mmiri) has fixed volume but takes the shape of its container. Only a solid (Ihe Siri Ike) has both fixed shape and fixed volume.",
+          feedback: "Liquid has fixed volume but no fixed shape.",
         },
       ],
-      defaultFeedback:
-        "A solid (Ihe Siri Ike) has both fixed shape and volume because particles are held in fixed positions.",
+      defaultFeedback: "Solids have both fixed shape and fixed volume.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-m-2",
-    type: QuestionType.MCQ,
-    questionText: "What is the change of state from liquid to gas called?",
-    options: ["Condensation", "Sublimation", "Evaporation", "Melting"],
-    correctAnswer: "Evaporation",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Condensation",
-          feedback:
-            "Condensation (Ịlaghachi Mmiri) is the OPPOSITE - gas to liquid. Liquid to gas is evaporation (Ịfefe Mmiri).",
-        },
-      ],
-      defaultFeedback:
-        "Evaporation (Ịfefe Mmiri) is when a liquid changes to a gas. At boiling point, this happens throughout the liquid.",
-    },
-  },
-  {
-    id: "q-m-3",
+    id: "q-sm-2",
     type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Gas particles are much closer together than liquid particles.",
+    questionText: "Gases have a fixed volume.",
+    questionTextIgbo: "Gas nwere olu kwụsie ike?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "True",
-          feedback:
-            "Gas particles (Ihe Obere Kacha) are much FURTHER apart than liquid particles - gases are about 1000x less dense than liquids.",
+          feedback: "Gas expands to fill any container. No fixed volume.",
         },
       ],
-      defaultFeedback:
-        "Gas particles (Ihe Obere Kacha) are far apart and move randomly at high speed. Liquid particles are much closer and can flow.",
+      defaultFeedback: "Gases have neither fixed shape nor fixed volume.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-m-4",
+    id: "q-sm-3",
+    type: QuestionType.MCQ,
+    questionText:
+      "Which state of matter takes the shape of its container but has fixed volume?",
+    questionTextIgbo:
+      "Kedu ọnọdụ ihe na-ewere udi nke akpa mana nwere otu olu?",
+    options: ["Solid", "Liquid", "Gas", "Plasma"],
+    optionsIgbo: ["Sọlid", "Likuid", "Gas", "Plasma"],
+    correctAnswer: "Liquid",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Gas",
+          feedback: "Gas has no fixed volume. Liquid does.",
+        },
+      ],
+      defaultFeedback: "Liquids flow and take container shape but keep volume.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-sm-4",
     type: QuestionType.SHORT_ANSWER,
     questionText:
-      "At what temperature does pure water boil at standard atmospheric pressure?",
+      "What is the process of a solid changing directly into a gas called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ mgbe sọlid gbanwee ozugbo gaa gas?",
     options: null,
-    correctAnswer: "100",
+    optionsIgbo: null,
+    correctAnswer: "sublimation",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "0",
-          feedback:
-            "0°C is water's melting/freezing point. Water boils at 100°C at standard atmospheric pressure.",
+          pattern: "melting",
+          feedback: "Melting is solid to liquid, not gas.",
         },
       ],
-      defaultFeedback:
-        "Pure water boils at 100°C (212°F) at standard atmospheric pressure. Below this, evaporation (Ịfefe Mmiri) can still occur from the surface.",
+      defaultFeedback: "Sublimation is solid directly to gas.",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-m-5",
-    type: QuestionType.MCQ,
-    questionText: "What happens to particles when a substance is heated?",
-    options: [
-      "They stop moving",
-      "They move slower",
-      "They gain energy and move faster",
-      "They change chemical composition",
-    ],
-    correctAnswer: "They gain energy and move faster",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "They stop moving",
-          feedback:
-            "Particles only stop at absolute zero (−273°C). Heating gives particles (Ihe Obere Kacha) more kinetic energy - they move faster.",
-        },
-      ],
-      defaultFeedback:
-        "Heating gives particles (Ihe Obere Kacha) more kinetic energy - they move faster and further apart, eventually changing state.",
-    },
-  },
-  {
-    id: "q-m-6",
-    type: QuestionType.MCQ,
-    questionText: "Diffusion is the movement of particles from:",
-    options: [
-      "Low to high concentration",
-      "High to low concentration",
-      "Only in liquids",
-      "Only requiring energy",
-    ],
-    correctAnswer: "High to low concentration",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Low to high concentration",
-          feedback:
-            "That describes active transport (requires energy). Diffusion (Ịgbasa Ihe) is passive movement from HIGH to LOW concentration.",
-        },
-      ],
-      defaultFeedback:
-        "Diffusion (Ịgbasa Ihe) is passive movement from areas of HIGH concentration to LOW concentration. No energy is required.",
-    },
-  },
-  {
-    id: "q-m-7",
-    type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Liquids are virtually incompressible under normal conditions.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "Liquids are nearly incompressible because their particles are already closely packed with little space between them.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Liquids are almost incompressible - their closely packed particles leave little room to compress. This makes hydraulic systems possible.",
-    },
-  },
-  {
-    id: "q-m-8",
-    type: QuestionType.MCQ,
-    questionText: "What are the two components of a solution called?",
-    options: [
-      "Solute and solvent",
-      "Element and compound",
-      "Acid and base",
-      "Reactant and product",
-    ],
-    correctAnswer: "Solute and solvent",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Acid and base",
-          feedback:
-            "Acids and bases are categories of chemicals. In a solution the dissolved substance is the solute and the dissolving medium is the solvent.",
-        },
-      ],
-      defaultFeedback:
-        "A solution has a solute (dissolved substance, e.g. salt) and a solvent (dissolving medium, e.g. water).",
-    },
-  },
-  {
-    id: "q-m-9",
+    id: "q-sm-5",
     type: QuestionType.MCQ,
     questionText:
-      "What change of state occurs when a gas cools and becomes a liquid?",
-    options: ["Evaporation", "Melting", "Condensation", "Freezing"],
-    correctAnswer: "Condensation",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Freezing",
-          feedback:
-            "Freezing is liquid to solid. Gas to liquid is condensation (Ịlaghachi Mmiri) - like water droplets forming on a cold glass.",
-        },
-      ],
-      defaultFeedback:
-        "Condensation (Ịlaghachi Mmiri) is when a gas cools and becomes liquid - e.g. water vapour condensing on a cold mirror.",
-    },
-  },
-  {
-    id: "q-m-10",
-    type: QuestionType.TRUE_FALSE,
-    questionText: "Diffusion is faster at higher temperatures.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "True. Higher temperature gives particles (Ihe Obere Kacha) more kinetic energy, so they diffuse (Ịgbasa Ihe) more quickly.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! At higher temperatures, particles (Ihe Obere Kacha) have more energy and move faster, increasing the rate of diffusion (Ịgbasa Ihe).",
-    },
-  },
-  {
-    id: "q-m-11",
-    type: QuestionType.MCQ,
-    questionText: "What happens at the melting point of a substance?",
-    options: [
-      "Liquid becomes gas",
-      "Solid becomes liquid",
-      "Gas becomes solid",
-      "Liquid becomes solid",
-    ],
-    correctAnswer: "Solid becomes liquid",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Liquid becomes gas",
-          feedback:
-            "Liquid becoming gas is the boiling/evaporation point. The melting point (Ịgba Ọkụ Ihe Siri Ike) is when a solid becomes a liquid.",
-        },
-      ],
-      defaultFeedback:
-        "At the melting point (Ịgba Ọkụ Ihe Siri Ike), a solid gains enough energy for particles to break free from their fixed positions and flow as a liquid.",
-    },
-  },
-  {
-    id: "q-m-12",
-    type: QuestionType.TRUE_FALSE,
-    questionText: "Sublimation is when a solid changes directly to a gas.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "True. Sublimation is the direct change from solid to gas without passing through the liquid state - e.g. dry ice (solid CO₂) subliming at room temperature.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Sublimation is solid → gas directly. A familiar example is dry ice (solid CO₂) which sublimates at room temperature.",
-    },
-  },
-  {
-    id: "q-m-13",
-    type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What term describes the maximum amount of solute that dissolves in a solvent at a given temperature?",
-    options: null,
-    correctAnswer: "solubility",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "concentration",
-          feedback:
-            "Concentration describes how much solute is already dissolved. Solubility is the MAXIMUM amount that CAN dissolve at a specific temperature.",
-        },
-      ],
-      defaultFeedback:
-        "Solubility is the maximum amount of solute that can dissolve in a given amount of solvent at a specific temperature. It usually increases with temperature for solids.",
-    },
-  },
-  {
-    id: "q-m-14",
-    type: QuestionType.MCQ,
-    questionText: "In which state do particles have the most kinetic energy?",
-    options: ["Solid", "Liquid", "Gas", "All the same"],
+      "Which state of matter has particles that are far apart and move freely?",
+    questionTextIgbo:
+      "Kedu ọnọdụ ihe nwere mkpụrụ dị anya na na-agagharị n’efu?",
+    options: ["Solid", "Liquid", "Gas", "All"],
+    optionsIgbo: ["Sọlid", "Likuid", "Gas", "Ha niile"],
     correctAnswer: "Gas",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Solid",
-          feedback:
-            "Solid particles have the LEAST kinetic energy - they only vibrate in place. Gas particles (Ihe Obere Kacha) move fastest and have the most energy.",
+          pattern: "Liquid",
+          feedback: "Liquid particles are close but can move past each other.",
         },
       ],
-      defaultFeedback:
-        "Gas particles (Ihe Obere Kacha) have the most kinetic energy - they move randomly at high speed and are far apart.",
+      defaultFeedback: "Gas particles are far apart and move freely.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-m-15",
+    id: "q-sm-6",
     type: QuestionType.TRUE_FALSE,
     questionText:
-      "When a substance changes state, its temperature remains constant.",
+      "Particles in a solid vibrate but do not move from place to place.",
+    questionTextIgbo:
+      "Mkpụrụ dị na sọlid na-ama jijiji mana anaghị agagharị ebe ọzọ?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. During a state change (e.g. melting or boiling), energy is used to break intermolecular bonds rather than raise temperature - so temperature stays constant.",
+          feedback: "They vibrate in fixed positions, not freely moving.",
         },
       ],
-      defaultFeedback:
-        "Correct! During a state change, energy input goes into breaking particle bonds (latent heat), not raising temperature. Temperature stays constant throughout the change.",
+      defaultFeedback: "Solid particles vibrate in fixed positions.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-m-16",
+    id: "q-sm-7",
     type: QuestionType.MCQ,
-    questionText:
-      "What is the name for the energy absorbed during melting or evaporation?",
-    options: [
-      "Specific heat",
-      "Latent heat",
-      "Activation energy",
-      "Thermal energy",
-    ],
-    correctAnswer: "Latent heat",
+    questionText: "What is the process of liquid changing into gas called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ mgbe likuid gbanwee gaa gas?",
+    options: ["Condensation", "Evaporation", "Freezing", "Melting"],
+    optionsIgbo: ["Condensation", "Evaporation", "Freezing", "Melting"],
+    correctAnswer: "Evaporation",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Specific heat",
-          feedback:
-            "Specific heat capacity relates to temperature change during heating. Latent heat is the energy absorbed or released during a change of state at constant temperature.",
+          pattern: "Condensation",
+          feedback: "Condensation is gas to liquid.",
         },
       ],
-      defaultFeedback:
-        "Latent heat is the energy absorbed or released during a change of state - melting (solid→liquid) or evaporation (liquid→gas) - without a change in temperature.",
+      defaultFeedback: "Evaporation is liquid to gas.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-m-17",
+    id: "q-sm-8",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What is the name for the change of state from gas directly to solid?",
+    questionText: "What is the process of gas changing into liquid called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ mgbe gas gbanwee gaa likuid?",
     options: null,
-    correctAnswer: "deposition",
+    optionsIgbo: null,
+    correctAnswer: "condensation",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "sublimation",
-          feedback:
-            "Sublimation is solid to gas. The reverse - gas directly to solid - is called deposition (e.g. frost forming on a cold surface).",
+          pattern: "evaporation",
+          feedback: "Evaporation is liquid to gas.",
+        },
+      ],
+      defaultFeedback: "Condensation is gas to liquid.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-sm-9",
+    type: QuestionType.MCQ,
+    questionText: "Which state of matter is most compressible?",
+    questionTextIgbo: "Kedu ọnọdụ ihe kacha mfe ịpịkọta?",
+    options: ["Solid", "Liquid", "Gas", "All equally"],
+    optionsIgbo: ["Sọlid", "Likuid", "Gas", "Ha niile"],
+    correctAnswer: "Gas",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Liquid",
+          feedback: "Liquids are not easily compressible.",
         },
       ],
       defaultFeedback:
-        "Deposition is when a gas changes directly to a solid without passing through liquid - the reverse of sublimation. Frost formation is a common example.",
+        "Gases compress easily due to large spaces between particles.",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-m-18",
+    id: "q-sm-10",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Gases can be compressed much more easily than liquids.",
+    questionText: "Increasing temperature increases particle kinetic energy.",
+    questionTextIgbo:
+      "Ịbawanye okpomọkụ na-eme ka ike mmegharị mkpụrụ bawanye?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Gas particles (Ihe Obere Kacha) are far apart, leaving lots of empty space. This makes gases highly compressible, unlike liquids where particles are already close.",
+          feedback: "Higher temperature means higher particle motion.",
         },
       ],
       defaultFeedback:
-        "Correct! Gas particles have large spaces between them, making gases highly compressible. This is why gas syringes and pneumatic systems work.",
+        "Temperature is directly related to particle kinetic energy.",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-m-19",
+    id: "q-sm-11",
     type: QuestionType.MCQ,
-    questionText:
-      "Which property allows liquids to flow and take the shape of their container?",
+    questionText: "What happens during melting?",
+    questionTextIgbo: "Gịnị na-eme mgbe melting na-eme?",
     options: [
-      "Fixed particle positions",
-      "Intermolecular bonds",
-      "Particles able to slide past each other",
-      "High particle speed",
+      "Solid to liquid",
+      "Liquid to gas",
+      "Gas to liquid",
+      "Liquid to solid",
     ],
-    correctAnswer: "Particles able to slide past each other",
+    optionsIgbo: [
+      "Sọlid gaa likuid",
+      "Likuid gaa gas",
+      "Gas gaa likuid",
+      "Likuid gaa sọlid",
+    ],
+    correctAnswer: "Solid to liquid",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Fixed particle positions",
-          feedback:
-            "Fixed positions describe solids (Ihe Siri Ike). Liquids (Mmiri) flow because their particles can slide past each other, unlike rigid solids.",
+          pattern: "Liquid to gas",
+          feedback: "That is evaporation, not melting.",
         },
       ],
-      defaultFeedback:
-        "In liquids (Mmiri), particles can slide past each other - they are close together but not locked in place. This gives liquids their ability to flow and fill container shapes.",
+      defaultFeedback: "Melting is the change from solid to liquid.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-m-20",
-    type: QuestionType.MCQ,
-    questionText:
-      "What happens to the boiling point of water at high altitude?",
-    options: [
-      "It increases",
-      "It decreases",
-      "It stays the same",
-      "It becomes 0°C",
-    ],
-    correctAnswer: "It decreases",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "It increases",
-          feedback:
-            "At high altitude, atmospheric pressure is LOWER. Lower pressure means water molecules escape more easily, so the boiling point DECREASES below 100°C.",
-        },
-      ],
-      defaultFeedback:
-        "At high altitude, atmospheric pressure is lower. This means water boils at temperatures below 100°C - which is why cooking takes longer in mountainous regions.",
-    },
-  },
-  {
-    id: "q-m-21",
+    id: "q-sm-12",
     type: QuestionType.TRUE_FALSE,
-    questionText: "The particles in a solid vibrate even at room temperature.",
+    questionText: "Liquids cannot flow.",
+    questionTextIgbo: "Likuid enweghị ike ịga?",
     options: ["True", "False"],
-    correctAnswer: "True",
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "False",
-          feedback:
-            "True. Solid particles (Ihe Obere Kacha) vibrate constantly - even at room temperature. Only at absolute zero (−273°C) would vibration cease completely.",
+          pattern: "True",
+          feedback: "Flow is a defining property of liquids.",
+        },
+      ],
+      defaultFeedback: "Liquids can flow and take the shape of containers.",
+    },
+    difficulty: 0.3,
+  },
+
+  {
+    id: "q-sm-13",
+    type: QuestionType.MCQ,
+    questionText:
+      "Which state of matter has the strongest intermolecular forces?",
+    questionTextIgbo:
+      "Kedu ọnọdụ ihe nwere ike njikọ kacha ike n’etiti mkpụrụ?",
+    options: ["Solid", "Liquid", "Gas", "Plasma"],
+    optionsIgbo: ["Sọlid", "Likuid", "Gas", "Plasma"],
+    correctAnswer: "Solid",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Gas",
+          feedback: "Gas has the weakest intermolecular forces.",
         },
       ],
       defaultFeedback:
-        "Correct! Solid particles (Ihe Siri Ike) are always vibrating around their fixed positions. Heating increases the amplitude of vibration until they break free and melt.",
+        "Solids have tightly bound particles with strong forces.",
     },
+    difficulty: 0.6,
   },
+
   {
-    id: "q-m-22",
+    id: "q-sm-14",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What is the term for spreading of a substance through a mixture without stirring?",
+    questionText: "What is the process of liquid changing into solid called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ mgbe likuid gbanwee gaa sọlid?",
     options: null,
+    optionsIgbo: null,
+    correctAnswer: "freezing",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "melting",
+          feedback: "Melting is solid to liquid.",
+        },
+      ],
+      defaultFeedback: "Freezing is liquid to solid.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-sm-15",
+    type: QuestionType.MCQ,
+    questionText: "Which process requires heat energy to be absorbed?",
+    questionTextIgbo: "Kedu usoro chọrọ ka okpomọkụ banye n’ime ya?",
+    options: ["Freezing", "Condensation", "Melting", "All"],
+    optionsIgbo: ["Freezing", "Condensation", "Melting", "Ha niile"],
+    correctAnswer: "Melting",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Freezing",
+          feedback: "Freezing releases heat, not absorbs.",
+        },
+      ],
+      defaultFeedback: "Melting requires heat energy input.",
+    },
+    difficulty: 0.6,
+  },
+
+  {
+    id: "q-sm-16",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "Gas particles move faster than liquid particles on average.",
+    questionTextIgbo: "Mkpụrụ gas na-agagharị ngwa ngwa karịa nke likuid?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Gas particles have higher kinetic energy.",
+        },
+      ],
+      defaultFeedback:
+        "Gas particles move fastest due to higher kinetic energy.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-sm-17",
+    type: QuestionType.MCQ,
+    questionText: "What is plasma?",
+    questionTextIgbo: "Gịnị bụ plasma?",
+    options: ["Solid particles", "Ionised gas", "Liquid metal", "Cold gas"],
+    optionsIgbo: ["Mkpụrụ sọlid", "Gas nwere ions", "Likuid metal", "Gas oyi"],
+    correctAnswer: "Ionised gas",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Cold gas",
+          feedback: "Plasma is high-energy, not cold.",
+        },
+      ],
+      defaultFeedback: "Plasma is an ionised, high-energy state of matter.",
+    },
+    difficulty: 0.6,
+  },
+
+  {
+    id: "q-sm-18",
+    type: QuestionType.SHORT_ANSWER,
+    questionText: "What is the term for particles spreading out to fill space?",
+    questionTextIgbo: "Gịnị ka a na-akpọ mgbe mkpụrụ gbasaa jupụta ebe?",
+    options: null,
+    optionsIgbo: null,
     correctAnswer: "diffusion",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "osmosis",
-          feedback:
-            "Osmosis is specifically water moving across a semi-permeable membrane. The general spreading of any substance from high to low concentration is diffusion (Ịgbasa Ihe).",
+          pattern: "expansion",
+          feedback: "Diffusion is the correct scientific term.",
         },
       ],
-      defaultFeedback:
-        "Diffusion (Ịgbasa Ihe) is the passive spreading of particles from a region of high concentration to low concentration - no stirring or energy required.",
+      defaultFeedback: "Diffusion is the spreading of particles.",
     },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-sm-19",
+    type: QuestionType.MCQ,
+    questionText: "Which change is exothermic?",
+    questionTextIgbo: "Kedu mgbanwe na-ewepụta okpomọkụ?",
+    options: ["Melting", "Evaporation", "Freezing", "Sublimation"],
+    optionsIgbo: ["Melting", "Evaporation", "Freezing", "Sublimation"],
+    correctAnswer: "Freezing",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Melting",
+          feedback: "Melting absorbs heat, not releases.",
+        },
+      ],
+      defaultFeedback: "Freezing releases heat energy.",
+    },
+    difficulty: 0.6,
+  },
+
+  {
+    id: "q-sm-20",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "All matter is made up of particles.",
+    questionTextIgbo: "Ihe niile mejupụtara mkpụrụ?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Particle theory explains all matter.",
+        },
+      ],
+      defaultFeedback: "All matter consists of particles.",
+    },
+    difficulty: 0.3,
   },
 ];
 
@@ -3617,433 +4364,477 @@ const Q_ELECTRICITY = [
     id: "q-el-1",
     type: QuestionType.MCQ,
     questionText: "What is the unit of electric current?",
+    questionTextIgbo: "Kedu otu esi atụ current eletrik?",
     options: ["Volt", "Ohm", "Ampere", "Watt"],
+    optionsIgbo: ["Volt", "Ohm", "Ampere", "Watt"],
     correctAnswer: "Ampere",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Volt",
-          feedback:
-            "Volt is the unit of voltage (Ike Ọkụ Eletrik). Current (Ọsịsọ Ọkụ Eletrik) is measured in amperes (A).",
+          feedback: "Volt measures voltage, not current.",
         },
         {
           pattern: "Ohm",
-          feedback:
-            "Ohm is the unit of resistance (Mgbochi Ọkụ Eletrik). Current (Ọsịsọ Ọkụ Eletrik) is measured in amperes (A).",
+          feedback: "Ohm measures resistance, not current.",
         },
       ],
-      defaultFeedback:
-        "Electric current (Ọsịsọ Ọkụ Eletrik) is measured in amperes (A). It is the rate of flow of electric charge.",
+      defaultFeedback: "Current is measured in amperes (A).",
     },
+    difficulty: 0.3,
   },
+
   {
     id: "q-el-2",
     type: QuestionType.MCQ,
     questionText:
-      "If resistance doubles with voltage constant, what happens to current?",
-    options: ["Doubles", "Halves", "Stays same", "Becomes zero"],
-    correctAnswer: "Halves",
+      "Using Ohm’s Law, what is the current when V = 12V and R = 4Ω?",
+    questionTextIgbo:
+      "Site na iwu Ohm, kedu current ma ọ bụrụ V = 12V na R = 4Ω?",
+    options: ["3A", "48A", "0.33A", "16A"],
+    optionsIgbo: ["3A", "48A", "0.33A", "16A"],
+    correctAnswer: "3A",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Doubles",
-          feedback:
-            "From Ohm's Law (Iwu Ohm): I = V/R. If R doubles and V is fixed, I is halved.",
+          pattern: "48A",
+          feedback: "You multiplied instead of dividing. I = V/R.",
         },
       ],
-      defaultFeedback:
-        "Ohm's Law (Iwu Ohm): I = V/R. Doubling resistance with constant voltage halves the current.",
+      defaultFeedback: "I = 12 / 4 = 3A.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-el-3",
     type: QuestionType.TRUE_FALSE,
-    questionText: "In a series circuit, all components share the same current.",
+    questionText: "In a series circuit, the current is the same at all points.",
+    questionTextIgbo: "Na circuit series, current na-adị otu n'ebe niile?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. In a series circuit (Usoro Ọkụ Ọbara Ọbara), there is only one path, so the same current flows through all components.",
+          feedback: "Series circuits have one path, so current cannot vary.",
         },
       ],
-      defaultFeedback:
-        "Correct! In a series circuit (Usoro Ọkụ Ọbara Ọbara), current has one path - the same value flows through every component.",
+      defaultFeedback: "Current is identical throughout a series circuit.",
     },
+    difficulty: 0.3,
   },
+
   {
     id: "q-el-4",
     type: QuestionType.SHORT_ANSWER,
     questionText:
-      "Write the formula for electrical power in terms of current (I) and voltage (V).",
+      "Write the formula for electrical power using voltage and current.",
+    questionTextIgbo: "Dee formula ike eletrik jiri voltage na current.",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "P = IV",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "V = IR",
-          feedback: "V = IR is Ohm's Law (Iwu Ohm). Power (Ike Ọrụ) = I × V.",
+          feedback: "That is Ohm’s Law, not power.",
         },
       ],
-      defaultFeedback:
-        "Power (Ike Ọrụ) = I × V. Measured in watts (W). A device drawing 2A at 12V uses 24W.",
+      defaultFeedback: "Power equals current multiplied by voltage.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-el-5",
     type: QuestionType.MCQ,
     questionText: "How is a voltmeter connected in a circuit?",
-    options: [
-      "In series",
-      "In parallel",
-      "Between battery terminals only",
-      "In series with battery",
-    ],
-    correctAnswer: "In parallel",
+    questionTextIgbo: "Kedu otu e si ejikọ voltmeter na circuit?",
+    options: ["Series", "Parallel", "Across battery only", "Grounded"],
+    optionsIgbo: ["Series", "Parallel", "N’elu batrị naanị", "Grounded"],
+    correctAnswer: "Parallel",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "In series",
-          feedback:
-            "Ammeters connect in series. A voltmeter must connect in PARALLEL (Usoro Ọkụ Ụzọ Abụọ) across the component being measured.",
+          pattern: "Series",
+          feedback: "Series connection is for ammeters, not voltmeters.",
         },
       ],
       defaultFeedback:
-        "A voltmeter connects in parallel (Usoro Ọkụ Ụzọ Abụọ) across the component. Its very high resistance means it draws negligible current.",
+        "Voltmeters are connected in parallel across components.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-el-6",
     type: QuestionType.TRUE_FALSE,
     questionText:
-      "In a parallel circuit, if one branch breaks, the other branches continue working.",
+      "In a parallel circuit, voltage is the same across all branches.",
+    questionTextIgbo: "Na parallel circuit, voltage na-adị otu n'akụkụ niile?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True - each branch has its own path in a parallel circuit (Usoro Ọkụ Ụzọ Abụọ). A break in one branch doesn't affect the others.",
+          feedback: "Voltage is constant across parallel branches.",
         },
       ],
       defaultFeedback:
-        "Correct! This is why household circuits use parallel (Usoro Ọkụ Ụzọ Abụọ) wiring - one failed bulb doesn't cut the whole circuit.",
+        "Parallel circuits maintain equal voltage across branches.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-el-7",
     type: QuestionType.MCQ,
-    questionText: "Voltage is 12V, current is 3A. What is the resistance?",
-    options: ["0.25 Ω", "4 Ω", "36 Ω", "9 Ω"],
-    correctAnswer: "4 Ω",
+    questionText:
+      "What happens to total resistance in a series circuit when more resistors are added?",
+    questionTextIgbo:
+      "Gịnị na-eme resistance mgbe a gbakwunye resistors na series?",
+    options: ["Decreases", "Increases", "Stays same", "Becomes zero"],
+    optionsIgbo: ["Na-ebelata", "Na-abawanye", "Na-adị otu", "Na-abụ zero"],
+    correctAnswer: "Increases",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "36 Ω",
-          feedback:
-            "Don't multiply - use Ohm's Law (Iwu Ohm): R = V/I = 12 ÷ 3 = 4 Ω.",
+          pattern: "Decreases",
+          feedback: "That is true for parallel circuits, not series.",
         },
       ],
       defaultFeedback:
-        "R = V/I = 12 ÷ 3 = 4 Ω. Ohm's Law (Iwu Ohm): Voltage = Current × Resistance.",
+        "Resistances add in series, increasing total resistance.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-el-8",
     type: QuestionType.MCQ,
-    questionText: "Which component allows current in one direction only?",
-    options: ["Resistor", "Capacitor", "Diode", "Inductor"],
+    questionText:
+      "Which component allows current to flow in only one direction?",
+    questionTextIgbo: "Kedu component na-ekwe ka current gafee naanị otu ụzọ?",
+    options: ["Resistor", "Capacitor", "Diode", "Battery"],
+    optionsIgbo: ["Resistor", "Capacitor", "Diode", "Batrị"],
     correctAnswer: "Diode",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Resistor",
-          feedback:
-            "A resistor (Mgbochi Ọkụ Eletrik) limits current in both directions. A diode allows current in one direction only.",
+          feedback: "Resistors limit current, not direction.",
         },
       ],
-      defaultFeedback:
-        "A diode allows current to flow in only one direction. It is used in rectifiers to convert AC to DC.",
+      defaultFeedback: "A diode permits one-way current flow.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-el-9",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Increasing wire length increases its electrical resistance.",
+    questionText: "Resistance increases as wire length increases.",
+    questionTextIgbo: "Resistance na-abawanye ka ogologo waya na-abawanye?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. A longer wire means more material for electrons to collide with, increasing resistance (Mgbochi Ọkụ Eletrik).",
+          feedback: "Longer wire means more collisions for electrons.",
         },
       ],
-      defaultFeedback:
-        "Correct! Resistance (Mgbochi Ọkụ Eletrik) is proportional to wire length - longer wire = more resistance.",
+      defaultFeedback: "Resistance is proportional to length.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-el-10",
     type: QuestionType.SHORT_ANSWER,
     questionText:
-      "What law relates voltage (V), current (I), and resistance (R)?",
+      "What is the formula for resistance using voltage and current?",
+    questionTextIgbo: "Kedu formula resistance jiri voltage na current?",
     options: null,
-    correctAnswer: "Ohm's Law",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Newton's Law",
-          feedback:
-            "Newton's Laws describe motion. The law connecting V, I, and R is Ohm's Law (Iwu Ohm): V = I × R.",
-        },
-      ],
-      defaultFeedback:
-        "Ohm's Law (Iwu Ohm): V = I × R. Applies to conductors at constant temperature.",
-    },
-  },
-  {
-    id: "q-el-11",
-    type: QuestionType.MCQ,
-    questionText: "Two resistors 3Ω and 5Ω in series. Total resistance?",
-    options: ["1.875 Ω", "8 Ω", "15 Ω", "2 Ω"],
-    correctAnswer: "8 Ω",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "15 Ω",
-          feedback:
-            "Don't multiply. In series (Usoro Ọkụ Ọbara Ọbara): R_total = R₁ + R₂ = 3 + 5 = 8 Ω.",
-        },
-        {
-          pattern: "1.875 Ω",
-          feedback:
-            "That uses the parallel formula. In SERIES (Usoro Ọkụ Ọbara Ọbara): simply add resistances: 3 + 5 = 8 Ω.",
-        },
-      ],
-      defaultFeedback:
-        "In series (Usoro Ọkụ Ọbara Ọbara): R_total = R₁ + R₂ = 3 + 5 = 8 Ω.",
-    },
-  },
-  {
-    id: "q-el-12",
-    type: QuestionType.TRUE_FALSE,
-    questionText:
-      "Static electricity is caused by the build-up of charge on an insulator.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "True. Static electricity builds up on insulators when electrons are transferred by friction - e.g. rubbing a balloon on hair.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Static electricity results from electron transfer (friction) creating a charge imbalance on an insulating surface.",
-    },
-  },
-  {
-    id: "q-el-13",
-    type: QuestionType.MCQ,
-    questionText: "A device uses 60W at 230V. What current does it draw?",
-    options: ["0.26 A", "3.8 A", "13,800 A", "0.004 A"],
-    correctAnswer: "0.26 A",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "3.8 A",
-          feedback:
-            "Use P = IV, rearranged to I = P/V = 60 ÷ 230 ≈ 0.26 A, not 3.8 A.",
-        },
-      ],
-      defaultFeedback:
-        "I = P/V = 60 ÷ 230 ≈ 0.26 A. A 60W lamp at 230V draws about a quarter of an ampere.",
-    },
-  },
-  {
-    id: "q-el-14",
-    type: QuestionType.MCQ,
-    questionText: "What does an ammeter measure and how is it connected?",
-    options: [
-      "Voltage, in parallel",
-      "Resistance, in series",
-      "Current, in series",
-      "Power, in parallel",
-    ],
-    correctAnswer: "Current, in series",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Voltage, in parallel",
-          feedback:
-            "A voltmeter measures voltage and connects in parallel. An ammeter measures current (Ọsịsọ Ọkụ Eletrik) and MUST connect in series.",
-        },
-      ],
-      defaultFeedback:
-        "An ammeter measures current (Ọsịsọ Ọkụ Eletrik) and is connected in series in the circuit. It has very low resistance to minimise its effect on the circuit.",
-    },
-  },
-  {
-    id: "q-el-15",
-    type: QuestionType.TRUE_FALSE,
-    questionText: "Like charges attract each other.",
-    options: ["True", "False"],
-    correctAnswer: "False",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "True",
-          feedback:
-            "Like charges REPEL each other. Unlike charges (positive and negative) attract. This is a fundamental law of electrostatics.",
-        },
-      ],
-      defaultFeedback:
-        "Like charges repel; unlike charges attract. Two positive charges push apart, while a positive and negative charge pull together.",
-    },
-  },
-  {
-    id: "q-el-16",
-    type: QuestionType.SHORT_ANSWER,
-    questionText: "What is the unit of electrical resistance?",
-    options: null,
-    correctAnswer: "ohm",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "volt",
-          feedback:
-            "Volt is the unit of voltage (Ike Ọkụ Eletrik). Resistance (Mgbochi Ọkụ Eletrik) is measured in ohms (Ω).",
-        },
-        {
-          pattern: "ampere",
-          feedback:
-            "Ampere is the unit of current (Ọsịsọ Ọkụ Eletrik). Resistance (Mgbochi Ọkụ Eletrik) is measured in ohms (Ω).",
-        },
-      ],
-      defaultFeedback:
-        "Resistance (Mgbochi Ọkụ Eletrik) is measured in ohms (Ω), named after Georg Ohm who formulated Ohm's Law (Iwu Ohm).",
-    },
-  },
-  {
-    id: "q-el-17",
-    type: QuestionType.MCQ,
-    questionText: "In a parallel circuit, what is the same across each branch?",
-    options: ["Current", "Resistance", "Voltage", "Power"],
-    correctAnswer: "Voltage",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Current",
-          feedback:
-            "Current is the same in series (Usoro Ọkụ Ọbara Ọbara). In parallel (Usoro Ọkụ Ụzọ Abụọ), each branch has the same voltage but different currents.",
-        },
-      ],
-      defaultFeedback:
-        "In a parallel circuit (Usoro Ọkụ Ụzọ Abụọ), all branches share the same voltage. Current divides between branches based on their resistance.",
-    },
-  },
-  {
-    id: "q-el-18",
-    type: QuestionType.TRUE_FALSE,
-    questionText:
-      "A thicker wire has less resistance than a thin wire of the same length and material.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "True. A thicker wire has a larger cross-sectional area, giving electrons more space to flow - lower resistance (Mgbochi Ọkụ Eletrik).",
-        },
-      ],
-      defaultFeedback:
-        "Correct! Resistance (Mgbochi Ọkụ Eletrik) decreases as cross-sectional area increases. Thicker wire = more pathways for electrons = less resistance.",
-    },
-  },
-  {
-    id: "q-el-19",
-    type: QuestionType.MCQ,
-    questionText: "What is the energy transfer in a resistor?",
-    options: [
-      "Electrical to chemical",
-      "Electrical to heat",
-      "Chemical to electrical",
-      "Heat to electrical",
-    ],
-    correctAnswer: "Electrical to heat",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Electrical to chemical",
-          feedback:
-            "Electrical to chemical energy conversion happens in batteries (during charging) or electrolysis. Resistors convert electrical energy to heat.",
-        },
-      ],
-      defaultFeedback:
-        "Resistors (Mgbochi Ọkụ Eletrik) convert electrical energy to heat as electrons collide with the material's atoms. This is the basis of electric heaters and filament bulbs.",
-    },
-  },
-  {
-    id: "q-el-20",
-    type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What is the formula for resistance in terms of voltage and current?",
-    options: null,
+    optionsIgbo: null,
     correctAnswer: "R = V/I",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "R = IV",
           feedback:
-            "That gives power (P = IV). Resistance is R = V/I - rearranging Ohm's Law (Iwu Ohm): V = IR.",
+            "That is incorrect. That gives power when rearranged wrongly.",
         },
       ],
-      defaultFeedback:
-        "R = V/I - rearranged from Ohm's Law (Iwu Ohm): V = I × R. So resistance equals voltage divided by current.",
+      defaultFeedback: "Resistance equals voltage divided by current.",
     },
+    difficulty: 0.4,
   },
+
   {
-    id: "q-el-21",
+    id: "q-el-11",
+    type: QuestionType.MCQ,
+    questionText: "Two resistors (2Ω and 3Ω) are in series. Total resistance?",
+    questionTextIgbo: "Resistors 2Ω na 3Ω na series. Gịnị bụ total resistance?",
+    options: ["5Ω", "6Ω", "1Ω", "2.5Ω"],
+    optionsIgbo: ["5Ω", "6Ω", "1Ω", "2.5Ω"],
+    correctAnswer: "5Ω",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "6Ω",
+          feedback: "You multiplied instead of adding.",
+        },
+      ],
+      defaultFeedback: "Series resistance = 2 + 3 = 5Ω.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-el-12",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Household appliances are connected in parallel.",
+    questionText: "Static electricity involves movement of electrons.",
+    questionTextIgbo: "Static eletrik na-agụnye mmegharị electrons?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Household appliances are wired in parallel (Usoro Ọkụ Ụzọ Abụọ) so each gets the full supply voltage and can be switched independently.",
+          feedback: "Static charge builds from electron transfer.",
         },
       ],
-      defaultFeedback:
-        "Correct! Parallel wiring (Usoro Ọkụ Ụzọ Abụọ) gives each appliance the full mains voltage and means switching one off doesn't affect others.",
+      defaultFeedback: "Static electricity results from electron transfer.",
     },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-el-13",
+    type: QuestionType.MCQ,
+    questionText: "A device uses 100W at 10V. What current flows?",
+    questionTextIgbo: "Ngwaọrụ ji 100W na 10V. Kedu current?",
+    options: ["10A", "0.1A", "1000A", "1A"],
+    optionsIgbo: ["10A", "0.1A", "1000A", "1A"],
+    correctAnswer: "10A",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "1A",
+          feedback: "You divided incorrectly. I = P/V.",
+        },
+      ],
+      defaultFeedback: "I = 100 / 10 = 10A.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-el-14",
+    type: QuestionType.MCQ,
+    questionText: "What does an ammeter measure?",
+    questionTextIgbo: "Gịnị ka ammeter na-atụ?",
+    options: ["Voltage", "Current", "Resistance", "Power"],
+    optionsIgbo: ["Voltage", "Current", "Resistance", "Power"],
+    correctAnswer: "Current",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Voltage",
+          feedback: "Voltage is measured by a voltmeter.",
+        },
+      ],
+      defaultFeedback: "An ammeter measures electric current.",
+    },
+    difficulty: 0.3,
+  },
+
+  {
+    id: "q-el-15",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "Like charges repel each other.",
+    questionTextIgbo: "Charges yiri ibe ha na-achụpụ onwe ha?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Opposite charges attract, not like charges.",
+        },
+      ],
+      defaultFeedback: "Like charges repel, unlike charges attract.",
+    },
+    difficulty: 0.3,
+  },
+
+  {
+    id: "q-el-16",
+    type: QuestionType.SHORT_ANSWER,
+    questionText: "What is the unit of resistance?",
+    questionTextIgbo: "Kedu unit resistance?",
+    options: null,
+    optionsIgbo: null,
+    correctAnswer: "ohm",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "volt",
+          feedback: "Volt measures voltage, not resistance.",
+        },
+      ],
+      defaultFeedback: "Resistance is measured in ohms (Ω).",
+    },
+    difficulty: 0.3,
+  },
+
+  {
+    id: "q-el-17",
+    type: QuestionType.MCQ,
+    questionText: "In parallel circuits, current is:",
+    questionTextIgbo: "Na parallel circuit, current si otú?",
+    options: [
+      "Same everywhere",
+      "Splits between branches",
+      "Zero",
+      "Constant only in battery",
+    ],
+    optionsIgbo: [
+      "Na-adị otu",
+      "Na-ekewa n’ụzọ dị iche",
+      "Zero",
+      "Na-adị naanị na batrị",
+    ],
+    correctAnswer: "Splits between branches",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Same everywhere",
+          feedback: "That applies to series circuits.",
+        },
+      ],
+      defaultFeedback: "Current divides across branches in parallel.",
+    },
+    difficulty: 0.5,
+  },
+
+  {
+    id: "q-el-18",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "Thicker wires have lower resistance.",
+    questionTextIgbo: "Waya buru ibu nwere resistance dị ala?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Larger cross-sectional area reduces resistance.",
+        },
+      ],
+      defaultFeedback: "Thicker wires reduce resistance.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-el-19",
+    type: QuestionType.MCQ,
+    questionText: "What energy conversion occurs in a resistor?",
+    questionTextIgbo: "Kedu mgbanwe ike na-eme na resistor?",
+    options: [
+      "Electrical to heat",
+      "Heat to electrical",
+      "Chemical to electrical",
+      "Electrical to chemical",
+    ],
+    optionsIgbo: [
+      "Eletrik gaa okpomọkụ",
+      "Okpomọkụ gaa eletrik",
+      "Chemical gaa eletrik",
+      "Eletrik gaa chemical",
+    ],
+    correctAnswer: "Electrical to heat",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Chemical to electrical",
+          feedback: "That occurs in batteries, not resistors.",
+        },
+      ],
+      defaultFeedback: "Resistors convert electrical energy to heat.",
+    },
+    difficulty: 0.5,
   },
   {
-    id: "q-el-22",
+    id: "q-el-20",
     type: QuestionType.MCQ,
-    questionText: "Which material is the best conductor of electricity?",
-    options: ["Glass", "Wood", "Silver", "Rubber"],
+    questionText: "Which material is the best conductor?",
+    questionTextIgbo: "Kedu ihe kacha mma n’ịdu eletrik?",
+    options: ["Wood", "Glass", "Silver", "Rubber"],
+    optionsIgbo: ["Osisi", "Glass", "Silver", "Rubber"],
     correctAnswer: "Silver",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Glass",
-          feedback:
-            "Glass is an insulator - it has very high resistance (Mgbochi Ọkụ Eletrik). Silver is the best electrical conductor, though copper is more commonly used due to cost.",
+          pattern: "Wood",
+          feedback: "Wood is an insulator.",
+        },
+      ],
+      defaultFeedback: "Silver is the best conductor listed.",
+    },
+    difficulty: 0.4,
+  },
+  {
+    id: "q-el-21",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "In a series circuit, voltage is shared between components.",
+    questionTextIgbo: "Na series circuit, voltage na-ekewa n'etiti components?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Voltage divides across components in series circuits.",
         },
       ],
       defaultFeedback:
-        "Silver is the best electrical conductor of the options listed, followed closely by copper. Insulators like glass and rubber resist current flow (Ọsịsọ Ọkụ Eletrik).",
+        "In series circuits, total voltage is shared across components.",
     },
+    difficulty: 0.4,
+  },
+  {
+    id: "q-el-22",
+    type: QuestionType.MCQ,
+    questionText:
+      "If voltage remains constant and resistance increases, what happens to current?",
+    questionTextIgbo:
+      "Ọ bụrụ na voltage adịghị agbanwe ma resistance abawanye, gịnị na-eme current?",
+    options: ["Increases", "Decreases", "Stays same", "Becomes zero"],
+    optionsIgbo: ["Na-abawanye", "Na-ebelata", "Na-adị otu", "Na-abụ zero"],
+    correctAnswer: "Decreases",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Increases",
+          feedback: "Ohm’s Law: I = V/R. Increasing R reduces I.",
+        },
+      ],
+      defaultFeedback:
+        "Current decreases when resistance increases at constant voltage.",
+    },
+    difficulty: 0.5,
   },
 ];
 
@@ -4055,480 +4846,519 @@ const Q_GENETICS = [
   {
     id: "q-g-1",
     type: QuestionType.MCQ,
-    questionText: "What are the different versions of a gene called?",
-    options: ["Chromosomes", "Alleles", "Genotypes", "Phenotypes"],
+    questionText: "What are different versions of a gene called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ ụdị dị iche iche nke gene?",
+    options: ["Chromosomes", "Alleles", "Genotypes", "Proteins"],
+    optionsIgbo: ["Chromosomes", "Alleles", "Genotype", "Protein"],
     correctAnswer: "Alleles",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Chromosomes",
-          feedback:
-            "Chromosomes (Usoro Ihe Nketa) contain thousands of genes. The different versions of a single gene are alleles (Ụdị Ihe Nketa).",
+          feedback: "Chromosomes contain many genes, not versions of one gene.",
         },
       ],
-      defaultFeedback:
-        "Alleles (Ụdị Ihe Nketa) are the different versions of a gene - e.g. the gene for eye colour has alleles for brown, blue, etc.",
+      defaultFeedback: "Alleles are different forms of the same gene.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-2",
     type: QuestionType.TRUE_FALSE,
     questionText:
-      "A dominant allele is only expressed when two copies are present.",
+      "A dominant allele can be expressed even if only one copy is present.",
+    questionTextIgbo:
+      "Allele siri ike nwere ike igosi onwe ya ọbụna ma ọ bụrụ na otu naanị dị?",
     options: ["True", "False"],
-    correctAnswer: "False",
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "True",
-          feedback:
-            "That describes a RECESSIVE allele. A dominant allele (Ihe Nketa Siri Ike) is expressed with just ONE copy.",
+          pattern: "False",
+          feedback: "That describes recessive alleles, not dominant ones.",
         },
       ],
-      defaultFeedback:
-        "A dominant allele (Ihe Nketa Siri Ike) is expressed with one copy. A recessive allele (Ihe Nketa Adịghị Ike) requires two copies.",
+      defaultFeedback: "Dominant alleles are expressed with just one copy.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-3",
     type: QuestionType.SHORT_ANSWER,
-    questionText: "What base always pairs with adenine (A) in DNA?",
+    questionText: "What base pairs with adenine (A) in DNA?",
+    questionTextIgbo: "Kedu base na-ejikọta na adenine (A) na DNA?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "thymine",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "guanine",
-          feedback:
-            "Guanine pairs with cytosine. Adenine (A) always pairs with thymine (T) in DNA.",
-        },
-        {
-          pattern: "uracil",
-          feedback:
-            "Uracil pairs with adenine in RNA. In DNA, adenine (A) pairs with thymine (T).",
+          feedback: "Guanine pairs with cytosine, not adenine.",
         },
       ],
-      defaultFeedback:
-        "Adenine (A) always pairs with Thymine (T). Cytosine (C) pairs with Guanine (G). These are the DNA base pairing rules.",
+      defaultFeedback: "Adenine pairs with thymine in DNA.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-4",
     type: QuestionType.MCQ,
-    questionText: "An organism with two identical alleles (TT or tt) is:",
-    options: ["Heterozygous", "Codominant", "Homozygous", "Recessive"],
-    correctAnswer: "Homozygous",
+    questionText: "An organism with genotype Aa is described as:",
+    questionTextIgbo: "Organism nwere genotype Aa bụ:",
+    options: ["Homozygous", "Heterozygous", "Dominant", "Recessive"],
+    optionsIgbo: ["Homozygous", "Heterozygous", "Dominant", "Recessive"],
+    correctAnswer: "Heterozygous",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Heterozygous",
-          feedback:
-            "Heterozygous means two DIFFERENT alleles (e.g. Tt). Two identical alleles (TT or tt) = homozygous.",
+          pattern: "Homozygous",
+          feedback: "Homozygous means identical alleles (AA or aa).",
         },
       ],
-      defaultFeedback:
-        "Homozygous means both alleles are the same (TT or tt). Heterozygous means different alleles (Tt).",
+      defaultFeedback: "Heterozygous means two different alleles.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-5",
     type: QuestionType.MCQ,
-    questionText: "Tt × Tt cross gives what phenotype ratio?",
-    options: ["1:1", "1:2:1", "3:1", "All tall"],
+    questionText: "What is the phenotype ratio of a Tt × Tt cross?",
+    questionTextIgbo: "Gịnị bụ ratio phenotype nke Tt × Tt?",
+    options: ["1:1", "3:1", "1:2:1", "All same"],
+    optionsIgbo: ["1:1", "3:1", "1:2:1", "Ha niile"],
     correctAnswer: "3:1",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "1:1",
-          feedback:
-            "1:1 comes from Tt × tt. Tt × Tt gives TT, Tt, Tt, tt - 3 tall : 1 short.",
+          pattern: "1:2:1",
+          feedback: "That is genotype ratio, not phenotype.",
         },
       ],
-      defaultFeedback:
-        "Tt × Tt Punnett square: TT, Tt, Tt, tt. Three have at least one T (tall), one is tt (short). Ratio = 3:1.",
+      defaultFeedback: "Phenotype ratio is 3 dominant : 1 recessive.",
     },
+    difficulty: 0.6,
   },
+
   {
     id: "q-g-6",
     type: QuestionType.TRUE_FALSE,
-    questionText: "A person's sex is determined by the sperm, not the egg.",
+    questionText: "Females have XX chromosomes.",
+    questionTextIgbo: "Ụmụ nwanyị nwere chromosome XX?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. All eggs carry X. Sperm carry X or Y. X sperm → XX (female); Y sperm → XY (male).",
+          feedback: "XY is male, not female.",
         },
       ],
-      defaultFeedback:
-        "Correct! All eggs (ákwá) carry X. The sperm (Mkpụrụ Ndụ Nna) determines sex - X sperm gives female (XX), Y sperm gives male (XY).",
+      defaultFeedback: "Females are XX, males are XY.",
     },
+    difficulty: 0.3,
   },
+
   {
     id: "q-g-7",
     type: QuestionType.MCQ,
     questionText: "Which disorder is caused by a recessive allele?",
+    questionTextIgbo: "Kedu ọrịa sitere na allele adịghị ike?",
     options: [
-      "Huntington's disease",
+      "Huntington’s disease",
       "Cystic fibrosis",
       "Down syndrome",
-      "Colour blindness (choose one)",
+      "Albinism (choose one)",
     ],
+    optionsIgbo: ["Huntington", "Cystic fibrosis", "Down syndrome", "Albinism"],
     correctAnswer: "Cystic fibrosis",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Huntington's disease",
-          feedback:
-            "Huntington's is caused by a DOMINANT allele. Cystic fibrosis is caused by a recessive allele (Ihe Nketa Adịghị Ike).",
-        },
-        {
-          pattern: "Down syndrome",
-          feedback:
-            "Down syndrome is a chromosomal mutation (extra chromosome 21), not a recessive allele disorder.",
+          pattern: "Huntington",
+          feedback: "Huntington’s is dominant.",
         },
       ],
-      defaultFeedback:
-        "Cystic fibrosis is caused by a recessive allele (Ihe Nketa Adịghị Ike). Both parents must carry the faulty allele for a child to be affected.",
+      defaultFeedback: "Cystic fibrosis is recessive.",
     },
+    difficulty: 0.6,
   },
+
   {
     id: "q-g-8",
     type: QuestionType.MCQ,
     questionText: "What is a mutation?",
+    questionTextIgbo: "Gịnị bụ mutation?",
     options: [
-      "Passing traits to offspring",
-      "A change in DNA sequence",
-      "Physical appearance",
-      "Two gametes combining",
+      "Gene copying",
+      "Change in DNA sequence",
+      "Cell division",
+      "Protein formation",
     ],
-    correctAnswer: "A change in DNA sequence",
+    optionsIgbo: [
+      "Mbipụta gene",
+      "Mgbanwe DNA",
+      "Nkewa cell",
+      "Mmeputa protein",
+    ],
+    correctAnswer: "Change in DNA sequence",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Passing traits to offspring",
-          feedback:
-            "Passing traits is heredity/inheritance. A mutation (Mgbanwe Ihe Nketa) is a change in the DNA sequence itself.",
+          pattern: "Cell division",
+          feedback: "Mutation is not cell division.",
         },
       ],
-      defaultFeedback:
-        "A mutation (Mgbanwe Ihe Nketa) is a change in the DNA sequence. Causes include radiation, chemical mutagens, or replication errors.",
+      defaultFeedback: "Mutation is a change in DNA sequence.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-9",
     type: QuestionType.TRUE_FALSE,
-    questionText: "A person with blood group AB has both A and B antigens.",
+    questionText: "Blood group AB shows codominance.",
+    questionTextIgbo: "Blood group AB na-egosi codominance?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Blood group AB results from codominance - both IA and IB alleles are expressed, producing A and B antigens.",
+          feedback: "Both alleles are expressed equally in AB.",
         },
       ],
-      defaultFeedback:
-        "Correct! AB blood group is codominance - both alleles expressed equally, producing both A and B antigens on red blood cells.",
+      defaultFeedback: "AB expresses both A and B alleles.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-g-10",
     type: QuestionType.SHORT_ANSWER,
-    questionText: "How many pairs of chromosomes do humans normally have?",
+    questionText: "How many pairs of chromosomes do humans have?",
+    questionTextIgbo: "Mmadu nwere pairs chromosome ole?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "23",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "46",
-          feedback:
-            "46 is the total number of chromosomes. They come in 23 PAIRS.",
+          feedback: "46 is total, but question asks for pairs.",
         },
       ],
-      defaultFeedback:
-        "Humans have 23 pairs of chromosomes (46 total) - 22 pairs of autosomes and 1 pair of sex chromosomes.",
+      defaultFeedback: "Humans have 23 pairs.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-11",
     type: QuestionType.MCQ,
-    questionText: "What term describes an organism's genetic makeup?",
-    options: ["Phenotype", "Allele", "Genotype", "Karyotype"],
-    correctAnswer: "Genotype",
+    questionText: "Genotype refers to:",
+    questionTextIgbo: "Genotype pụtara:",
+    options: [
+      "Physical appearance",
+      "Genetic makeup",
+      "Protein structure",
+      "DNA shape",
+    ],
+    optionsIgbo: ["Ihe a na-ahụ", "Nhazi gene", "Protein", "Udi DNA"],
+    correctAnswer: "Genetic makeup",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Phenotype",
-          feedback:
-            "Phenotype (Ihe A Na-Ahụ N'Ihe Dị Ndụ) is the observable trait. Genotype (Ihe Nketa Ndụ) is the underlying genetic makeup (e.g. Tt).",
+          pattern: "Physical appearance",
+          feedback: "That is phenotype.",
         },
       ],
-      defaultFeedback:
-        "Genotype (Ihe Nketa Ndụ) is the genetic makeup - the actual allele combination (e.g. TT, Tt, tt).",
+      defaultFeedback: "Genotype is the allele combination.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-12",
     type: QuestionType.MCQ,
     questionText: "Down syndrome is caused by:",
+    questionTextIgbo: "Down syndrome sitere na:",
     options: [
-      "Missing chromosome 21",
+      "Missing chromosome",
       "Extra chromosome 21",
-      "Mutation on chromosome 7",
-      "Extra X chromosome",
+      "Mutation only",
+      "Protein defect",
+    ],
+    optionsIgbo: [
+      "Chromosome efu",
+      "Chromosome 21 ọzọ",
+      "Mutation naanị",
+      "Nsogbu protein",
     ],
     correctAnswer: "Extra chromosome 21",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "Missing chromosome 21",
-          feedback:
-            "Missing a chromosome causes different conditions. Down syndrome is trisomy 21 - having THREE copies of chromosome 21.",
+          pattern: "Missing chromosome",
+          feedback: "It is an extra, not missing.",
         },
       ],
-      defaultFeedback:
-        "Down syndrome (trisomy 21) results from three copies of chromosome 21 instead of the usual two - a chromosomal mutation (Mgbanwe Ihe Nketa).",
+      defaultFeedback: "Down syndrome is trisomy 21.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-g-13",
     type: QuestionType.TRUE_FALSE,
-    questionText: "DNA is found in the nucleus of eukaryotic cells.",
+    questionText: "DNA is located in the nucleus.",
+    questionTextIgbo: "DNA dị n'ime nucleus?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. In eukaryotes (plants, animals), DNA (Ihe Nketa Ndụ) is stored in the nucleus (Isi Mkpụrụ Ndụ), wound around proteins as chromosomes.",
+          feedback: "In eukaryotes, DNA is in nucleus.",
         },
       ],
-      defaultFeedback:
-        "Correct! In eukaryotic cells, DNA (Ihe Nketa Ndụ) is stored in the nucleus (Isi Mkpụrụ Ndụ), organised into chromosomes (Usoro Ihe Nketa).",
+      defaultFeedback: "DNA is stored in the nucleus.",
     },
+    difficulty: 0.3,
   },
+
   {
     id: "q-g-14",
     type: QuestionType.SHORT_ANSWER,
-    questionText: "What are the four bases found in DNA?",
+    questionText: "List the four DNA bases.",
+    questionTextIgbo: "Kpọọ bases anọ nke DNA.",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "A, T, C, G",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "A, U, C, G",
-          feedback:
-            "Uracil (U) is found in RNA, not DNA. The four DNA bases are Adenine (A), Thymine (T), Cytosine (C), and Guanine (G).",
+          feedback: "U is RNA, not DNA.",
         },
       ],
-      defaultFeedback:
-        "The four DNA bases are: Adenine (A), Thymine (T), Cytosine (C), and Guanine (G). In RNA, Uracil replaces Thymine.",
+      defaultFeedback: "DNA bases are A, T, C, G.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-g-15",
     type: QuestionType.MCQ,
-    questionText:
-      "In codominance, what happens when two different alleles are present?",
+    questionText: "Phenotype refers to:",
+    questionTextIgbo: "Phenotype pụtara:",
     options: [
-      "One is always hidden",
-      "Both are fully expressed",
-      "One is always dominant",
-      "Neither is expressed",
+      "DNA sequence",
+      "Observable traits",
+      "Alleles only",
+      "Proteins only",
     ],
-    correctAnswer: "Both are fully expressed",
+    optionsIgbo: ["DNA", "Ihe a na-ahụ", "Alleles naanị", "Protein naanị"],
+    correctAnswer: "Observable traits",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "One is always hidden",
-          feedback:
-            "That describes standard dominance/recessiveness. In codominance, BOTH alleles are fully expressed simultaneously - neither is hidden.",
+          pattern: "DNA sequence",
+          feedback: "That is genotype.",
         },
       ],
-      defaultFeedback:
-        "In codominance, both alleles are fully expressed when present together. E.g. in AB blood group, both A and B antigens are produced.",
+      defaultFeedback: "Phenotype is observable characteristics.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-16",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Huntington's disease can be inherited from just one parent.",
+    questionText: "Huntington’s disease is dominant.",
+    questionTextIgbo: "Huntington bụ dominant?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True. Huntington's is caused by a DOMINANT allele (Ihe Nketa Siri Ike) - inheriting just one copy from one parent is enough to develop the disease.",
+          feedback: "Only one copy is needed for Huntington’s.",
         },
       ],
-      defaultFeedback:
-        "Correct! Huntington's disease is autosomal dominant - one copy of the allele (Ụdị Ihe Nketa) from either parent is sufficient to cause it.",
+      defaultFeedback: "Huntington’s is dominant.",
     },
+    difficulty: 0.5,
   },
+
   {
     id: "q-g-17",
     type: QuestionType.MCQ,
-    questionText: "What is the shape of the DNA molecule?",
-    options: ["Single helix", "Double helix", "Triple helix", "Linear strand"],
+    questionText: "What is the structure of DNA?",
+    questionTextIgbo: "Kedu udi DNA?",
+    options: ["Single helix", "Double helix", "Triple helix", "Linear"],
+    optionsIgbo: ["Single helix", "Double helix", "Triple helix", "Linear"],
     correctAnswer: "Double helix",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "Single helix",
-          feedback:
-            "DNA (Ihe Nketa Ndụ) has TWO strands twisted together - a double helix, like a twisted ladder. This structure was discovered by Watson and Crick in 1953.",
+          feedback: "DNA has two strands, not one.",
         },
       ],
-      defaultFeedback:
-        "DNA (Ihe Nketa Ndụ) is a double helix - two complementary strands twisted around each other, held together by hydrogen bonds between base pairs.",
+      defaultFeedback: "DNA is a double helix.",
     },
+    difficulty: 0.4,
   },
+
   {
     id: "q-g-18",
     type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What term describes the observable characteristics of an organism?",
+    questionText: "What is the chart used to predict inheritance called?",
+    questionTextIgbo: "Gịnị ka a na-akpọ chart iji chọpụta inheritance?",
     options: null,
-    correctAnswer: "phenotype",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "genotype",
-          feedback:
-            "Genotype (Ihe Nketa Ndụ) is the genetic makeup. Phenotype (Ihe A Na-Ahụ N'Ihe Dị Ndụ) is what you can observe - e.g. eye colour, height.",
-        },
-      ],
-      defaultFeedback:
-        "Phenotype (Ihe A Na-Ahụ N'Ihe Dị Ndụ) is the observable characteristic - the result of genotype interacting with the environment.",
-    },
-  },
-  {
-    id: "q-g-19",
-    type: QuestionType.MCQ,
-    questionText:
-      "A carrier of a recessive genetic disorder has which genotype?",
-    options: [
-      "Homozygous dominant (AA)",
-      "Heterozygous (Aa)",
-      "Homozygous recessive (aa)",
-      "No alleles for the gene",
-    ],
-    correctAnswer: "Heterozygous (Aa)",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "Homozygous dominant (AA)",
-          feedback:
-            "AA has no recessive allele to pass on - they cannot be a carrier. A carrier has one dominant and one recessive allele: Aa (heterozygous).",
-        },
-        {
-          pattern: "Homozygous recessive (aa)",
-          feedback:
-            "aa would HAVE the disease (if aa is the affected genotype). A carrier has the disease allele but is unaffected: Aa (heterozygous).",
-        },
-      ],
-      defaultFeedback:
-        "A carrier is heterozygous (Aa) - they have one normal dominant allele and one recessive disease allele, but do not show symptoms themselves.",
-    },
-  },
-  {
-    id: "q-g-20",
-    type: QuestionType.TRUE_FALSE,
-    questionText: "Mutations can be caused by UV radiation.",
-    options: ["True", "False"],
-    correctAnswer: "True",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "False",
-          feedback:
-            "True. UV radiation can damage DNA and cause mutations (Mgbanwe Ihe Nketa), including the type associated with skin cancer.",
-        },
-      ],
-      defaultFeedback:
-        "Correct! UV radiation is a known mutagen - it can alter the DNA base sequence, potentially causing cancer-causing mutations (Mgbanwe Ihe Nketa).",
-    },
-  },
-  {
-    id: "q-g-21",
-    type: QuestionType.MCQ,
-    questionText: "What is the sex chromosome combination in human females?",
-    options: ["XY", "YY", "XX", "X only"],
-    correctAnswer: "XX",
-    feedbackRules: {
-      misconceptions: [
-        {
-          pattern: "XY",
-          feedback:
-            "XY is the male sex chromosome combination. Human females are XX - two X chromosomes.",
-        },
-      ],
-      defaultFeedback:
-        "Human females have two X chromosomes (XX). Males have one X and one Y (XY). The Y chromosome carries the gene for male sex determination.",
-    },
-  },
-  {
-    id: "q-g-22",
-    type: QuestionType.SHORT_ANSWER,
-    questionText:
-      "What is the name of the chart used to predict offspring genotype ratios?",
-    options: null,
+    optionsIgbo: null,
     correctAnswer: "Punnett square",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "family tree",
-          feedback:
-            "A family tree (pedigree) shows inherited traits across generations. A Punnett square specifically predicts genotype ratios for a single cross.",
+          feedback: "That tracks generations, not predictions.",
         },
       ],
-      defaultFeedback:
-        "A Punnett square is the grid used to predict the probability of genotypes and phenotypes in offspring from a given genetic cross.",
+      defaultFeedback: "Punnett square predicts genetic outcomes.",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-g-23",
+    id: "q-g-19",
     type: QuestionType.MCQ,
-    questionText:
-      "Which blood group is the universal donor for red blood cells?",
-    options: ["AB", "A", "B", "O"],
-    correctAnswer: "O",
+    questionText: "A carrier has which genotype?",
+    questionTextIgbo: "Carrier nwere genotype kedu?",
+    options: ["AA", "Aa", "aa", "None"],
+    optionsIgbo: ["AA", "Aa", "aa", "None"],
+    correctAnswer: "Aa",
     feedbackRules: {
       misconceptions: [
         {
-          pattern: "AB",
-          feedback:
-            "AB is the universal RECIPIENT (can receive any blood type). Blood group O (no A or B antigens) is the universal donor.",
+          pattern: "aa",
+          feedback: "That shows disease, not carrier.",
         },
       ],
-      defaultFeedback:
-        "Blood group O is the universal donor - O red blood cells have no A or B antigens, so they won't trigger immune reactions in any recipient.",
+      defaultFeedback: "Carrier is heterozygous (Aa).",
     },
+    difficulty: 0.5,
   },
+
   {
-    id: "q-g-24",
+    id: "q-g-20",
     type: QuestionType.TRUE_FALSE,
-    questionText: "Every cell in a person's body has the same DNA.",
+    questionText: "Mutations can be caused by radiation.",
+    questionTextIgbo: "Radiation nwere ike ibute mutation?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
         {
           pattern: "False",
-          feedback:
-            "True (with minor exceptions like gametes and mature red blood cells). Every body cell contains the same DNA (Ihe Nketa Ndụ), copied during cell division.",
+          feedback: "Radiation damages DNA.",
         },
       ],
-      defaultFeedback:
-        "Correct! Every body cell has the same DNA (Ihe Nketa Ndụ) - produced by mitosis from the original fertilised egg. Different cell types express different genes, but the DNA is identical.",
+      defaultFeedback: "Radiation can cause mutations.",
     },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-g-21",
+    type: QuestionType.MCQ,
+    questionText: "Which blood group is universal donor?",
+    questionTextIgbo: "Kedu blood group bụ universal donor?",
+    options: ["A", "B", "AB", "O"],
+    optionsIgbo: ["A", "B", "AB", "O"],
+    correctAnswer: "O",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "AB",
+          feedback: "AB is universal recipient.",
+        },
+      ],
+      defaultFeedback: "O is universal donor.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-g-22",
+    type: QuestionType.TRUE_FALSE,
+    questionText: "All body cells contain identical DNA.",
+    questionTextIgbo: "Cells niile nwere otu DNA?",
+    options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
+    correctAnswer: "True",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "False",
+          feedback: "Cells differ in expression, not DNA.",
+        },
+      ],
+      defaultFeedback: "All cells share the same DNA.",
+    },
+    difficulty: 0.4,
+  },
+
+  {
+    id: "q-g-23",
+    type: QuestionType.MCQ,
+    questionText:
+      "What is the probability of getting a recessive phenotype from Aa × Aa?",
+    questionTextIgbo: "Probability nke phenotype recessive site na Aa × Aa?",
+    options: ["25%", "50%", "75%", "100%"],
+    optionsIgbo: ["25%", "50%", "75%", "100%"],
+    correctAnswer: "25%",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "50%",
+          feedback: "You confused genotype vs phenotype.",
+        },
+      ],
+      defaultFeedback: "1 out of 4 = 25%.",
+    },
+    difficulty: 0.7,
+  },
+
+  {
+    id: "q-g-24",
+    type: QuestionType.MCQ,
+    questionText: "Which process produces gametes?",
+    questionTextIgbo: "Kedu usoro na-emepụta gametes?",
+    options: ["Mitosis", "Meiosis", "Diffusion", "Fertilisation"],
+    optionsIgbo: ["Mitosis", "Meiosis", "Diffusion", "Fertilisation"],
+    correctAnswer: "Meiosis",
+    feedbackRules: {
+      misconceptions: [
+        {
+          pattern: "Mitosis",
+          feedback: "Mitosis produces identical cells, not gametes.",
+        },
+      ],
+      defaultFeedback: "Meiosis produces gametes.",
+    },
+    difficulty: 0.5,
   },
 ];
 
@@ -4550,72 +5380,118 @@ async function seedExtraTopics() {
   await seedTopic({
     id: "topic-forces-motion",
     title: "Forces and Motion",
+    titleIgbo: "Ike na Mmegharị",
     description:
       "Explore how forces cause objects to accelerate, decelerate, and change direction using Newton's Laws.",
+    descriptionIgbo:
+      "Mụta otú ike si eme ka ihe gbaa ọsọ, kwụsị, ma ọ bụ gbanwee ntụziaka dịka iwu Newton si dị.",
     duration: "30 mins",
     order: 9,
     lessonId: "lesson-forces-1",
     lessonContent: LESSON_FORCES,
+    igboContent: LESSON_FORCES_IGBO,
     keyTerms: KT_FORCES,
     questions: Q_FORCES,
   });
+
   await seedTopic({
     id: "topic-atom",
     title: "The Atom",
+    titleIgbo: "Atom",
     description:
       "Understand the structure of the atom, subatomic particles, and how the periodic table is organised.",
+    descriptionIgbo:
+      "Ghọta nhazi atom, ihe mejupụtara ya, na otu tebụl periodic si arụ ọrụ.",
     duration: "25 mins",
     order: 10,
     lessonId: "lesson-atom-1",
     lessonContent: LESSON_ATOM,
+    igboContent: LESSON_ATOM_IGBO,
     keyTerms: KT_ATOM,
     questions: Q_ATOM,
   });
+
   await seedTopic({
     id: "topic-circulatory-system",
     title: "Human Circulatory System",
+    titleIgbo: "Usoro Ọbara N’Ahụ Mmadụ",
     description:
       "Trace the path of blood through the heart and body, and learn how oxygen and nutrients are delivered to cells.",
+    descriptionIgbo:
+      "Soro ụzọ ọbara si aga n’ahụ mmadụ ma mụta otu oxygen na nri si erute sel.",
     duration: "25 mins",
     order: 11,
     lessonId: "lesson-circ-1",
     lessonContent: LESSON_CIRCULATION,
+    igboContent: LESSON_CIRCULATION_IGBO,
     keyTerms: KT_CIRCULATION,
     questions: Q_CIRCULATION,
   });
+
   await seedTopic({
     id: "topic-plant-biology",
     title: "Plant Biology",
+    titleIgbo: "Sayensị Osisi",
     description:
       "Study plant organs, transport systems, hormones, and how plants respond to their environment.",
+    descriptionIgbo:
+      "Mụta akụkụ osisi, ụzọ ha si ebufe ihe, na otu ha si aza gburugburu ebe ha nọ.",
     duration: "25 mins",
     order: 12,
     lessonId: "lesson-plant-1",
     lessonContent: LESSON_PLANTS,
+    igboContent: LESSON_PLANTS_IGBO,
     keyTerms: KT_PLANTS,
     questions: Q_PLANTS,
   });
+
   await seedTopic({
     id: "topic-chemical-reactions",
     title: "Chemical Reactions",
+    titleIgbo: "Mmeghachi Kemikal",
     description:
       "Understand what happens during chemical reactions, reaction types, rates, and energy changes.",
+    descriptionIgbo:
+      "Ghọta ihe na-eme mgbe kemikal na-emeghachi, ụdị mmeghachi na ọsọ ha.",
     duration: "30 mins",
     order: 13,
     lessonId: "lesson-chem-1",
     lessonContent: LESSON_CHEMISTRY,
+    igboContent: LESSON_CHEMISTRY_IGBO,
     keyTerms: KT_CHEMISTRY,
     questions: Q_CHEMISTRY,
   });
+
   await seedTopic({
     id: "topic-nervous-system",
     title: "Human Nervous System",
+    titleIgbo: "Usoro Akwara Ụbụrụ",
     description:
       "Learn how the brain, spinal cord, and nerves coordinate rapid responses to stimuli.",
+    descriptionIgbo:
+      "Mụta otu ụbụrụ, akwara azụ, na akwara si arụkọ ọrụ iji zaghachi ngwa ngwa.",
     duration: "25 mins",
     order: 14,
     lessonId: "lesson-nerve-1",
     lessonContent: LESSON_NERVOUS,
+    igboContent: LESSON_NERVOUS_IGBO,
+    keyTerms: KT_NERVOUS,
+    questions: Q_NERVOUS,
+  });
+
+  await seedTopic({
+    id: "topic-nervous-system",
+    title: "Human Nervous System",
+    titleIgbo: "Usoro Akwara Ụbụrụ",
+    description:
+      "Learn how the brain, spinal cord, and nerves coordinate rapid responses to stimuli.",
+    descriptionIgbo:
+      "Mụta otu ụbụrụ, akwara azụ, na akwara si arụkọ ọrụ iji zaghachi ngwa ngwa na ihe na-akpali.",
+    duration: "25 mins",
+    order: 15,
+    lessonId: "lesson-nerve-1",
+    lessonContent: LESSON_NERVOUS,
+    igboContent: LESSON_NERVOUS_IGBO,
     keyTerms: KT_NERVOUS,
     questions: Q_NERVOUS,
   });
@@ -4623,6 +5499,10 @@ async function seedExtraTopics() {
 
 // ═══════════════════════════════════════════════════════════════════
 // LESSON CONTENT - TOPICS 9–14
+// ═══════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════
+// FORCES AND MOTION
 // ═══════════════════════════════════════════════════════════════════
 
 const LESSON_FORCES = `## Forces and Motion
@@ -4673,6 +5553,59 @@ Area under a velocity–time graph = distance travelled.
 - **Kinetic energy** = ½mv²
 - **Gravitational potential energy** = mgh
 - **Power** = work done ÷ time = W/t (watts, W)`;
+
+const LESSON_FORCES_IGBO = `## Ike na Ntugharị (Forces and Motion)
+
+**Ike (Force)** bụ nkwaba ma ọ bụ ndọpụ nke nwere ike ịgbanwe ọsọ, ihu, ma ọ bụ ọdịdị nke ihe. A na-atụ ike na **newtons (N)**.
+
+### Ụdị Ike Dị Iche Iche
+
+- **Ike ndọda (Gravity)** - na-adọta ihe n'ala; weight = mass × g (g ≈ 10 N/kg)
+- **Normal force** - elu ihe na-akwaba azụ n'ụzọ perpendicular
+- **Esemokwu (Friction)** - na-emegide ntugharị n'etiti elu ihe abụọ
+- **Air resistance (drag)** - na-emegide ntugharị n'ime ikuku
+- **Tension** - ike na-aga n'ime eriri agbatịrị agbatị
+- **Upthrust (buoyancy)** - ike na-akwaba ihe elu n'ime mmiri ma ọ bụ ikuku
+
+### Iwu Atọ nke Newton banyere Ntugharị
+
+**Iwu mbụ (Inertia)** - Ihe na-anọ n'otu ebe ma ọ bụ na-agagharị n'otu ọsọ belụsọ ma ọ bụrụ na ike ọzọ abịa gbanwee ya.
+
+**Iwu abụọ** - F = ma (Ike = mass × acceleration). Ọsọ ihe na-agba na-adabere n'ike e tinyere na ya na ibu (mass) ya.
+
+**Iwu atọ** - Maka omume ọ bụla, e nwere mmeghachi omume hà nhata nke chere ihu n'akụkụ nke ọzọ.
+
+### Speed, Velocity, na Acceleration
+
+- **Speed** = anya (distance) ÷ oge (time) (na-egosi naanị ọsọ)
+- **Velocity** = displacement ÷ oge (na-egosi ọsọ na ihu ọ na-aga)
+- **Acceleration** = mgbanwe na velocity ÷ oge = (v − u) ÷ t
+
+### Graphs nke Anya na Oge (Distance–Time na Velocity–Time)
+
+| Graph | Ahịrị kwụ ọtọ | Ahịrị gbadara agbada | Ahịrị gbagọrọ agbagọ |
+|---|---|---|---|
+| Distance–Time | Ihe guzo otu ebe | Ọsọ na-adịghị agbanwe | Ọsọ na-agbanwe agbanwe |
+| Velocity–Time | Velocity na-adịghị agbanwe | Acceleration na-adịghị agbanwe | Acceleration na-agbanwe agbanwe |
+
+Ohere (area) dị n'okpuru velocity–time graph = anya a gara (distance travelled).
+
+### Momentum
+
+> p = m × v (momentum = mass × velocity)
+
+**Nchekwa Momentum (Conservation of Momentum)**: N'ime usoro mechiri emechi, ngụkọta momentum tupu ihe abụọ akụkọrọ = ngụkọta momentum mgbe ha kụkọrọ.
+
+### Work, Energy, na Power
+
+- **Work done** = Ike × anya n'ihu ike ahụ (W = Fd)
+- **Kinetic energy** = ½mv²
+- **Gravitational potential energy** = mgh
+- **Power** = work done ÷ oge = W/t (watts, W)`;
+
+// ═══════════════════════════════════════════════════════════════════
+// THE ATOM
+// ═══════════════════════════════════════════════════════════════════
 
 const LESSON_ATOM = `## The Atom
 
@@ -4726,6 +5659,62 @@ Some nuclei are unstable and decay by emitting radiation:
 - **Beta (β)** - fast electron; stopped by aluminium; moderately ionising
 - **Gamma (γ)** - electromagnetic radiation; stopped by lead/thick concrete; weakly ionising`;
 
+const LESSON_ATOM_IGBO = `## Atom
+
+Ihe niile dị n'ụwa bụ **atoms** mejupụtara ha - nke bụ irighiri ihe kachasị obere nke element nke nwere njirimara kemịkal ya.
+
+### Irighiri Ihe Dị N'ime Atom (Subatomic Particles)
+
+| Irighiri Ihe | Ebe Ọ Nọ | Ebubo (Charge) | Ibu (Relative Mass) |
+|---|---|---|---|
+| Proton | Nucleus | +1 | 1 |
+| Neutron | Nucleus | 0 | 1 |
+| Electron | Shells (orbitals) | −1 | ~1/1836 |
+
+Nucleus ahụ dị obere ma sie ike. Ihe ka ukwuu n'ime atom bụ oghere efu ebe electron shells nọ.
+
+### Nọmba Atom na Nọmba Mass
+
+- **Nọmba Atom (Z)** = ọnụ ọgụgụ protons (ọ na-akọwa ụdị element ọ bụ)
+- **Nọmba Mass (A)** = protons + neutrons
+- Atoms na-anaghị ebu ebubo: ọnụ ọgụgụ protons = ọnụ ọgụgụ electrons
+
+### Isotopes
+
+Isotopes bụ atoms nke otu element nwere ọnụ ọgụgụ neutrons dị iche (otu nọmba atom, mana nọmba mass dị iche). Ọmụmaatụ: Carbon-12 na Carbon-14.
+
+### Electron Shells
+
+Electrons na-anọ n'ime shells n'ogo ike dị iche iche:
+- Shell 1: kacha electrons 2
+- Shell 2: kacha electrons 8
+- Shell 3: kacha electrons 8 (n'ụdị dị mfe)
+
+Nhazi electrons nke sodium (Na, Z=11): 2, 8, 1.
+
+### Tebụl Periodic (The Periodic Table)
+
+A haziri elements dịka **nọmba atom** ha siri dị. Tebụl a nwere:
+- **Periods** (ahịrị kwụ ọtọ) - elements nọ n'otu period nwere otu ọnụ ọgụgụ electron shells
+- **Groups** (ahịrị kwụ n'ahịrị) - elements nọ n'otu group nwere otu ọnụ ọgụgụ electrons n'elu ma nwee njirimara kemịkal yiri onwe ha
+
+### Ions
+
+Atoms na-enweta ma ọ bụ na-atụfu electrons iji ghọọ **ions**:
+- Metal atoms na-atụfu electrons → positive ions (cations), dịka Na⁺, Ca²⁺
+- Non-metal atoms na-enweta electrons → negative ions (anions), dịka Cl⁻, O²⁻
+
+### Radioactivity
+
+Ụfọdụ nuclei anaghị akwụsi ike ma na-emebi site n'iwepụta radiation:
+- **Alpha (α)** - helium nucleus (2p + 2n); akwụkwọ nwere ike igbochi ya
+- **Beta (β)** - electron na-agba ọsọ; aluminium nwere ike igbochi ya
+- **Gamma (γ)** - ebili mmiri electromagnetic; lead ma ọ bụ concrete siri ike na-egbochi ya`;
+
+// ═══════════════════════════════════════════════════════════════════
+// HUMAN CIRCULATORY SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+
 const LESSON_CIRCULATION = `## The Human Circulatory System
 
 The circulatory system delivers oxygen and nutrients to cells and removes waste products like CO₂.
@@ -4770,6 +5759,55 @@ Heart rate is controlled by the **sinoatrial (SA) node** - the heart's natural p
 ### Coronary Heart Disease
 
 Caused by fatty deposits (plaques) narrowing coronary arteries. Risk factors: high blood pressure, high cholesterol, smoking, obesity, diabetes.`;
+
+const LESSON_CIRCULATION_IGBO = `## Usoro Mgbasa Ọbara (Human Circulatory System)
+
+Usoro mgbasa ọbara na-ebuga oxygen na nri n'ime mkpụrụ ndụ ma na-ewepụ ihe mkpofu dịka CO₂.
+
+### Obi (The Heart)
+
+Obi bụ **pọmpụ abụọ** ejiri akwara cardiac mee:
+- **Akụkụ aka nri** - na-apụnye ọbara na-enweghị oxygen n'akpa ume (pulmonary circuit)
+- **Akụkụ aka ekpe** - na-apụnye ọbara nwere oxygen n'ahụ niile (systemic circuit)
+
+**Ụlọ Obi (Chambers):** Right atrium → Right ventricle → Akpa ume → Left atrium → Left ventricle → Ahụ
+
+**Valves:** Na-egbochi ọbara ịlaghachi azụ - tricuspid (nri), bicuspid/mitral (ekpe), pulmonary, aortic.
+
+### Akwara Ọbara (Blood Vessels)
+
+| Akwara | Ihu Ọ Na-aga | Mgbidi Ya | Ike Ọsọ (Pressure) |
+|---|---|---|---|
+| Artery | Na-esi n'obi pụọ | Siri ike, nwee akwara | Dị elu |
+| Vein | Na-aga n'obi | Dị mfe, nwee valves | Dị ala |
+| Capillary | Maka mgbanwe ihe | Dị mfe nke ukwuu | Dị ala nke ukwuu |
+
+### Mgbasa Ọbara Abụọ (Double Circulation)
+
+1. **Pulmonary circuit** - obi → akpa ume → obi (ọbara na-enweta O₂, tufuo CO₂)
+2. **Systemic circuit** - obi → ahụ → obi (na-ebuga O₂, na-enweta CO₂)
+
+### Ihe Mejupụtara Ọbara
+
+- **Mkpụrụ ndụ ọbara uhie** - na-ebu oxygen; enweghị nucleus; nwee ọdịdị biconcave
+- **Mkpụrụ ndụ ọbara ọcha** - na-echebe ahụ megide ọrịa
+- **Platelets** - na-eme ka ọbara kụọ ma mmadụ merụọ ahụ
+- **Plasma** - mmiri na-ebu nri gbazere agbaze, hormones, CO₂, na urea
+
+### Okirikiri Obi (The Cardiac Cycle)
+
+1. **Diastole** - obi na-ezu ike; ụlọ obi na-ejupụta n'ọbara
+2. **Systole** - ventricles na-agbakọ; a na-apụnye ọbara n'akpa ume na n'ahụ
+
+Ọsọ obi na-akụ bụ **sinoatrial (SA) node** na-achịkwa ya - ihe na-enye obi ọkụ n'onwe ya.
+
+### Ọrịa Obi Coronary
+
+Ihe na-ebute ya bụ abụba na-emechi akwara obi. Ihe ndị na-ebute ya: ọbara mgbali elu, cholesterol dị elu, ise siga, ibu oke, na ọrịa shuga.`;
+
+// ═══════════════════════════════════════════════════════════════════
+// PLANT BIOLOGY
+// ═══════════════════════════════════════════════════════════════════
 
 const LESSON_PLANTS = `## Plant Biology
 
@@ -4819,6 +5857,59 @@ Factors increasing transpiration rate:
 **Fertilisation** - pollen tube grows down the style; male nucleus fuses with ovule → seed.
 
 The ovary develops into a **fruit** surrounding the seed.`;
+
+const LESSON_PLANTS_IGBO = `## Sayensị Osisi (Plant Biology)
+
+Osisi bụ ihe dị ndụ nwere ọtụtụ mkpụrụ ndụ na-emepụta nri site n'anyanwụ ma nwee ike ibi n'elu ala.
+
+### Akụkụ Osisi
+
+- **Mgbọrọgwụ** - na-ejigide osisi n'ala; na-amịkọ mmiri na mineral; na-echekwa nri
+- **Opa (Stem)** - na-akwado osisi; na-ebugharị mmiri na nri
+- **Akwụkwọ** - isi ebe photosynthesis na-eme; mgbanwe ikuku na-eme na stomata
+- **Okooko osisi** - maka mmeputakwa (pollination na fertilisation)
+
+### Njem n'ime Osisi (Transport in Plants)
+
+**Xylem** - na-ebu mmiri na mineral site na mgbọrọgwụ gaa n'akwụkwọ. Mmiri na-esi n'akwụkwọ apụ na-eme ka ọ na-arị elu. Ọ na-aga naanị n'elu.
+
+**Phloem** - na-ebu shuga gbazere agbaze (sitere na photosynthesis) site n'akwụkwọ gaa n'akụkụ niile nke osisi. Ọ na-aga n'elu na n'ala.
+
+### Mwepụta Mmiri (Transpiration)
+
+Mmiri na-esi n'akwụkwọ pụọ n'ụdị ikuku site na stomata. Nke a na-adọta mmiri elu site na xylem.
+
+Ihe na-eme ka mmiri pụọ ngwa ngwa:
+- Ìhè anyanwụ ka ukwuu
+- Okpomọkụ ka elu
+- Mmiri dị n'ikuku (humidity) dị ala
+- Ikuku na-efe n'ọsọ
+
+### Hormones Osisi
+
+**Auxin** - a na-emepụta ya n'ọnụ osisi; ọ na-eme ka akụkụ osisi gbagọọ n'akụkụ ìhè anyanwụ (**phototropism**).
+
+**Gibberellins** - na-enyere osisi aka itolite ogologo ma na-enyere mkpụrụ aka ipu ome.
+
+**Ethylene** - na-eme ka mkpụrụ osisi chaa ngwa ngwa.
+
+### Mmeghachi Omume Osisi
+
+- **Phototropism** - uto na-aga n'akụkụ ìhè
+- **Gravitropism** - opa na-eto na-emegide ike ndọda; mgbọrọgwụ na-eto na-eso ike ndọda
+- **Thigmotropism** - uto na-adabere na mmetụ (dịka osisi na-arị arị)
+
+### Mmeputakwa na Osisi (Sexual Reproduction)
+
+**Pollination** - ntụgharị pollen site n'aka nwoke gaa n'aka nwaanyị (stigma). Ikuku ma ọ bụ ụmụ ahụhụ nwere ike ime nke a.
+
+**Fertilisation** - pollen na ovule na-ezukọ iji ghọọ mkpụrụ.
+
+Ovary na-aghọ **mkpụrụ osisi (fruit)** nke gbara mkpụrụ ahụ gburugburu.`;
+
+// ═══════════════════════════════════════════════════════════════════
+// CHEMICAL REACTIONS
+// ═══════════════════════════════════════════════════════════════════
 
 const LESSON_CHEMISTRY = `## Chemical Reactions
 
@@ -4878,6 +5969,68 @@ Reactions occur when particles collide with sufficient energy (activation energy
 - **Universal indicator** changes colour across the pH range
 - **Neutralisation**: Acid + Alkali → Salt + Water`;
 
+const LESSON_CHEMISTRY_IGBO = `## Mmeghachi Omume Kemịkal (Chemical Reactions)
+
+**Mmeghachi omume kemịkal** bụ usoro ihe (reactants) na-agbanwe ghọọ ihe ọhụrụ (products). A na-ahazi atoms ọzọ mana anaghị emepụta ma ọ bụ bibie ha.
+
+### Ihe Ndị Na-egosi Mmeghachi Omume Kemịkal
+
+- Mgbanwe agba
+- Mwepụta ikuku (effervescence)
+- Mgbanwe okpomọkụ
+- Ihe siri ike na-apụta n'ime mmiri (precipitate)
+- Mgbanwe a na-enweghị ike iweghachi azụ
+
+### Nchekwa nke Mass (Conservation of Mass)
+
+> Ngụkọta mass nke reactants = Ngụkọta mass nke products
+
+Anaghị emepụta ma ọ bụ bibie atoms n'oge mmeghachi omume.
+
+### Ụdị Mmeghachi Omume Kemịkal
+
+**Synthesis (Njikọ):** A + B → AB (ihe abụọ ejikọọ)
+
+**Decomposition (Ntikpọ):** AB → A + B (otu ihe atikpọọ)
+
+**Combustion (Ọkụ):** Fuel + O₂ → CO₂ + H₂O + ike (ọkụ zuru ezu)
+
+**Neutralisation:** Acid + Base → Nnu + Mmiri
+
+**Redox:** Mgbanwe nke electrons; oxidation = ntụfu electrons; reduction = nnweta electrons
+
+**Precipitation:** Ngwakọta abụọ na-emeghachi omume iji mepụta ihe siri ike na-adịghị agbazere agbazere
+
+### Mgbanwe Ike (Energy Changes)
+
+- **Exothermic** - na-ewepụta ike (okpomọkụ na-arị elu); dịka ọkụ, respiration
+- **Endothermic** - na-amịkọrọ ike (okpomọkụ na-ada ala); dịka photosynthesis
+
+### Ọsọ nke Mmeghachi Omume (Rates of Reaction)
+
+Ihe na-eme ka ọ gbaa ọsọ:
+1. **Okpomọkụ ka elu** - irighiri ihe na-enwekwu ike
+2. **Ntinye uche (Concentration) ka elu** - irighiri ihe ka n'ụba n'otu ebe
+3. **Mpaghara elu (Surface area) ka ukwuu** - ọtụtụ mmetụ na-eme
+4. **Catalyst** - na-enyere mmeghachi omume aka iji obere ike mee
+5. **Ìhè** (maka mmeghachi omume photochemical)
+
+### Ozizi Mmetụ (Collision Theory)
+
+Mmeghachi omume na-eme mgbe irighiri ihe metụrụ onwe ha n'ike zuru ezu (activation energy). Ihe ọ bụla na-eme ka mmetụ a na-eme mgbe niile na-eme ka ọsọ ya rịpụ elu.
+
+### pH Scale na Acids/Bases
+
+- **pH 0–6**: Acid (H⁺ ions)
+- **pH 7**: Neutral (adịghị n'akụkụ ọ bụla)
+- **pH 8–14**: Alkali/Base (OH⁻ ions)
+- **Universal indicator** na-agbanwe agba na pH dị iche iche
+- **Neutralisation**: Acid + Alkali → Nnu + Mmiri`;
+
+// ═══════════════════════════════════════════════════════════════════
+// HUMAN NERVOUS SYSTEM
+// ═══════════════════════════════════════════════════════════════════
+
 const LESSON_NERVOUS = `## The Human Nervous System
 
 The nervous system allows the body to detect stimuli and coordinate rapid responses.
@@ -4930,6 +6083,58 @@ Major regions:
 | Mechanoreceptors | Pressure, sound |
 | Thermoreceptors | Temperature |
 | Nociceptors | Pain |`;
+
+const LESSON_NERVOUS_IGBO = `## Usoro Akwara Ozi (Human Nervous System)
+
+Usoro akwara ozi na-enyere ahụ aka ịmata ihe na-eme gburugburu ma na-enye nzaghachi ngwa ngwa.
+
+### Nhazi
+
+**Central Nervous System (CNS)** - ụbụrụ + spinal cord; ọ na-ahazi ozi
+
+**Peripheral Nervous System (PNS)** - akwara ndị ọzọ niile; na-ebu ozi na-aga ma na-esi na CNS
+
+### Mkpụrụ Ndụ Akwara (Neurones)
+
+Ụdị atọ dị:
+- **Sensory neurones** - na-ebu ozi SITE NA receptors GAA NA CNS
+- **Relay neurones** - na-ejikọ sensory na motor neurones n'ime CNS
+- **Motor neurones** - na-ebu ozi SITE NA CNS GAA NA ahụ (akwara/glands)
+
+Nhazi: Cell body, dendrites (na-anata ozi), axon (na-eziga ozi), myelin sheath (na-echebe ma na-eme ka ozi gbaa ọsọ).
+
+### Synapse
+
+**Synapse** bụ oghere dị n'etiti mkpụrụ ndụ akwara abụọ. Mgbe ozi ruru n'isi otu akwara:
+1. A na-atọhapụ **neurotransmitters** (kemịkal ozi) n'ime oghere ahụ
+2. Kemịkal ndị a na-aga n'akụkụ nke ọzọ wee rapala na receptors nke akwara ọzọ
+3. Nke a na-amalite ozi ọhụrụ n'akwara nke abụọ ahụ
+
+### Usoro Mmeghachi Omume Mberede (Reflex Arcs)
+
+**Reflex** bụ nzaghachi ngwa ngwa na nke akpaka nke na-agaghị n'isi ụbụrụ tupu o mee.
+
+Ụzọ ọ na-agbaso: **Ihe merenụ (Stimulus) → Onye natara ozi (Receptor) → Sensory neurone → Relay neurone (spinal cord) → Motor neurone → Ihe ga-eme ihe (Effector) → Nzaghachi**
+
+Ọmụmaatụ: Iwepụ aka n'ọkụ ngwa ngwa, iku ume, ikpebi anya mgbe ìhè batara.
+
+### Ụbụrụ (The Brain)
+
+Akụkụ ndị dị mkpa:
+- **Cerebrum (Isi Ụbụrụ)** - echiche, ncheta, mmụta, na ntugharị aka na ụkwụ
+- **Cerebellum** - nhazi na itule ahụ (balance)
+- **Medulla oblongata** - na-achịkwa ọrụ akpaka (iku ume, ọsọ obi)
+- **Hypothalamus** - na-achịkwa okpomọkụ ahụ, agụụ, akpịrị ịkpọ nkụ
+
+### Ndị Na-anata Ozi (Receptors)
+
+| Onye Na-anata Ozi | Ihe Ọ Na-amata |
+|---|---|
+| Photoreceptors | Ìhè |
+| Chemoreceptors | Kemịkal (ụtọ, isi) |
+| Mechanoreceptors | Mmetụ, ụda |
+| Thermoreceptors | Okpomọkụ |
+| Nociceptors | Ihe mgbu |`;
 
 // ═══════════════════════════════════════════════════════════════════
 // KEY TERMS - TOPICS 9–14
@@ -5294,11 +6499,18 @@ const Q_FORCES = [
     id: "q-f-1",
     type: QuestionType.MCQ,
     questionText: "What is Newton's Second Law?",
+    questionTextIgbo: "Gịnị bụ Iwu Newton Nke Abụọ?",
     options: [
       "An object at rest stays at rest",
       "F = ma",
       "Every action has an equal and opposite reaction",
       "Energy is conserved",
+    ],
+    optionsIgbo: [
+      "Ihe dị jụụ na-anọgide jụụ",
+      "F = ma",
+      "Omume ọ bụla nwere mmeghachi omume hà na nke megidere ya",
+      "A na-echekwa ike",
     ],
     correctAnswer: "F = ma",
     feedbackRules: {
@@ -5318,7 +6530,10 @@ const Q_FORCES = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "A heavier object always falls faster than a lighter one in a vacuum.",
+    questionTextIgbo:
+      "Ihe dị arọ na-adaba ngwa ngwa karịa nke dị mfe n'ime oghere efu?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -5336,7 +6551,9 @@ const Q_FORCES = [
     id: "q-f-3",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the formula for momentum?",
+    questionTextIgbo: "Kedu usoro maka momentum?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "p = mv",
     feedbackRules: {
       misconceptions: [
@@ -5354,7 +6571,10 @@ const Q_FORCES = [
     id: "q-f-4",
     type: QuestionType.MCQ,
     questionText: "What does the area under a velocity–time graph represent?",
+    questionTextIgbo:
+      "Gịnị ka mpaghara dị n'okpuru graph velocity–time na-anọchi anya?",
     options: ["Acceleration", "Force", "Distance travelled", "Momentum"],
+    optionsIgbo: ["Ọsọ Ọsịsọ", "Ike", "Ụzọ gara", "Momentum"],
     correctAnswer: "Distance travelled",
     feedbackRules: {
       misconceptions: [
@@ -5372,7 +6592,10 @@ const Q_FORCES = [
     id: "q-f-5",
     type: QuestionType.TRUE_FALSE,
     questionText: "Friction always acts in the same direction as motion.",
+    questionTextIgbo:
+      "Friction na-arụ ọrụ n'otu ụzọ ahụ na mmegharị mgbe niile?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -5390,7 +6613,10 @@ const Q_FORCES = [
     id: "q-f-6",
     type: QuestionType.MCQ,
     questionText: "A 5 kg object accelerates at 3 m/s². What force acts on it?",
+    questionTextIgbo:
+      "Ihe nwere ibu 5 kg na-enweta acceleration 3 m/s². Kedu ike na-arụ ọrụ na ya?",
     options: ["1.67 N", "8 N", "15 N", "0.6 N"],
+    optionsIgbo: ["1.67 N", "8 N", "15 N", "0.6 N"],
     correctAnswer: "15 N",
     feedbackRules: {
       misconceptions: [
@@ -5408,7 +6634,10 @@ const Q_FORCES = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What is the principle that states momentum is conserved in a closed system?",
+    questionTextIgbo:
+      "Kedu iwu na-ekwu na a na-echekwa momentum n'ime sistem mechiri emechi?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "conservation of momentum",
     feedbackRules: {
       misconceptions: [
@@ -5426,11 +6655,18 @@ const Q_FORCES = [
     id: "q-f-8",
     type: QuestionType.MCQ,
     questionText: "What is the difference between speed and velocity?",
+    questionTextIgbo: "Kedu ihe dị iche n'etiti speed na velocity?",
     options: [
       "Speed has direction; velocity does not",
       "Velocity has direction; speed does not",
       "They are identical",
       "Speed is measured in m/s; velocity in km/h",
+    ],
+    optionsIgbo: [
+      "Speed nwere direction; velocity enweghị",
+      "Velocity nwere direction; speed enweghị",
+      "Ha bụ otu ihe",
+      "Speed na-atụ na m/s; velocity na km/h",
     ],
     correctAnswer: "Velocity has direction; speed does not",
     feedbackRules: {
@@ -5450,7 +6686,10 @@ const Q_FORCES = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Newton's Third Law states that every action has an equal and opposite reaction.",
+    questionTextIgbo:
+      "Iwu Newton Nke Atọ na-ekwu na omume ọ bụla nwere mmeghachi omume hà na nke megidere ya?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5469,12 +6708,15 @@ const Q_FORCES = [
     type: QuestionType.MCQ,
     questionText:
       "An object travelling at constant velocity has what net force acting on it?",
+    questionTextIgbo:
+      "Ihe na-emegharị na velocity kwụsie ike nwere ike net nke ole na-arụ ọrụ na ya?",
     options: [
       "A large force",
       "A small force",
       "Zero force",
       "Its weight only",
     ],
+    optionsIgbo: ["Ike buru ibu", "Ike nta", "Enweghị ike", "Naanị ibu ya"],
     correctAnswer: "Zero force",
     feedbackRules: {
       misconceptions: [
@@ -5492,7 +6734,9 @@ const Q_FORCES = [
     id: "q-f-11",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the formula for work done?",
+    questionTextIgbo: "Kedu usoro maka work done?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "W = Fd",
     feedbackRules: {
       misconceptions: [
@@ -5511,7 +6755,10 @@ const Q_FORCES = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Kinetic energy depends on the square of an object's velocity.",
+    questionTextIgbo:
+      "Kinetic energy na-adabere na square nke velocity nke ihe?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5530,7 +6777,10 @@ const Q_FORCES = [
     type: QuestionType.MCQ,
     questionText:
       "What force opposes the motion of an object falling through air?",
+    questionTextIgbo:
+      "Kedu ike na-egbochi mmegharị nke ihe na-adaba n'ime ikuku?",
     options: ["Gravity", "Normal force", "Air resistance", "Tension"],
+    optionsIgbo: ["Gravity", "Normal force", "Air resistance", "Tension"],
     correctAnswer: "Air resistance",
     feedbackRules: {
       misconceptions: [
@@ -5549,11 +6799,19 @@ const Q_FORCES = [
     type: QuestionType.MCQ,
     questionText:
       "At terminal velocity, what can be said about the forces on a falling object?",
+    questionTextIgbo:
+      "N'oge terminal velocity, gịnị ka a ga-ekwu gbasara ike na-arụ ọrụ na ihe na-adaba?",
     options: [
       "Only gravity acts",
       "Only air resistance acts",
       "Forces are balanced",
       "Gravity is greater than drag",
+    ],
+    optionsIgbo: [
+      "Naanị gravity na-arụ ọrụ",
+      "Naanị air resistance na-arụ ọrụ",
+      "Ike kwekọrọ",
+      "Gravity karịrị drag",
     ],
     correctAnswer: "Forces are balanced",
     feedbackRules: {
@@ -5573,7 +6831,10 @@ const Q_FORCES = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Gravitational potential energy increases as an object is lifted higher.",
+    questionTextIgbo:
+      "Gravitational potential energy na-abawanye mgbe a buliri ihe elu?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5592,7 +6853,9 @@ const Q_FORCES = [
     type: QuestionType.MCQ,
     questionText:
       "An object has mass 2 kg and velocity 6 m/s. Its momentum is:",
+    questionTextIgbo: "Ihe nwere ibu 2 kg na velocity 6 m/s. Kedu momentum ya?",
     options: ["3 kg·m/s", "8 kg·m/s", "12 kg·m/s", "36 kg·m/s"],
+    optionsIgbo: ["3 kg·m/s", "8 kg·m/s", "12 kg·m/s", "36 kg·m/s"],
     correctAnswer: "12 kg·m/s",
     feedbackRules: {
       misconceptions: [
@@ -5611,7 +6874,10 @@ const Q_FORCES = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What name is given to the resistance of an object to changes in its motion?",
+    questionTextIgbo:
+      "Kedu aha a na-akpọ iguzogide mgbanwe na mmegharị nke ihe?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "inertia",
     feedbackRules: {
       misconceptions: [
@@ -5629,11 +6895,18 @@ const Q_FORCES = [
     id: "q-f-18",
     type: QuestionType.MCQ,
     questionText: "Which graph shows constant acceleration?",
+    questionTextIgbo: "Kedu graph na-egosi acceleration na-adịgide?",
     options: [
       "Horizontal line on distance-time graph",
       "Curved line on distance-time graph",
       "Straight sloped line on velocity-time graph",
       "Horizontal line on velocity-time graph",
+    ],
+    optionsIgbo: [
+      "Ahịrị kwụ ọtọ na distance-time graph",
+      "Ahịrị gbagọrọ agbagọ na distance-time graph",
+      "Ahịrị nwere slope kwụ ọtọ na velocity-time graph",
+      "Ahịrị kwụ ọtọ na velocity-time graph",
     ],
     correctAnswer: "Straight sloped line on velocity-time graph",
     feedbackRules: {
@@ -5652,7 +6925,9 @@ const Q_FORCES = [
     id: "q-f-19",
     type: QuestionType.TRUE_FALSE,
     questionText: "Power is the rate at which work is done.",
+    questionTextIgbo: "Power bụ ọsọ e si arụ ọrụ?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5670,7 +6945,15 @@ const Q_FORCES = [
     id: "q-f-20",
     type: QuestionType.MCQ,
     questionText: "What happens to stopping distance if a car's speed doubles?",
+    questionTextIgbo:
+      "Gịnị na-eme na stopping distance ma ọ bụrụ na ọsọ ụgbọ ala gbara abụọ?",
     options: ["Doubles", "Triples", "Quadruples", "Stays the same"],
+    optionsIgbo: [
+      "Na-agba abụọ",
+      "Na-agba atọ",
+      "Na-agba anọ",
+      "Na-anọgide otu",
+    ],
     correctAnswer: "Quadruples",
     feedbackRules: {
       misconceptions: [
@@ -5688,7 +6971,9 @@ const Q_FORCES = [
     id: "q-f-21",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the unit of force?",
+    questionTextIgbo: "Kedu unit nke force?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "newton",
     feedbackRules: {
       misconceptions: [
@@ -5706,7 +6991,9 @@ const Q_FORCES = [
     id: "q-f-22",
     type: QuestionType.TRUE_FALSE,
     questionText: "An object at rest has zero momentum.",
+    questionTextIgbo: "Ihe dị jụụ nwere momentum efu?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5731,11 +7018,18 @@ const Q_ATOM = [
     id: "q-a-1",
     type: QuestionType.MCQ,
     questionText: "What is found in the nucleus of an atom?",
+    questionTextIgbo: "Gịnị ka a na-ahụ n'ime nucleus nke atom?",
     options: [
       "Electrons only",
       "Protons and neutrons",
       "Neutrons only",
       "Protons only",
+    ],
+    optionsIgbo: [
+      "Naanị electrons",
+      "Protons na neutrons",
+      "Naanị neutrons",
+      "Naanị protons",
     ],
     correctAnswer: "Protons and neutrons",
     feedbackRules: {
@@ -5754,7 +7048,9 @@ const Q_ATOM = [
     id: "q-a-2",
     type: QuestionType.MCQ,
     questionText: "What charge does an electron carry?",
+    questionTextIgbo: "Kedu charge electron na-eburu?",
     options: ["+1", "0", "−1", "−2"],
+    optionsIgbo: ["+1", "0", "−1", "−2"],
     correctAnswer: "−1",
     feedbackRules: {
       misconceptions: [
@@ -5773,7 +7069,9 @@ const Q_ATOM = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Isotopes of the same element have the same number of protons.",
+    questionTextIgbo: "Isotopes nke otu element nwere otu ọnụọgụ protons?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5791,7 +7089,9 @@ const Q_ATOM = [
     id: "q-a-4",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What does the atomic number of an element tell you?",
+    questionTextIgbo: "Kedu ihe atomic number nke element na-agwa gị?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "number of protons",
     feedbackRules: {
       misconceptions: [
@@ -5810,7 +7110,10 @@ const Q_ATOM = [
     type: QuestionType.MCQ,
     questionText:
       "What is the maximum number of electrons in the second shell?",
+    questionTextIgbo:
+      "Kedu ọnụ ọgụgụ kacha elu nke electrons na shell nke abụọ?",
     options: ["2", "4", "8", "18"],
+    optionsIgbo: ["2", "4", "8", "18"],
     correctAnswer: "8",
     feedbackRules: {
       misconceptions: [
@@ -5829,7 +7132,9 @@ const Q_ATOM = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "In a neutral atom, the number of protons equals the number of electrons.",
+    questionTextIgbo: "N'ime atom neutral, ọnụọgụ protons hà na electrons?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5847,11 +7152,18 @@ const Q_ATOM = [
     id: "q-a-7",
     type: QuestionType.MCQ,
     questionText: "What is an ion?",
+    questionTextIgbo: "Gịnị bụ ion?",
     options: [
       "An atom with extra neutrons",
       "An atom that has gained or lost electrons",
       "A radioactive atom",
       "A molecule",
+    ],
+    optionsIgbo: [
+      "Atom nwere neutrons karịa",
+      "Atom enwetara ma ọ bụ tufuo electrons",
+      "Atom radioactive",
+      "Molecule",
     ],
     correctAnswer: "An atom that has gained or lost electrons",
     feedbackRules: {
@@ -5871,11 +7183,19 @@ const Q_ATOM = [
     type: QuestionType.MCQ,
     questionText:
       "Elements in the same group of the periodic table have similar chemical properties because:",
+    questionTextIgbo:
+      "Elements nọ n'otu group na periodic table nwere àgwà kemịkal yiri nke ahụ n'ihi na:",
     options: [
       "Same mass number",
       "Same number of outer electrons",
       "Same number of neutrons",
       "Same physical state",
+    ],
+    optionsIgbo: [
+      "Otu mass number",
+      "Otu ọnụọgụ electrons n'èzí",
+      "Otu ọnụọgụ neutrons",
+      "Otu ọnọdụ anụ ahụ",
     ],
     correctAnswer: "Same number of outer electrons",
     feedbackRules: {
@@ -5895,7 +7215,10 @@ const Q_ATOM = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Alpha radiation is the most ionising and least penetrating type.",
+    questionTextIgbo:
+      "Alpha radiation bụ nke kacha ionising ma nwee ntinye kacha nta?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5913,7 +7236,9 @@ const Q_ATOM = [
     id: "q-a-10",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the mass number of an atom?",
+    questionTextIgbo: "Gịnị bụ mass number nke atom?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "protons plus neutrons",
     feedbackRules: {
       misconceptions: [
@@ -5931,11 +7256,18 @@ const Q_ATOM = [
     id: "q-a-11",
     type: QuestionType.MCQ,
     questionText: "Carbon-12 and Carbon-14 are:",
+    questionTextIgbo: "Carbon-12 na Carbon-14 bụ:",
     options: [
       "Different elements",
       "Isotopes of carbon",
       "Ions of carbon",
       "Allotropes of carbon",
+    ],
+    optionsIgbo: [
+      "Elements dị iche",
+      "Isotopes nke carbon",
+      "Ions nke carbon",
+      "Allotropes nke carbon",
     ],
     correctAnswer: "Isotopes of carbon",
     feedbackRules: {
@@ -5954,7 +7286,9 @@ const Q_ATOM = [
     id: "q-a-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "Most of an atom's volume is empty space.",
+    questionTextIgbo: "Ọtụtụ akụkụ nke atom bụ oghere efu?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -5972,7 +7306,10 @@ const Q_ATOM = [
     id: "q-a-13",
     type: QuestionType.MCQ,
     questionText: "What radiation is stopped by a thin sheet of aluminium?",
+    questionTextIgbo:
+      "Kedu radiation a na-egbochi site na aluminium dị ntakịrị?",
     options: ["Alpha", "Beta", "Gamma", "All three"],
+    optionsIgbo: ["Alpha", "Beta", "Gamma", "Ha niile"],
     correctAnswer: "Beta",
     feedbackRules: {
       misconceptions: [
@@ -5996,7 +7333,10 @@ const Q_ATOM = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What is the name for atoms of the same element with different mass numbers?",
+    questionTextIgbo:
+      "Kedu aha a na-akpọ atoms nke otu element nwere mass number dị iche?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "isotopes",
     feedbackRules: {
       misconceptions: [
@@ -6014,7 +7354,9 @@ const Q_ATOM = [
     id: "q-a-15",
     type: QuestionType.MCQ,
     questionText: "Which subatomic particle has the smallest mass?",
+    questionTextIgbo: "Kedu subatomic particle nwere mass kacha nta?",
     options: ["Proton", "Neutron", "Electron", "They are all equal"],
+    optionsIgbo: ["Proton", "Neutron", "Electron", "Ha niile hà"],
     correctAnswer: "Electron",
     feedbackRules: {
       misconceptions: [
@@ -6032,7 +7374,9 @@ const Q_ATOM = [
     id: "q-a-16",
     type: QuestionType.TRUE_FALSE,
     questionText: "Gamma radiation is a form of electromagnetic radiation.",
+    questionTextIgbo: "Gamma radiation bụ ụdị electromagnetic radiation?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6050,7 +7394,9 @@ const Q_ATOM = [
     id: "q-a-17",
     type: QuestionType.MCQ,
     questionText: "What is the electronic configuration of sodium (Na, Z=11)?",
+    questionTextIgbo: "Gịnị bụ electronic configuration nke sodium (Na, Z=11)?",
     options: ["2,9", "2,8,1", "3,8", "2,6,3"],
+    optionsIgbo: ["2,9", "2,8,1", "3,8", "2,6,3"],
     correctAnswer: "2,8,1",
     feedbackRules: {
       misconceptions: [
@@ -6068,11 +7414,18 @@ const Q_ATOM = [
     id: "q-a-18",
     type: QuestionType.MCQ,
     questionText: "How are elements arranged in the modern periodic table?",
+    questionTextIgbo: "Kedu ka e si hazie elements na modern periodic table?",
     options: [
       "By atomic mass",
       "By alphabetical order",
       "By atomic number",
       "By density",
+    ],
+    optionsIgbo: [
+      "Site na atomic mass",
+      "Site na mkpụrụedemede",
+      "Site na atomic number",
+      "Site na density",
     ],
     correctAnswer: "By atomic number",
     feedbackRules: {
@@ -6091,7 +7444,9 @@ const Q_ATOM = [
     id: "q-a-19",
     type: QuestionType.TRUE_FALSE,
     questionText: "Protons and neutrons have approximately equal mass.",
+    questionTextIgbo: "Protons na neutrons nwere mass dị ka ibe ha?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6109,7 +7464,9 @@ const Q_ATOM = [
     id: "q-a-20",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What type of charge do positive ions (cations) carry?",
+    questionTextIgbo: "Kedu ụdị charge ions dị mma (cations) na-eburu?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "positive",
     feedbackRules: {
       misconceptions: [
@@ -6134,7 +7491,9 @@ const Q_CIRCULATION = [
     id: "q-ci-1",
     type: QuestionType.MCQ,
     questionText: "Which side of the heart pumps blood to the lungs?",
+    questionTextIgbo: "Kedu akụkụ obi na-ebuga ọbara gaa na akpa ume?",
     options: ["Left", "Right", "Both sides simultaneously", "Neither"],
+    optionsIgbo: ["Ekpe", "Nri", "Ha abụọ n'otu oge", "Ọ dịghị"],
     correctAnswer: "Right",
     feedbackRules: {
       misconceptions: [
@@ -6152,11 +7511,18 @@ const Q_CIRCULATION = [
     id: "q-ci-2",
     type: QuestionType.MCQ,
     questionText: "What is the function of valves in the heart?",
+    questionTextIgbo: "Kedu ọrụ valves dị n’obi?",
     options: [
       "Speed up blood flow",
       "Prevent backflow of blood",
       "Produce blood cells",
       "Regulate heart rate",
+    ],
+    optionsIgbo: [
+      "Mee ka ọbara gbaa ọsọ ọsọ",
+      "Gbochie ọbara ịlaghachi azụ",
+      "Mepụta mkpụrụ ndụ ọbara",
+      "Hazie ọsọ obi",
     ],
     correctAnswer: "Prevent backflow of blood",
     feedbackRules: {
@@ -6175,7 +7541,9 @@ const Q_CIRCULATION = [
     id: "q-ci-3",
     type: QuestionType.TRUE_FALSE,
     questionText: "Arteries carry blood away from the heart.",
+    questionTextIgbo: "Arteries na-ebuga ọbara pụọ n’obi.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6193,7 +7561,9 @@ const Q_CIRCULATION = [
     id: "q-ci-4",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What protein in red blood cells carries oxygen?",
+    questionTextIgbo: "Kedu protein dị na red blood cells na-eburu oxygen?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "haemoglobin",
     feedbackRules: {
       misconceptions: [
@@ -6211,7 +7581,9 @@ const Q_CIRCULATION = [
     id: "q-ci-5",
     type: QuestionType.MCQ,
     questionText: "Which blood vessel has the thinnest walls?",
+    questionTextIgbo: "Kedu akwara ọbara nwere mgbidi kacha dịrị gịrịgịrị?",
     options: ["Artery", "Vein", "Capillary", "Aorta"],
+    optionsIgbo: ["Artery", "Vein", "Capillary", "Aorta"],
     correctAnswer: "Capillary",
     feedbackRules: {
       misconceptions: [
@@ -6229,7 +7601,9 @@ const Q_CIRCULATION = [
     id: "q-ci-6",
     type: QuestionType.TRUE_FALSE,
     questionText: "Veins have valves to prevent backflow.",
+    questionTextIgbo: "Veins nwere valves iji gbochie ọbara ịlaghachi azụ.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6247,7 +7621,14 @@ const Q_CIRCULATION = [
     id: "q-ci-7",
     type: QuestionType.MCQ,
     questionText: "What are the four components of blood?",
+    questionTextIgbo: "Kedu akụkụ anọ mejupụtara ọbara?",
     options: [
+      "Red cells, white cells, platelets, plasma",
+      "Arteries, veins, capillaries, heart",
+      "Oxygen, glucose, CO₂, water",
+      "Haemoglobin, antibodies, clotting factors, hormones",
+    ],
+    optionsIgbo: [
       "Red cells, white cells, platelets, plasma",
       "Arteries, veins, capillaries, heart",
       "Oxygen, glucose, CO₂, water",
@@ -6270,11 +7651,18 @@ const Q_CIRCULATION = [
     id: "q-ci-8",
     type: QuestionType.MCQ,
     questionText: "What is the role of white blood cells?",
+    questionTextIgbo: "Kedu ọrụ white blood cells?",
     options: [
       "Carry oxygen",
       "Clot blood",
       "Defend against disease",
       "Carry nutrients",
+    ],
+    optionsIgbo: [
+      "Buru oxygen",
+      "Mee ka ọbara gbaa",
+      "Chebe megide ọrịa",
+      "Buru nri",
     ],
     correctAnswer: "Defend against disease",
     feedbackRules: {
@@ -6293,7 +7681,9 @@ const Q_CIRCULATION = [
     id: "q-ci-9",
     type: QuestionType.TRUE_FALSE,
     questionText: "The human circulatory system is a single circulation.",
+    questionTextIgbo: "Usoro mgbasa ọbara mmadụ bụ single circulation.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -6311,7 +7701,9 @@ const Q_CIRCULATION = [
     id: "q-ci-10",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the name of the heart's natural pacemaker?",
+    questionTextIgbo: "Kedu aha pacemaker nke obi?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "sinoatrial node",
     feedbackRules: {
       misconceptions: [
@@ -6329,11 +7721,18 @@ const Q_CIRCULATION = [
     id: "q-ci-11",
     type: QuestionType.MCQ,
     questionText: "During diastole, what happens in the heart?",
+    questionTextIgbo: "N’oge diastole, gịnị na-eme n’obi?",
     options: [
       "Ventricles contract",
       "Blood is pumped to the body",
       "Heart muscle relaxes and chambers fill",
       "Valves close permanently",
+    ],
+    optionsIgbo: [
+      "Ventricles na-akpakọrịta",
+      "A na-ebuga ọbara n’ahụ",
+      "Obi na-ezu ike ma jupụta",
+      "Valves na-emechi kpamkpam",
     ],
     correctAnswer: "Heart muscle relaxes and chambers fill",
     feedbackRules: {
@@ -6352,7 +7751,9 @@ const Q_CIRCULATION = [
     id: "q-ci-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "Coronary arteries supply blood to the heart muscle.",
+    questionTextIgbo: "Coronary arteries na-ebuga ọbara na akwara obi.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6370,11 +7771,18 @@ const Q_CIRCULATION = [
     id: "q-ci-13",
     type: QuestionType.MCQ,
     questionText: "What does plasma carry in the blood?",
+    questionTextIgbo: "Gịnị ka plasma na-eburu n’ọbara?",
     options: [
       "Only oxygen",
       "Only red blood cells",
       "Nutrients, hormones, CO₂, and waste",
       "Only white blood cells",
+    ],
+    optionsIgbo: [
+      "Naanị oxygen",
+      "Naanị red blood cells",
+      "Nri, hormones, CO₂ na ihe mkpofu",
+      "Naanị white blood cells",
     ],
     correctAnswer: "Nutrients, hormones, CO₂, and waste",
     feedbackRules: {
@@ -6393,7 +7801,9 @@ const Q_CIRCULATION = [
     id: "q-ci-14",
     type: QuestionType.TRUE_FALSE,
     questionText: "Platelets are responsible for blood clotting.",
+    questionTextIgbo: "Platelets na-ahụ maka ịgba ọbara.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6412,7 +7822,9 @@ const Q_CIRCULATION = [
     type: QuestionType.MCQ,
     questionText:
       "What condition results from fatty deposits narrowing coronary arteries?",
+    questionTextIgbo: "Kedu ọrịa na-eme mgbe abụba mechiri coronary arteries?",
     options: ["Asthma", "Coronary heart disease", "Diabetes", "Anaemia"],
+    optionsIgbo: ["Asthma", "Coronary heart disease", "Diabetes", "Anaemia"],
     correctAnswer: "Coronary heart disease",
     feedbackRules: {
       misconceptions: [
@@ -6430,7 +7842,9 @@ const Q_CIRCULATION = [
     id: "q-ci-16",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the name of the lower chambers of the heart?",
+    questionTextIgbo: "Kedu aha akụkụ ala obi?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "ventricles",
     feedbackRules: {
       misconceptions: [
@@ -6449,7 +7863,9 @@ const Q_CIRCULATION = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "The left ventricle has thicker walls than the right ventricle.",
+    questionTextIgbo: "Left ventricle nwere mgbidi karịrị nke right ventricle?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6467,11 +7883,18 @@ const Q_CIRCULATION = [
     id: "q-ci-18",
     type: QuestionType.MCQ,
     questionText: "What is the pulmonary circuit?",
+    questionTextIgbo: "Gịnị bụ pulmonary circuit?",
     options: [
       "Heart to body and back",
       "Heart to lungs and back",
       "Lungs to kidneys",
       "Brain to heart",
+    ],
+    optionsIgbo: [
+      "Obi gaa n’ahụ laghachi",
+      "Obi gaa na akpa ume laghachi",
+      "Akpa ume gaa n’akụrụ",
+      "Ụbụrụ gaa n’obi",
     ],
     correctAnswer: "Heart to lungs and back",
     feedbackRules: {
@@ -6490,7 +7913,9 @@ const Q_CIRCULATION = [
     id: "q-ci-19",
     type: QuestionType.TRUE_FALSE,
     questionText: "Red blood cells have no nucleus in their mature form.",
+    questionTextIgbo: "Red blood cells enweghị nucleus mgbe ha tolitere?",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6509,7 +7934,10 @@ const Q_CIRCULATION = [
     type: QuestionType.MCQ,
     questionText:
       "Which blood vessel carries oxygenated blood from the lungs to the heart?",
+    questionTextIgbo:
+      "Kedu akwara ọbara na-ebuga oxygenated blood site na akpa ume gaa n’obi?",
     options: ["Pulmonary artery", "Aorta", "Pulmonary vein", "Vena cava"],
+    optionsIgbo: ["Pulmonary artery", "Aorta", "Pulmonary vein", "Vena cava"],
     correctAnswer: "Pulmonary vein",
     feedbackRules: {
       misconceptions: [
@@ -6530,11 +7958,18 @@ const Q_PLANTS = [
     id: "q-pl-1",
     type: QuestionType.MCQ,
     questionText: "What is the function of xylem in plants?",
+    questionTextIgbo: "Gịnị bụ ọrụ xylem n’osisi?",
     options: [
       "Transport sugars",
       "Transport water and minerals upward",
       "Store food",
       "Carry out photosynthesis",
+    ],
+    optionsIgbo: [
+      "Buru shuga",
+      "Buru mmiri na mineral elu",
+      "Chekwaa nri",
+      "Mee photosynthesis",
     ],
     correctAnswer: "Transport water and minerals upward",
     feedbackRules: {
@@ -6553,7 +7988,9 @@ const Q_PLANTS = [
     id: "q-pl-2",
     type: QuestionType.TRUE_FALSE,
     questionText: "Phloem transports sugars in both directions in the plant.",
+    questionTextIgbo: "Phloem na-ebuga shuga n’ụzọ abụọ n’osisi.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6571,11 +8008,18 @@ const Q_PLANTS = [
     id: "q-pl-3",
     type: QuestionType.MCQ,
     questionText: "What drives the movement of water up xylem?",
+    questionTextIgbo: "Gịnị na-akpali mmegharị mmiri n’ime xylem?",
     options: [
       "Active pumping by roots",
       "Transpiration pull from leaves",
       "Phloem pressure",
       "Gravity",
+    ],
+    optionsIgbo: [
+      "Mgbapụta site na mgbọrọgwụ",
+      "Ihichapụ mmiri site na akwụkwọ",
+      "Phloem pressure",
+      "Graviti",
     ],
     correctAnswer: "Transpiration pull from leaves",
     feedbackRules: {
@@ -6594,7 +8038,9 @@ const Q_PLANTS = [
     id: "q-pl-4",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What plant hormone causes shoots to bend toward light?",
+    questionTextIgbo: "Kedu hormone osisi na-eme ka ọ gbadaa n’ebe ìhè dị?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "auxin",
     feedbackRules: {
       misconceptions: [
@@ -6612,11 +8058,18 @@ const Q_PLANTS = [
     id: "q-pl-5",
     type: QuestionType.MCQ,
     questionText: "What is phototropism?",
+    questionTextIgbo: "Gịnị bụ phototropism?",
     options: [
       "Growth response to gravity",
       "Growth response to light",
       "Growth response to water",
       "Growth response to touch",
+    ],
+    optionsIgbo: [
+      "Mmegharị n’ihi gravitị",
+      "Mmegharị n’ihi ìhè",
+      "Mmegharị n’ihi mmiri",
+      "Mmegharị n’ihi mmetụ",
     ],
     correctAnswer: "Growth response to light",
     feedbackRules: {
@@ -6636,7 +8089,10 @@ const Q_PLANTS = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Roots show positive gravitropism (they grow toward gravity).",
+    questionTextIgbo:
+      "Mgbọrọgwụ na-egosi positive gravitropism (ha na-eto n’ebe gravitị dị).",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6655,7 +8111,15 @@ const Q_PLANTS = [
     type: QuestionType.MCQ,
     questionText:
       "What process causes water to move up xylem via evaporation from leaves?",
+    questionTextIgbo:
+      "Kedu usoro na-eme ka mmiri si n’akwụkwọ pụọ ma kpalie ya elu n’ime xylem?",
     options: ["Osmosis", "Translocation", "Transpiration", "Photosynthesis"],
+    optionsIgbo: [
+      "Osmosis",
+      "Translocation",
+      "Transpiration",
+      "Photosynthesis",
+    ],
     correctAnswer: "Transpiration",
     feedbackRules: {
       misconceptions: [
@@ -6673,11 +8137,18 @@ const Q_PLANTS = [
     id: "q-pl-8",
     type: QuestionType.MCQ,
     questionText: "Which factor increases the rate of transpiration?",
+    questionTextIgbo: "Kedu ihe na-abawanye ọsọ transpiration?",
     options: [
       "High humidity",
       "Darkness",
       "Low wind speed",
       "High temperature",
+    ],
+    optionsIgbo: [
+      "Humidity dị elu",
+      "Ọchịchịrị",
+      "Ifufe dị ala",
+      "Okpomọkụ dị elu",
     ],
     correctAnswer: "High temperature",
     feedbackRules: {
@@ -6696,7 +8167,9 @@ const Q_PLANTS = [
     id: "q-pl-9",
     type: QuestionType.TRUE_FALSE,
     questionText: "Xylem cells are dead when they are functional.",
+    questionTextIgbo: "Xylem cells anwụọla mgbe ha na-arụ ọrụ ha.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6715,7 +8188,10 @@ const Q_PLANTS = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What is the transfer of pollen from one flower to another called?",
+    questionTextIgbo:
+      "Kedu ihe a na-akpọ nnyefe pollen site n’otu ifuru gaa n’ọzọ?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "pollination",
     feedbackRules: {
       misconceptions: [
@@ -6734,7 +8210,10 @@ const Q_PLANTS = [
     type: QuestionType.MCQ,
     questionText:
       "What structure in the ovary develops into a seed after fertilisation?",
+    questionTextIgbo:
+      "Kedu akụkụ n’ime ovary na-aghọ mkpụrụ mgbe fertilisation gasịrị?",
     options: ["Petal", "Ovule", "Stigma", "Anther"],
+    optionsIgbo: ["Petal", "Ovule", "Stigma", "Anther"],
     correctAnswer: "Ovule",
     feedbackRules: {
       misconceptions: [
@@ -6753,7 +8232,10 @@ const Q_PLANTS = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Root hair cells have a large surface area to increase water and mineral absorption.",
+    questionTextIgbo:
+      "Root hair cells nwere nnukwu surface area iji mee ka absorption dị elu.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6771,7 +8253,9 @@ const Q_PLANTS = [
     id: "q-pl-13",
     type: QuestionType.MCQ,
     questionText: "Which hormone is responsible for fruit ripening?",
+    questionTextIgbo: "Kedu hormone na-eme ka mkpụrụ osisi ripen?",
     options: ["Auxin", "Gibberellin", "Ethylene", "Cytokinin"],
+    optionsIgbo: ["Auxin", "Gibberellin", "Ethylene", "Cytokinin"],
     correctAnswer: "Ethylene",
     feedbackRules: {
       misconceptions: [
@@ -6789,7 +8273,9 @@ const Q_PLANTS = [
     id: "q-pl-14",
     type: QuestionType.MCQ,
     questionText: "Where in a plant cell does photosynthesis take place?",
+    questionTextIgbo: "Ebee ka photosynthesis na-eme n’ime plant cell?",
     options: ["Mitochondria", "Vacuole", "Chloroplast", "Ribosome"],
+    optionsIgbo: ["Mitochondria", "Vacuole", "Chloroplast", "Ribosome"],
     correctAnswer: "Chloroplast",
     feedbackRules: {
       misconceptions: [
@@ -6807,7 +8293,9 @@ const Q_PLANTS = [
     id: "q-pl-15",
     type: QuestionType.TRUE_FALSE,
     questionText: "Stomata open when guard cells lose water.",
+    questionTextIgbo: "Stomata na-emeghe mgbe guard cells tufuru mmiri.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -6825,7 +8313,9 @@ const Q_PLANTS = [
     id: "q-pl-16",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the main function of plant roots?",
+    questionTextIgbo: "Gịnị bụ isi ọrụ mgbọrọgwụ osisi?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "absorb water and minerals",
     feedbackRules: {
       misconceptions: [
@@ -6844,7 +8334,9 @@ const Q_PLANTS = [
     type: QuestionType.MCQ,
     questionText:
       "What is the process by which sugars move through phloem called?",
+    questionTextIgbo: "Kedu usoro shuga si aga n’ime phloem?",
     options: ["Transpiration", "Diffusion", "Translocation", "Osmosis"],
+    optionsIgbo: ["Transpiration", "Diffusion", "Translocation", "Osmosis"],
     correctAnswer: "Translocation",
     feedbackRules: {
       misconceptions: [
@@ -6862,7 +8354,9 @@ const Q_PLANTS = [
     id: "q-pl-18",
     type: QuestionType.TRUE_FALSE,
     questionText: "Auxin promotes cell elongation in plant shoots.",
+    questionTextIgbo: "Auxin na-akwalite elongation nke cell n’ime shoots.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -6880,11 +8374,18 @@ const Q_PLANTS = [
     id: "q-pl-19",
     type: QuestionType.MCQ,
     questionText: "What is the function of the waxy cuticle on leaves?",
+    questionTextIgbo: "Gịnị bụ ọrụ waxy cuticle dị na akwụkwọ?",
     options: [
       "Absorb light",
       "Reduce water loss",
       "Allow gas exchange",
       "Trap insects",
+    ],
+    optionsIgbo: [
+      "Nabata ìhè",
+      "Belata mfu mmiri",
+      "Mee ka gas gafee",
+      "Jide insects",
     ],
     correctAnswer: "Reduce water loss",
     feedbackRules: {
@@ -6903,7 +8404,9 @@ const Q_PLANTS = [
     id: "q-pl-20",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What organ of a plant produces pollen?",
+    questionTextIgbo: "Kedu akụkụ osisi na-emepụta pollen?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "anther",
     feedbackRules: {
       misconceptions: [
@@ -6924,11 +8427,18 @@ const Q_CHEMISTRY = [
     id: "q-ch-1",
     type: QuestionType.MCQ,
     questionText: "What is an exothermic reaction?",
+    questionTextIgbo: "Gịnị bụ exothermic reaction?",
     options: [
       "Absorbs heat from surroundings",
       "Releases heat to surroundings",
       "Has no energy change",
       "Only occurs in labs",
+    ],
+    optionsIgbo: [
+      "Na-amịkọrọ okpomọkụ site n’ebe gbara ya gburugburu",
+      "Na-ewepụta okpomọkụ n’ebe gbara ya gburugburu",
+      "Enweghị mgbanwe ike",
+      "Na-eme naanị n’ụlọ nyocha",
     ],
     correctAnswer: "Releases heat to surroundings",
     feedbackRules: {
@@ -6947,7 +8457,10 @@ const Q_CHEMISTRY = [
     id: "q-ch-2",
     type: QuestionType.TRUE_FALSE,
     questionText: "In a chemical reaction, atoms are created and destroyed.",
+    questionTextIgbo:
+      "N'ime mmeghachi omume kemikal, a na-emepụta ma na-ebibi atoms.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -6965,11 +8478,18 @@ const Q_CHEMISTRY = [
     id: "q-ch-3",
     type: QuestionType.MCQ,
     questionText: "What does a catalyst do?",
+    questionTextIgbo: "Gịnị ka catalyst na-eme?",
     options: [
       "Gets used up in the reaction",
       "Increases activation energy",
       "Speeds up reaction without being consumed",
       "Decreases the temperature",
+    ],
+    optionsIgbo: [
+      "A na-eji ya n’ọrụ ahụ",
+      "Na-abawanye activation energy",
+      "Na-eme ka mmeghachi omume gaa ọsọ ọsọ na-enweghị ire ere",
+      "Na-ebelata okpomọkụ",
     ],
     correctAnswer: "Speeds up reaction without being consumed",
     feedbackRules: {
@@ -6988,7 +8508,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-4",
     type: QuestionType.MCQ,
     questionText: "What pH does a neutral solution have?",
+    questionTextIgbo: "Kedu pH nke solution na-anọpụ iche?",
     options: ["0", "7", "14", "4"],
+    optionsIgbo: ["0", "7", "14", "4"],
     correctAnswer: "7",
     feedbackRules: {
       misconceptions: [
@@ -7007,7 +8529,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Increasing concentration increases the rate of a chemical reaction.",
+    questionTextIgbo:
+      "Ịbawanye concentration na-abawanye ọsọ nke mmeghachi omume kemikal.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7026,7 +8551,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What two products are formed in every neutralisation reaction?",
+    questionTextIgbo:
+      "Kedu ngwaahịa abụọ na-apụta n’ime neutralisation reaction ọ bụla?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "salt and water",
     feedbackRules: {
       misconceptions: [
@@ -7045,7 +8573,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.MCQ,
     questionText:
       "What type of reaction releases energy as products have more energy than reactants?",
+    questionTextIgbo:
+      "Kedu ụdị mmeghachi omume na-ewepụta ike ka ngwaahịa nwee ike karịrị reactants?",
     options: ["Exothermic", "Endothermic", "Neutralisation", "Combustion"],
+    optionsIgbo: ["Exothermic", "Endothermic", "Neutralisation", "Combustion"],
     correctAnswer: "Endothermic",
     feedbackRules: {
       misconceptions: [
@@ -7063,7 +8594,14 @@ const Q_CHEMISTRY = [
     id: "q-ch-8",
     type: QuestionType.MCQ,
     questionText: "Which factor does NOT affect reaction rate?",
+    questionTextIgbo: "Kedu ihe na-adịghị emetụta ọsọ mmeghachi omume?",
     options: ["Temperature", "Catalyst", "Colour of reactants", "Surface area"],
+    optionsIgbo: [
+      "Temperature",
+      "Catalyst",
+      "Agba nke reactants",
+      "Nnukwu elu",
+    ],
     correctAnswer: "Colour of reactants",
     feedbackRules: {
       misconceptions: [
@@ -7081,7 +8619,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-9",
     type: QuestionType.TRUE_FALSE,
     questionText: "In oxidation, electrons are lost.",
+    questionTextIgbo: "N’ime oxidation, electrons na-apụ n’aka ihe ahụ.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7100,7 +8640,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What gas is produced in complete combustion of a hydrocarbon fuel?",
+    questionTextIgbo:
+      "Kedu gas na-apụta n’ime complete combustion nke hydrocarbon fuel?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "carbon dioxide",
     feedbackRules: {
       misconceptions: [
@@ -7119,8 +8662,16 @@ const Q_CHEMISTRY = [
     type: QuestionType.MCQ,
     questionText:
       "Which of the following is an example of an endothermic process?",
+    questionTextIgbo:
+      "Kedu n’ime ihe ndị a bụ ihe atụ nke endothermic process?",
     options: [
       "Burning wood",
+      "Neutralisation",
+      "Photosynthesis",
+      "Respiration",
+    ],
+    optionsIgbo: [
+      "Ịkụ osisi ọkụ",
       "Neutralisation",
       "Photosynthesis",
       "Respiration",
@@ -7142,7 +8693,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "A larger surface area increases the rate of reaction.",
+    questionTextIgbo: "Nnukwu surface area na-abawanye ọsọ mmeghachi omume.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7160,7 +8713,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-13",
     type: QuestionType.MCQ,
     questionText: "In a precipitation reaction, what forms?",
+    questionTextIgbo: "N’ime precipitation reaction, gịnị na-apụta?",
     options: ["A gas", "A solution", "An insoluble solid", "An acid"],
+    optionsIgbo: ["Gas", "Solution", "Solid na-adịghị agbaze", "Acid"],
     correctAnswer: "An insoluble solid",
     feedbackRules: {
       misconceptions: [
@@ -7179,7 +8734,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What name is given to the minimum energy needed for a reaction to occur?",
+    questionTextIgbo:
+      "Kedu aha a na-akpọ ike kacha nta dị mkpa ka mmeghachi omume mee?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "activation energy",
     feedbackRules: {
       misconceptions: [
@@ -7198,11 +8756,19 @@ const Q_CHEMISTRY = [
     type: QuestionType.MCQ,
     questionText:
       "What does 'conservation of mass' mean in a chemical reaction?",
+    questionTextIgbo:
+      "Gịnị ka 'conservation of mass' pụtara n’ime chemical reaction?",
     options: [
       "Mass of products > mass of reactants",
       "No atoms are created or destroyed",
       "Temperature is conserved",
       "Only metals conserve mass",
+    ],
+    optionsIgbo: [
+      "Mass nke ngwaahịa karịrị nke reactants",
+      "Enweghị atom a na-emepụta ma ọ bụ na-ebibi",
+      "A na-echekwa okpomọkụ",
+      "Ọ bụ naanị metals na-echekwa mass",
     ],
     correctAnswer: "No atoms are created or destroyed",
     feedbackRules: {
@@ -7222,7 +8788,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Higher temperature always increases the rate of a chemical reaction.",
+    questionTextIgbo:
+      "Okpomọkụ dị elu mgbe niile na-abawanye ọsọ mmeghachi omume kemikal.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7240,11 +8809,18 @@ const Q_CHEMISTRY = [
     id: "q-ch-17",
     type: QuestionType.MCQ,
     questionText: "What is the product when an acid reacts with a metal?",
+    questionTextIgbo: "Gịnị bụ ngwaahịa mgbe acid na metal meghachara?",
     options: [
       "Salt and water",
       "Salt and hydrogen gas",
       "Salt and CO₂",
       "Water and CO₂",
+    ],
+    optionsIgbo: [
+      "Salt na water",
+      "Salt na hydrogen gas",
+      "Salt na CO₂",
+      "Water na CO₂",
     ],
     correctAnswer: "Salt and hydrogen gas",
     feedbackRules: {
@@ -7264,7 +8840,15 @@ const Q_CHEMISTRY = [
     type: QuestionType.MCQ,
     questionText:
       "What is the term for a reaction where one element replaces another in a compound?",
+    questionTextIgbo:
+      "Kedu aha a na-akpọ reaction ebe otu element dochie nke ọzọ n’ime compound?",
     options: ["Decomposition", "Synthesis", "Displacement", "Neutralisation"],
+    optionsIgbo: [
+      "Decomposition",
+      "Synthesis",
+      "Displacement",
+      "Neutralisation",
+    ],
     correctAnswer: "Displacement",
     feedbackRules: {
       misconceptions: [
@@ -7282,7 +8866,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-19",
     type: QuestionType.TRUE_FALSE,
     questionText: "Acids produce H⁺ ions in solution.",
+    questionTextIgbo: "Acids na-emepụta H⁺ ions n’ime solution.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7301,7 +8887,10 @@ const Q_CHEMISTRY = [
     type: QuestionType.SHORT_ANSWER,
     questionText:
       "What is the name of the theory that explains why increasing concentration speeds up reactions?",
+    questionTextIgbo:
+      "Kedu aha theory na-akọwa ihe kpatara ịbawanye concentration ji eme ka reaction ọsọ ọsọ?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "collision theory",
     feedbackRules: {
       misconceptions: [
@@ -7319,7 +8908,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-21",
     type: QuestionType.MCQ,
     questionText: "What gas is produced when acid reacts with a carbonate?",
+    questionTextIgbo: "Kedu gas na-apụta mgbe acid meghachara na carbonate?",
     options: ["Hydrogen", "Oxygen", "Carbon dioxide", "Nitrogen"],
+    optionsIgbo: ["Hydrogen", "Oxygen", "Carbon dioxide", "Nitrogen"],
     correctAnswer: "Carbon dioxide",
     feedbackRules: {
       misconceptions: [
@@ -7337,7 +8928,9 @@ const Q_CHEMISTRY = [
     id: "q-ch-22",
     type: QuestionType.TRUE_FALSE,
     questionText: "An enzyme is a biological catalyst.",
+    questionTextIgbo: "Enzyme bụ biological catalyst.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7358,9 +8951,16 @@ const Q_NERVOUS = [
     id: "q-n-1",
     type: QuestionType.MCQ,
     questionText: "What are the three types of neurones?",
+    questionTextIgbo: "Gịnị bụ ụdị neurone atọ?",
     options: [
       "Sensory, relay, motor",
       "Brain, spine, nerve",
+      "Axon, dendrite, synapse",
+      "Alpha, beta, gamma",
+    ],
+    optionsIgbo: [
+      "Sensory, relay, motor",
+      "Ụbụrụ, ọkpụkpụ azụ, akwara",
       "Axon, dendrite, synapse",
       "Alpha, beta, gamma",
     ],
@@ -7381,7 +8981,9 @@ const Q_NERVOUS = [
     id: "q-n-2",
     type: QuestionType.TRUE_FALSE,
     questionText: "A reflex action involves conscious thought in the brain.",
+    questionTextIgbo: "Reflex action na-achọ echiche nke ụbụrụ.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
     feedbackRules: {
       misconceptions: [
@@ -7399,7 +9001,14 @@ const Q_NERVOUS = [
     id: "q-n-3",
     type: QuestionType.MCQ,
     questionText: "What crosses the synaptic gap to transmit a signal?",
+    questionTextIgbo: "Gịnị na-agafe synaptic gap iji zipu ozi?",
     options: ["Electrical impulse", "Enzyme", "Neurotransmitter", "Hormone"],
+    optionsIgbo: [
+      "Electrical impulse",
+      "Enzyme",
+      "Neurotransmitter",
+      "Hormone",
+    ],
     correctAnswer: "Neurotransmitter",
     feedbackRules: {
       misconceptions: [
@@ -7417,11 +9026,18 @@ const Q_NERVOUS = [
     id: "q-n-4",
     type: QuestionType.MCQ,
     questionText: "What is the correct reflex arc pathway?",
+    questionTextIgbo: "Kedu ụzọ reflex arc ziri ezi?",
     options: [
       "Brain → muscle → response",
       "Stimulus → receptor → sensory neurone → relay → motor neurone → effector",
       "Effector → brain → muscle",
       "Receptor → brain → effector",
+    ],
+    optionsIgbo: [
+      "Ụbụrụ → muscle → nzaghachi",
+      "Stimulus → receptor → sensory neurone → relay → motor neurone → effector",
+      "Effector → ụbụrụ → muscle",
+      "Receptor → ụbụrụ → effector",
     ],
     correctAnswer:
       "Stimulus → receptor → sensory neurone → relay → motor neurone → effector",
@@ -7441,7 +9057,9 @@ const Q_NERVOUS = [
     id: "q-n-5",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What part of the brain controls coordination and balance?",
+    questionTextIgbo: "Kedu akụkụ ụbụrụ na-achịkwa nhazi na ịdị n’otu?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "cerebellum",
     feedbackRules: {
       misconceptions: [
@@ -7459,7 +9077,9 @@ const Q_NERVOUS = [
     id: "q-n-6",
     type: QuestionType.TRUE_FALSE,
     questionText: "Motor neurones carry signals FROM the CNS TO muscles.",
+    questionTextIgbo: "Motor neurones na-ebuga ozi site na CNS gaa na muscle.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7477,11 +9097,18 @@ const Q_NERVOUS = [
     id: "q-n-7",
     type: QuestionType.MCQ,
     questionText: "What is the function of the myelin sheath?",
+    questionTextIgbo: "Gịnị bụ ọrụ myelin sheath?",
     options: [
       "Produce neurotransmitters",
       "Insulate the axon and speed up impulses",
       "Store memories",
       "Connect neurones at synapses",
+    ],
+    optionsIgbo: [
+      "Mepụta neurotransmitters",
+      "Chebe axon ma mee ka impulse ọsọ ọsọ",
+      "Chekwaa ncheta",
+      "Jikọta neurones na synapse",
     ],
     correctAnswer: "Insulate the axon and speed up impulses",
     feedbackRules: {
@@ -7500,7 +9127,14 @@ const Q_NERVOUS = [
     id: "q-n-8",
     type: QuestionType.MCQ,
     questionText: "Which part of the brain regulates breathing and heart rate?",
+    questionTextIgbo: "Kedu akụkụ ụbụrụ na-achịkwa iku ume na obi?",
     options: ["Cerebrum", "Cerebellum", "Medulla oblongata", "Hypothalamus"],
+    optionsIgbo: [
+      "Cerebrum",
+      "Cerebellum",
+      "Medulla oblongata",
+      "Hypothalamus",
+    ],
     correctAnswer: "Medulla oblongata",
     feedbackRules: {
       misconceptions: [
@@ -7518,7 +9152,10 @@ const Q_NERVOUS = [
     id: "q-n-9",
     type: QuestionType.TRUE_FALSE,
     questionText: "Sensory neurones carry signals from receptors to the CNS.",
+    questionTextIgbo:
+      "Sensory neurones na-ebuga ozi site na receptors gaa na CNS.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7536,7 +9173,9 @@ const Q_NERVOUS = [
     id: "q-n-10",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What is the name of the gap between two neurones?",
+    questionTextIgbo: "Kedu aha oghere dị n’etiti neurones abụọ?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "synapse",
     feedbackRules: {
       misconceptions: [
@@ -7554,7 +9193,14 @@ const Q_NERVOUS = [
     id: "q-n-11",
     type: QuestionType.MCQ,
     questionText: "Which type of receptor detects changes in temperature?",
+    questionTextIgbo: "Kedu ụdị receptor na-achọpụta mgbanwe okpomọkụ?",
     options: [
+      "Photoreceptor",
+      "Chemoreceptor",
+      "Mechanoreceptor",
+      "Thermoreceptor",
+    ],
+    optionsIgbo: [
       "Photoreceptor",
       "Chemoreceptor",
       "Mechanoreceptor",
@@ -7577,7 +9223,9 @@ const Q_NERVOUS = [
     id: "q-n-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "The spinal cord is part of the central nervous system.",
+    questionTextIgbo: "Spinal cord bụ akụkụ nke central nervous system.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7596,9 +9244,17 @@ const Q_NERVOUS = [
     type: QuestionType.MCQ,
     questionText:
       "Which part of the nervous system controls voluntary movement?",
+    questionTextIgbo:
+      "Kedu akụkụ nervous system na-achịkwa mmegharị mmadụ họọrọ?",
     options: [
       "Medulla oblongata",
       "Spinal cord alone",
+      "Cerebrum",
+      "Hypothalamus",
+    ],
+    optionsIgbo: [
+      "Medulla oblongata",
+      "Spinal cord naanị",
       "Cerebrum",
       "Hypothalamus",
     ],
@@ -7619,7 +9275,9 @@ const Q_NERVOUS = [
     id: "q-n-14",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What do effectors do in the nervous system?",
+    questionTextIgbo: "Gịnị ka effectors na-eme na nervous system?",
     options: null,
+    optionsIgbo: null,
     correctAnswer: "carry out responses",
     feedbackRules: {
       misconceptions: [
@@ -7637,11 +9295,18 @@ const Q_NERVOUS = [
     id: "q-n-15",
     type: QuestionType.MCQ,
     questionText: "What is a stimulus?",
+    questionTextIgbo: "Gịnị bụ stimulus?",
     options: [
       "A response by the body",
       "A type of neurone",
       "A change in the environment detected by receptors",
       "A brain chemical",
+    ],
+    optionsIgbo: [
+      "Nzaghachi nke ahụ",
+      "Ụdị neurone",
+      "Mgbanwe n’ebe gbara gburugburu nke receptors na-achọpụta",
+      "Kemikal nke ụbụrụ",
     ],
     correctAnswer: "A change in the environment detected by receptors",
     feedbackRules: {
@@ -7661,7 +9326,10 @@ const Q_NERVOUS = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Neurotransmitters are broken down or reabsorbed after crossing the synapse.",
+    questionTextIgbo:
+      "A na-ebibi ma ọ bụ na-eweghachi neurotransmitters mgbe ha gafere synapse.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7680,10 +9348,18 @@ const Q_NERVOUS = [
     type: QuestionType.MCQ,
     questionText:
       "The hypothalamus links the nervous system to which other system?",
+    questionTextIgbo:
+      "Hypothalamus na-ejikọta nervous system na sistemu ọzọ nke gịnị?",
     options: [
       "Digestive system",
       "Circulatory system",
       "Endocrine (hormonal) system",
+      "Immune system",
+    ],
+    optionsIgbo: [
+      "Digestive system",
+      "Circulatory system",
+      "Endocrine system",
       "Immune system",
     ],
     correctAnswer: "Endocrine (hormonal) system",
@@ -7703,11 +9379,18 @@ const Q_NERVOUS = [
     id: "q-n-18",
     type: QuestionType.MCQ,
     questionText: "What is the role of dendrites in a neurone?",
+    questionTextIgbo: "Gịnị bụ ọrụ dendrites n’ime neurone?",
     options: [
       "Transmit impulses away from cell body",
       "Receive signals from other neurones",
       "Produce neurotransmitters",
       "Insulate the neurone",
+    ],
+    optionsIgbo: [
+      "Zipu impulses pụọ na cell body",
+      "Nata ozi site na neurones ndị ọzọ",
+      "Mepụta neurotransmitters",
+      "Chebe neurone",
     ],
     correctAnswer: "Receive signals from other neurones",
     feedbackRules: {
@@ -7727,7 +9410,10 @@ const Q_NERVOUS = [
     type: QuestionType.TRUE_FALSE,
     questionText:
       "Drugs that mimic neurotransmitters can affect nervous system function.",
+    questionTextIgbo:
+      "Drugs na-eme ka neurotransmitters dị ka ha nwere ike imetụta nervous system.",
     options: ["True", "False"],
+    optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
     feedbackRules: {
       misconceptions: [
@@ -7746,7 +9432,14 @@ const Q_NERVOUS = [
     type: QuestionType.MCQ,
     questionText:
       "Which brain region is associated with conscious thought and memory?",
+    questionTextIgbo: "Kedu akụkụ ụbụrụ metụtara echiche na ncheta?",
     options: ["Cerebellum", "Medulla oblongata", "Cerebrum", "Hypothalamus"],
+    optionsIgbo: [
+      "Cerebellum",
+      "Medulla oblongata",
+      "Cerebrum",
+      "Hypothalamus",
+    ],
     correctAnswer: "Cerebrum",
     feedbackRules: {
       misconceptions: [
@@ -7769,7 +9462,7 @@ const Q_NERVOUS = [
 main()
   .then(() => seedExtraTopics())
   .then(() => {
-    console.log("✅ All extra topics seeded (topics 9–14)");
+    console.log("✅ All extra topics seeded (topics 9-15)");
   })
   .catch((e) => {
     console.error(e);
