@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { TopicGrid } from "@/components/topic/TopicGrid";
 import { useTranslation } from "@/lib/hooks/useTranslation";
+import { RecommendationsPanel } from "@/components/dashboard/RecommendationsPanel";
 
 interface Stats {
   topicCount: number;
@@ -64,8 +65,7 @@ export default function DashboardPage() {
           {t("dashboard.welcome")}, {firstName} 👋
         </h1>
         <p className='text-ink-400 font-body mt-2 max-w-xl'>
-          Continue where you left off, or explore a new topic. Each lesson
-          includes Igbo key term support and a quiz at the end.
+          {t("dashboard.description")}
         </p>
       </div>
 
@@ -90,6 +90,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
+      <RecommendationsPanel />
       <div className='animate-fade-up'>
         <TopicGrid />
       </div>
