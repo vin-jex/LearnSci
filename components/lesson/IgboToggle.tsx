@@ -2,10 +2,12 @@
 
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 import { toggleIgbo } from "@/lib/store/slices/igboSlice";
+import { useTranslation } from "@/lib/hooks/useTranslation";
 
 export function IgboToggle() {
   const dispatch = useAppDispatch();
   const isVisible = useAppSelector((s) => s.igbo.isVisible);
+  const { t } = useTranslation();
 
   return (
     <button
@@ -19,14 +21,14 @@ export function IgboToggle() {
             : "bg-ink-900/60 border-ink-700 text-ink-400 hover:border-ink-600 hover:text-ink-300"
         }
       `}
-      title={isVisible ? "Hide Igbo translations" : "Show Igbo translations"}
+      title={isVisible ? "Hide Igbo" : "Show Igbo"}
     >
       <span className='flex items-center gap-0.5'>
         <span className='w-2 h-3 rounded-sm bg-forest-600 opacity-80' />
         <span className='w-2 h-3 rounded-sm bg-white opacity-30' />
         <span className='w-2 h-3 rounded-sm bg-forest-600 opacity-80' />
       </span>
-      {isVisible ? "Igbo: ON" : "Igbo: OFF"}
+      {isVisible ? t("lesson.igboOn") : t("lesson.igboOff")}
 
       <span
         className={`
