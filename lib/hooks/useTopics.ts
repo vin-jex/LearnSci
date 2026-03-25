@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 export interface TopicSummary {
   id: string;
   title: string;
+  titleIgbo?: string;
   description: string;
+  descriptionIgbo?: string;
   duration: string;
   order: number;
   status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
