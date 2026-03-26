@@ -36,6 +36,17 @@ export function evaluateAnswer(
   questionText: string,
 ): EvaluationResult {
   const normalised = (s: string) => s.trim().toLowerCase();
+
+  if (!userAnswer.trim()) {
+    return {
+      isCorrect: false,
+      feedback:
+        feedbackRules.defaultFeedback ||
+        `The correct answer is: ${correctAnswer}.`,
+      weakArea: questionText,
+    };
+  }
+
   const isCorrect = normalised(userAnswer) === normalised(correctAnswer);
 
   if (isCorrect) {

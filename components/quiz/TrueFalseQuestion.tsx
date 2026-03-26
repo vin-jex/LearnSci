@@ -17,7 +17,7 @@ export function TrueFalseQuestion({
   questionNumber,
   total,
 }: Props) {
-  const options = ["True", "False"];
+  const englishOptions = ["True", "False"];
   const showResult = feedback !== null;
 
   return (
@@ -35,16 +35,16 @@ export function TrueFalseQuestion({
       </p>
 
       <div className='grid grid-cols-2 gap-3'>
-        {options.map((opt) => {
-          const isSelected = selected === opt;
+        {englishOptions.map((englishVal) => {
+          const isSelected = selected === englishVal;
           const isCorrect = showResult && feedback!.isCorrect && isSelected;
           const isWrong = showResult && !feedback!.isCorrect && isSelected;
-          const isTrue = opt === "True";
+          const isTrue = englishVal === "True";
 
           return (
             <button
-              key={opt}
-              onClick={() => !showResult && onSelect(opt)}
+              key={englishVal}
+              onClick={() => !showResult && onSelect(englishVal)}
               disabled={showResult}
               className={`
                 py-5 rounded-2xl border text-sm font-semibold font-body
@@ -62,7 +62,7 @@ export function TrueFalseQuestion({
               `}
             >
               <span className='text-2xl'>{isTrue ? "✓" : "✗"}</span>
-              {opt}
+              {englishVal}
             </button>
           );
         })}

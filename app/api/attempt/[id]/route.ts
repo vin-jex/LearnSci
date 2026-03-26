@@ -15,7 +15,11 @@ export async function GET(
 
     const attempt = await prisma.attempt.findFirst({
       where: { id: params.id, userId: session.user.id },
-      include: { topic: { select: { id: true, title: true, titleIgbo: true, order: true } } },
+      include: {
+        topic: {
+          select: { id: true, title: true, titleIgbo: true, order: true },
+        },
+      },
     });
 
     if (!attempt) {
@@ -28,7 +32,18 @@ export async function GET(
       select: { id: true, title: true, titleIgbo: true },
     });
 
-    return NextResponse.json({ attempt, nextTopic });
+    const totalQuestions = await prisma.question.count({
+      where: { topicId: attempt.topic.id },
+    });
+
+    const correctCount = Math.round((attempt.score / 100) * totalQuestions);
+
+    return NextResponse.json({
+      attempt,
+      nextTopic,
+      totalQuestions,
+      correctCount,
+    });
   } catch (error) {
     console.error("[ATTEMPT_GET]", error);
     return NextResponse.json(

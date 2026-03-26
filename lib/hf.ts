@@ -79,8 +79,16 @@ export async function evaluateShortAnswerNLI(
     return { isCorrect: confidence >= 0.65, confidence };
   } catch {
     const norm = (s: string) => s.toLowerCase().trim();
-    const isCorrect = norm(learnerAnswer).includes(norm(correctAnswer));
-    return { isCorrect, confidence: isCorrect ? 1 : 0 };
+    const answer = norm(learnerAnswer);
+    const correct = norm(correctAnswer);
+    // Reject blank or suspiciously short answers
+    if (answer.length < 2) return { isCorrect: false, confidence: 0 };
+    // Require the correct answer to appear as a whole word, not just a substring
+    const wordBoundary = new RegExp(
+      `\\b${correct.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`,
+    );
+    const isCorrect = wordBoundary.test(answer);
+    return { isCorrect, confidence: isCorrect ? 0.7 : 0 };
   }
 }
 

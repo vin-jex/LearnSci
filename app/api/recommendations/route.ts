@@ -3,6 +3,15 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+const SELECT_FIELDS = {
+  id: true,
+  title: true,
+  titleIgbo: true,
+  description: true,
+  descriptionIgbo: true,
+  duration: true,
+} as const;
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -15,11 +24,10 @@ export async function GET() {
     });
 
     if (!profile?.recommendedTopics) {
-      // No profile yet - return topics in default order
       const topics = await prisma.topic.findMany({
         where: { published: true },
         orderBy: { order: "asc" },
-        select: { id: true, title: true, description: true, duration: true },
+        select: SELECT_FIELDS,
       });
       return NextResponse.json({ topics, personalised: false });
     }
@@ -28,7 +36,7 @@ export async function GET() {
 
     const topics = await prisma.topic.findMany({
       where: { published: true, id: { in: recommendedIds } },
-      select: { id: true, title: true, description: true, duration: true },
+      select: SELECT_FIELDS,
     });
 
     // Return in recommended order

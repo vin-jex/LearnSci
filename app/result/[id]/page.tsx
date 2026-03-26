@@ -15,7 +15,11 @@ interface AttemptData {
 
 export default function ResultPage({ params }: { params: { id: string } }) {
   const [attempt, setAttempt] = useState<AttemptData | null>(null);
-  const [nextTopic, setNextTopic] = useState<{ id: string; title: string; titleIgbo?: string } | null>(null);
+  const [nextTopic, setNextTopic] = useState<{
+    id: string;
+    title: string;
+    titleIgbo?: string;
+  } | null>(null);
   const [totalQ, setTotalQ] = useState(0);
   const [correctQ, setCorrectQ] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,15 +30,15 @@ export default function ResultPage({ params }: { params: { id: string } }) {
     fetch(`/api/attempt/${params.id}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.error) { setError(data.error); return; }
+        if (data.error) {
+          setError(data.error);
+          return;
+        }
         setAttempt(data.attempt);
         setNextTopic(data.nextTopic ?? null);
-        const total = data.attempt.weakAreas?.length
-          ? data.attempt.weakAreas.length + Math.round((data.attempt.score / 100) * 3)
-          : 3;
-        const correct = Math.round((data.attempt.score / 100) * total);
-        setTotalQ(total);
-        setCorrectQ(correct);
+
+        setTotalQ(data.totalQuestions ?? 0);
+        setCorrectQ(data.correctCount ?? 0);
       })
       .catch(() => setError("Failed to load results"))
       .finally(() => setIsLoading(false));
@@ -54,7 +58,10 @@ export default function ResultPage({ params }: { params: { id: string } }) {
     return (
       <div className='flex flex-col items-center justify-center py-24 gap-4'>
         <p className='text-ink-400 font-body'>{error ?? "Result not found."}</p>
-        <Link href='/dashboard' className='text-sm text-forest-400 underline font-body'>
+        <Link
+          href='/dashboard'
+          className='text-sm text-forest-400 underline font-body'
+        >
           {t("nav.backDashboard")}
         </Link>
       </div>

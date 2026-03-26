@@ -181,8 +181,8 @@ export default function QuizPage({ params }: { params: { id: string } }) {
                   ? "key terms"
                   : "key term"}{" "}
               {isIgbo
-                ? "dị n'ebe a - gbanye Igbo n'akụkụ."
-                : "available during the quiz - toggle Igbo in the sidebar."}
+                ? "dị n'ebe a — gbanye Igbo n'akụkụ."
+                : "available during the quiz — toggle Igbo in the sidebar."}
             </p>
           )}
 

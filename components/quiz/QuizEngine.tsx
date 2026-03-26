@@ -99,7 +99,9 @@ export function QuizEngine({
       } else {
         const fallback: PerQuestionResult = {
           isCorrect: false,
-          feedback: isIgbo ? "Enweghị ike ịnwale. Gaa n'ihu." : "Could not evaluate. Moving on.",
+          feedback: isIgbo
+            ? "Enweghị ike ịnwale. Gaa n'ihu."
+            : "Could not evaluate. Moving on.",
         };
         setFeedback(fallback);
         setResults((prev) => [...prev, fallback]);
@@ -107,7 +109,9 @@ export function QuizEngine({
     } catch {
       const fallback: PerQuestionResult = {
         isCorrect: false,
-        feedback: isIgbo ? "Njehie netwọkụ. Gaa n'ihu." : "Network error. Moving on.",
+        feedback: isIgbo
+          ? "Njehie netwọkụ. Gaa n'ihu."
+          : "Network error. Moving on.",
       };
       setFeedback(fallback);
       setResults((prev) => [...prev, fallback]);
@@ -138,14 +142,23 @@ export function QuizEngine({
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error ?? (isIgbo ? "Izipu adighi. Nwaa ọzọ." : "Submission failed. Please try again."));
+        setSubmitError(
+          data.error ??
+            (isIgbo
+              ? "Izipu adighi. Nwaa ọzọ."
+              : "Submission failed. Please try again."),
+        );
         setIsSubmitting(false);
         return;
       }
 
       router.push(`/result/${data.attemptId}`);
     } catch {
-      setSubmitError(isIgbo ? "Njehie netwọkụ. Nwaa ọzọ." : "Network error. Please try again.");
+      setSubmitError(
+        isIgbo
+          ? "Njehie netwọkụ. Nwaa ọzọ."
+          : "Network error. Please try again.",
+      );
       setIsSubmitting(false);
     }
   }, [isLast, topicId, router, isIgbo]);
@@ -164,7 +177,7 @@ export function QuizEngine({
   const translatedOptions =
     isIgbo && current.optionsIgbo
       ? current.optionsIgbo
-      : (current.options as string[]) ?? [];
+      : ((current.options as string[]) ?? []);
 
   return (
     <div className='animate-fade-up'>
@@ -179,9 +192,7 @@ export function QuizEngine({
             </span>
           )}
         </div>
-        <h1 className='font-display text-3xl text-ink-100'>
-          {displayTitle}
-        </h1>
+        <h1 className='font-display text-3xl text-ink-100'>{displayTitle}</h1>
       </div>
 
       {predictedWeakAreas.length > 0 && (
@@ -215,6 +226,7 @@ export function QuizEngine({
               <MCQQuestion
                 questionText={translatedQuestionText}
                 options={translatedOptions}
+                englishOptions={(current.options as string[]) ?? []}
                 selected={currentInput || null}
                 onSelect={setCurrentInput}
                 feedback={feedback}

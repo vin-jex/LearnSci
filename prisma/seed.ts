@@ -1485,7 +1485,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-1",
     type: QuestionType.MCQ,
     questionText: "What is photosynthesis?",
-    questionTextIgbo: "Gịnị bụ fotosinthesis?",
+    questionTextIgbo: "Gịnị bụ fotosintesis?",
     options: [
       "The process of breaking down food to release energy",
       "The process by which plants make their own food using light",
@@ -1493,8 +1493,8 @@ const Q_PHOTOSYNTHESIS = [
       "The process of respiration in animals",
     ],
     optionsIgbo: [
-      "Imebi nri iji wepụta ike",
-      "Usoro osisi si emepụta nri ha site n’ìhè",
+      "Usoro ịkpụda nri iji wepụta ike",
+      "Usoro osisi si emepụta nri ha site n’ìhè anyanwụ",
       "Mmegharị mmiri n’osisi",
       "Usoro iku ume n’anụmanụ",
     ],
@@ -1518,7 +1518,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-2",
     type: QuestionType.TRUE_FALSE,
     questionText: "Photosynthesis occurs in the chloroplast.",
-    questionTextIgbo: "Fotosinthesis na-eme n’ime chloroplast?",
+    questionTextIgbo: "Fotosintesis na-eme n’ime klọrọplast.",
     options: ["True", "False"],
     optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
@@ -1540,7 +1540,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-3",
     type: QuestionType.SHORT_ANSWER,
     questionText: "What pigment absorbs light energy for photosynthesis?",
-    questionTextIgbo: "Kedu pigment na-anata ìhè maka fotosinthesis?",
+    questionTextIgbo: "Kedu pigment na-anata ìhè anyanwụ maka fotosintesis?",
     options: null,
     optionsIgbo: null,
     correctAnswer: "chlorophyll",
@@ -1562,7 +1562,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-4",
     type: QuestionType.MCQ,
     questionText: "Which gas is taken in by plants during photosynthesis?",
-    questionTextIgbo: "Kedu gas osisi na-ewe n’ime fotosinthesis?",
+    questionTextIgbo: "Kedu gas osisi na-ewebata n’ime fotosintesis?",
     options: ["Oxygen", "Carbon dioxide", "Nitrogen", "Hydrogen"],
     optionsIgbo: ["Oxygen", "Carbon dioxide", "Nitrogen", "Hydrogen"],
     correctAnswer: "Carbon dioxide",
@@ -1584,9 +1584,9 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-5",
     type: QuestionType.MCQ,
     questionText: "What is the main product of photosynthesis used as food?",
-    questionTextIgbo: "Gịnị bụ isi nri a na-emepụta na fotosinthesis?",
+    questionTextIgbo: "Gịnị bụ isi nri a na-emepụta n’ime fotosintesis?",
     options: ["Oxygen", "Glucose", "Water", "Carbon dioxide"],
-    optionsIgbo: ["Oxygen", "Glucose", "Water", "Carbon dioxide"],
+    optionsIgbo: ["Oxygen", "Glucose", "Mmiri", "Carbon dioxide"],
     correctAnswer: "Glucose",
     feedbackRules: {
       misconceptions: [
@@ -1606,7 +1606,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-6",
     type: QuestionType.TRUE_FALSE,
     questionText: "Sunlight is required for photosynthesis.",
-    questionTextIgbo: "Ìhè anyanwụ dị mkpa maka fotosinthesis?",
+    questionTextIgbo: "Ìhè anyanwụ dị mkpa maka fotosintesis?",
     options: ["True", "False"],
     optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
@@ -1630,9 +1630,9 @@ const Q_PHOTOSYNTHESIS = [
     questionText:
       "Which part of the plant allows gas exchange for photosynthesis?",
     questionTextIgbo:
-      "Kedu akụkụ osisi na-enye ohere mgbanwe gas maka fotosinthesis?",
+      "Kedu akụkụ osisi na-enye ohere mgbanwe gas maka fotosintesis?",
     options: ["Roots", "Stem", "Stomata", "Flowers"],
-    optionsIgbo: ["Mgbọrọgwụ", "Osisi ogwe", "Stomata", "Ifuru"],
+    optionsIgbo: ["Mgbọrọgwụ", "Ogwe osisi", "Stomata", "Ifuru"],
     correctAnswer: "Stomata",
     feedbackRules: {
       misconceptions: [
@@ -1654,7 +1654,7 @@ const Q_PHOTOSYNTHESIS = [
     questionText:
       "What is the name of the process by which plants lose water vapour through stomata?",
     questionTextIgbo:
-      "Gịnị ka a na-akpọ usoro osisi si tufuo mmiri site na stomata?",
+      "Gịnị ka a na-akpọ usoro osisi si tufuo uzuoku mmiri site na stomata?",
     options: null,
     optionsIgbo: null,
     correctAnswer: "transpiration",
@@ -1676,14 +1676,14 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-9",
     type: QuestionType.MCQ,
     questionText: "Which factor does NOT affect the rate of photosynthesis?",
-    questionTextIgbo: "Kedu ihe anaghị emetụta ọsọ fotosinthesis?",
+    questionTextIgbo: "Kedu ihe anaghị emetụta ọsọ fotosintesis?",
     options: [
       "Light intensity",
       "Temperature",
       "Carbon dioxide concentration",
       "Sound",
     ],
-    optionsIgbo: ["Ike ìhè", "Okpomọkụ", "Ogologo carbon dioxide", "Ụda"],
+    optionsIgbo: ["Ike ìhè", "Okpomọkụ", "Ọnụọgụ carbon dioxide", "Ụda"],
     correctAnswer: "Sound",
     feedbackRules: {
       misconceptions: [
@@ -1703,7 +1703,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-10",
     type: QuestionType.TRUE_FALSE,
     questionText: "Oxygen is produced as a by-product of photosynthesis.",
-    questionTextIgbo: "Oxygen na-apụta dịka ihe fọdụrụ na fotosinthesis?",
+    questionTextIgbo: "Oxygen na-apụta dịka ihe fọdụrụ n’ime fotosintesis?",
     options: ["True", "False"],
     optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
@@ -1725,7 +1725,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-11",
     type: QuestionType.MCQ,
     questionText: "Which equation correctly represents photosynthesis?",
-    questionTextIgbo: "Kedu equation ziri ezi maka fotosinthesis?",
+    questionTextIgbo: "Kedu equation ziri ezi maka fotosintesis?",
     options: [
       "Glucose + Oxygen → Carbon dioxide + Water",
       "Carbon dioxide + Water → Glucose + Oxygen",
@@ -1733,10 +1733,10 @@ const Q_PHOTOSYNTHESIS = [
       "Water + Oxygen → Glucose + Carbon dioxide",
     ],
     optionsIgbo: [
-      "Glucose + Oxygen → Carbon dioxide + Water",
-      "Carbon dioxide + Water → Glucose + Oxygen",
-      "Oxygen + Water → Carbon dioxide + Glucose",
-      "Water + Oxygen → Glucose + Carbon dioxide",
+      "Glucose + Oxygen → Carbon dioxide + Mmiri",
+      "Carbon dioxide + Mmiri → Glucose + Oxygen",
+      "Oxygen + Mmiri → Carbon dioxide + Glucose",
+      "Mmiri + Oxygen → Glucose + Carbon dioxide",
     ],
     correctAnswer: "Carbon dioxide + Water → Glucose + Oxygen",
     feedbackRules: {
@@ -1756,7 +1756,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-12",
     type: QuestionType.TRUE_FALSE,
     questionText: "Photosynthesis can occur in the absence of chlorophyll.",
-    questionTextIgbo: "Fotosinthesis nwere ike ime na-enweghị chlorophyll?",
+    questionTextIgbo: "Fotosintesis nwere ike ime na-enweghị chlorophyll?",
     options: ["True", "False"],
     optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
@@ -1780,7 +1780,7 @@ const Q_PHOTOSYNTHESIS = [
     questionText:
       "What form of energy is converted into chemical energy during photosynthesis?",
     questionTextIgbo:
-      "Kedu ụdị ike na-agbanwe gaa na chemical energy n’ime fotosinthesis?",
+      "Kedu ụdị ike na-agbanwe gaa na kemikal ike n’ime fotosintesis?",
     options: null,
     optionsIgbo: null,
     correctAnswer: "light energy",
@@ -1802,9 +1802,9 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-14",
     type: QuestionType.MCQ,
     questionText: "Where does the water used in photosynthesis come from?",
-    questionTextIgbo: "Ebee ka mmiri eji eme fotosinthesis si abịa?",
+    questionTextIgbo: "Ebee ka mmiri eji eme fotosintesis si abịa?",
     options: ["Air", "Soil", "Sunlight", "Leaves"],
-    optionsIgbo: ["Ikuku", "Ala", "Ìhè", "Akwụkwọ"],
+    optionsIgbo: ["Ikuku", "Ala", "Ìhè anyanwụ", "Akwụkwọ"],
     correctAnswer: "Soil",
     feedbackRules: {
       misconceptions: [
@@ -1824,7 +1824,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-15",
     type: QuestionType.TRUE_FALSE,
     questionText: "Plants only carry out photosynthesis during the day.",
-    questionTextIgbo: "Osisi na-eme fotosinthesis naanị n’ehihie?",
+    questionTextIgbo: "Osisi na-eme fotosintesis naanị mgbe ìhè anyanwụ dị?",
     options: ["True", "False"],
     optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "True",
@@ -1846,7 +1846,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-16",
     type: QuestionType.MCQ,
     questionText: "Which part of the leaf contains the most chloroplasts?",
-    questionTextIgbo: "Kedu akụkụ akwụkwọ nwere chloroplast kachasị?",
+    questionTextIgbo: "Kedu akụkụ akwụkwọ nwere chloroplast kacha ọtụtụ?",
     options: [
       "Upper epidermis",
       "Palisade mesophyll",
@@ -1904,7 +1904,7 @@ const Q_PHOTOSYNTHESIS = [
     questionText:
       "Increasing carbon dioxide concentration always increases photosynthesis rate indefinitely.",
     questionTextIgbo:
-      "Ibulite carbon dioxide na-eme ka fotosinthesis na-abawanye ruo mgbe ebighị ebi?",
+      "Ịbawanye carbon dioxide na-eme ka fotosintesis na-aga n’ihu ruo mgbe ebighị ebi?",
     options: ["True", "False"],
     optionsIgbo: ["Eziokwu", "Ụgha"],
     correctAnswer: "False",
@@ -1927,7 +1927,7 @@ const Q_PHOTOSYNTHESIS = [
     type: QuestionType.MCQ,
     questionText:
       "Which structure controls the opening and closing of stomata?",
-    questionTextIgbo: "Kedu akụkụ na-achịkwa mmeghe na mmechi stomata?",
+    questionTextIgbo: "Kedu sel na-achịkwa mmeghe na mmechi stomata?",
     options: ["Root cells", "Guard cells", "Xylem", "Phloem"],
     optionsIgbo: ["Sel mgbọrọgwụ", "Guard cells", "Xylem", "Phloem"],
     correctAnswer: "Guard cells",
@@ -1949,7 +1949,7 @@ const Q_PHOTOSYNTHESIS = [
     id: "q-p-20",
     type: QuestionType.MCQ,
     questionText: "Which of the following is NOT required for photosynthesis?",
-    questionTextIgbo: "Kedu n’ime ndị a anaghị achọ maka fotosinthesis?",
+    questionTextIgbo: "Kedu n’ime ndị a anaghị achọ maka fotosintesis?",
     options: ["Light", "Water", "Oxygen", "Carbon dioxide"],
     optionsIgbo: ["Ìhè", "Mmiri", "Oxygen", "Carbon dioxide"],
     correctAnswer: "Oxygen",

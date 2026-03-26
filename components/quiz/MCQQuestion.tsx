@@ -8,6 +8,7 @@ interface Props {
   feedback: { isCorrect: boolean; feedback: string } | null;
   questionNumber: number;
   total: number;
+  englishOptions?: string[];
 }
 
 export function MCQQuestion({
@@ -18,7 +19,12 @@ export function MCQQuestion({
   feedback,
   questionNumber,
   total,
+  englishOptions,
 }: Props) {
+  const sourceOptions = englishOptions ?? options;
+  const selectedIndex =
+    selected !== null ? sourceOptions.indexOf(selected) : -1;
+
   return (
     <div className='space-y-5'>
       <QuestionHeader
@@ -31,8 +37,8 @@ export function MCQQuestion({
       </p>
 
       <div className='grid gap-3'>
-        {options.map((opt) => {
-          const isSelected = selected === opt;
+        {options.map((opt, idx) => {
+          const isSelected = selectedIndex === idx;
           const showResult = feedback !== null;
           const isCorrectAnswer =
             showResult && feedback!.isCorrect && isSelected;
@@ -41,8 +47,12 @@ export function MCQQuestion({
 
           return (
             <button
-              key={opt}
-              onClick={() => !showResult && onSelect(opt)}
+              key={idx}
+              onClick={() => {
+                if (!showResult) {
+                  onSelect(sourceOptions[idx] ?? opt);
+                }
+              }}
               disabled={showResult}
               className={`
                 w-full text-left px-5 py-3.5 rounded-xl border text-sm font-body
@@ -80,7 +90,7 @@ export function MCQQuestion({
                     }
                   `}
                 >
-                  {String.fromCharCode(65 + options.indexOf(opt))}
+                  {String.fromCharCode(65 + idx)}
                 </span>
                 {opt}
                 {/* Tick / X icon */}
