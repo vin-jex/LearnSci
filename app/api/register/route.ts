@@ -45,10 +45,10 @@ export async function POST(req: Request) {
 
         await storeTokenBidirectional("email_verify", token, created.id);
 
-        await sendVerificationEmail(email, name, token);
-
         return created;
       });
+
+      await sendVerificationEmail(email, name, token);
     } catch (txError) {
       console.error("[REGISTER_TX]", txError);
       return NextResponse.json(

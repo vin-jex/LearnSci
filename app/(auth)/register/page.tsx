@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
 import { registerSchema, RegisterInput } from "@/lib/validations/auth";
 import { FormInput } from "@/components/auth/FormInput";
 import { PasswordInput } from "@/components/auth/PasswordInput";
@@ -22,7 +21,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isLoading, error, successMessage } = useAppSelector((s) => s.auth);
-  const [step, setStep] = useState<"form" | "success">("form");
+  const [step] = useState<"form" | "success">("form");
   const { t } = useTranslation();
 
   const {
@@ -51,25 +50,23 @@ export default function RegisterPage() {
         dispatch(
           setError(json.error ?? "Registration failed. Please try again."),
         );
+        dispatch(setLoading(false));
         return;
       }
 
-      dispatch(setSuccess(t("auth.creatingAccount")));
-      setStep("success");
+      dispatch(
+        setSuccess(
+          "Account created. Please check your email to verify your account.",
+        ),
+      );
 
-      const signInResult = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
-
-      if (signInResult?.ok) {
-        setTimeout(() => router.push("/dashboard"), 800);
-      } else {
+      setTimeout(() => {
         router.push("/login?registered=true");
-      }
+      }, 1200);
     } catch {
       dispatch(setError("Network error. Please check your connection."));
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -92,27 +89,51 @@ export default function RegisterPage() {
         </div>
 
         {error && (
-          <div className='mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20
-                          text-red-400 text-sm font-body flex items-center gap-2 animate-fade-in'>
-            <svg className='w-4 h-4 shrink-0' viewBox='0 0 20 20' fill='currentColor'>
-              <path fillRule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z' clipRule='evenodd' />
+          <div
+            className='mb-5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20
+                          text-red-400 text-sm font-body flex items-center gap-2 animate-fade-in'
+          >
+            <svg
+              className='w-4 h-4 shrink-0'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+            >
+              <path
+                fillRule='evenodd'
+                d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z'
+                clipRule='evenodd'
+              />
             </svg>
             {error}
           </div>
         )}
 
         {successMessage && (
-          <div className='mb-5 px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20
-                          text-forest-400 text-sm font-body flex items-center gap-2 animate-fade-in'>
-            <svg className='w-4 h-4 shrink-0' viewBox='0 0 20 20' fill='currentColor'>
-              <path fillRule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clipRule='evenodd' />
+          <div
+            className='mb-5 px-4 py-3 rounded-xl bg-forest-500/10 border border-forest-500/20
+                          text-forest-400 text-sm font-body flex items-center gap-2 animate-fade-in'
+          >
+            <svg
+              className='w-4 h-4 shrink-0'
+              viewBox='0 0 20 20'
+              fill='currentColor'
+            >
+              <path
+                fillRule='evenodd'
+                d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z'
+                clipRule='evenodd'
+              />
             </svg>
             {successMessage}
           </div>
         )}
 
         {step === "form" && (
-          <form onSubmit={handleSubmit(onSubmit)} className='space-y-5 stagger' noValidate>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className='space-y-5 stagger'
+            noValidate
+          >
             <div className='animate-fade-up'>
               <FormInput
                 label={t("auth.name")}
@@ -160,7 +181,10 @@ export default function RegisterPage() {
                       />
                     ))}
                   </div>
-                  <p className='text-xs' style={{ color: passwordStrength.color }}>
+                  <p
+                    className='text-xs'
+                    style={{ color: passwordStrength.color }}
+                  >
                     {passwordStrength.label}
                   </p>
                 </div>
@@ -199,7 +223,10 @@ export default function RegisterPage() {
         {step === "form" && (
           <p className='mt-6 text-center text-sm text-ink-500 font-body animate-fade-up'>
             {t("auth.hasAccount")}{" "}
-            <Link href='/login' className='btn-ghost text-forest-400 hover:text-forest-300'>
+            <Link
+              href='/login'
+              className='btn-ghost text-forest-400 hover:text-forest-300'
+            >
               {t("auth.login")}
             </Link>
           </p>
