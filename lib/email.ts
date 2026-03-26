@@ -10,14 +10,11 @@ function emailLayout(content: string): string {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <title>LearnSci</title>
 </head>
-<body style="
-  margin:0;padding:0;
-  background-color:#09090b;
-  font-family:'Plus Jakarta Sans','Helvetica Neue',Arial,sans-serif;
-  color:#e4e4e7;
-  -webkit-font-smoothing:antialiased;
+<body style="margin:0; padding:0; background-color:#09090b !important; font-family:'Plus Jakarta Sans','Helvetica Neue',Arial,sans-serif; color:#e4e4e7 !important; -webkit-font-smoothing:antialiased;
 ">
   <!-- Outer wrapper -->
   <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#09090b;min-height:100vh;padding:48px 20px;">
@@ -220,12 +217,17 @@ export async function sendVerificationEmail(
     </p>
   `;
 
-  await resend.emails.send({
+  const res = await resend.emails.send({
     from: FROM,
     to,
     subject: "Verify your LearnSci account",
     html: emailLayout(content),
   });
+
+  if (res.error) {
+    console.error("[RESEND_ERROR]", res.error);
+    throw new Error("Email delivery failed");
+  }
 }
 
 // ── Password reset email ──────────────────────────────────────────
@@ -354,10 +356,15 @@ export async function sendPasswordResetEmail(
     </p>
   `;
 
-  await resend.emails.send({
+  const res = await resend.emails.send({
     from: FROM,
     to,
     subject: "Reset your LearnSci password",
     html: emailLayout(content),
   });
+
+  if (res.error) {
+    console.error("[RESEND_ERROR]", res.error);
+    throw new Error("Email delivery failed");
+  }
 }

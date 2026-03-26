@@ -13,6 +13,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const parsed = schema.safeParse(body);
+
     if (!parsed.success) {
       return NextResponse.json(
         { error: parsed.error.errors[0].message },
@@ -22,19 +23,38 @@ export async function POST(req: Request) {
 
     const { email } = parsed.data;
 
-    // Always return success to prevent email enumeration
     const user = await prisma.user.findUnique({
       where: { email },
       select: { id: true, name: true, email: true },
     });
 
-    if (user) {
-      let token = await getExistingToken("password_reset", user.id);
-      if (!token) {
-        token = randomBytes(32).toString("hex");
-        await storeTokenBidirectional("password_reset", token, user.id);
-      }
+    if (!user) {
+      return NextResponse.json({
+        message:
+          "If an account with that email exists, a reset link has been sent.",
+      });
+    }
+
+    let token = await getExistingToken("password_reset", user.id);
+
+    if (!token) {
+      token = randomBytes(32).toString("hex");
+      await storeTokenBidirectional("password_reset", token, user.id);
+    }
+
+    try {
       await sendPasswordResetEmail(email, user.name, token);
+    } catch (emailError) {
+      console.error("[FORGOT_PASSWORD_EMAIL_FAILED]", {
+        email,
+        userId: user.id,
+        error: emailError,
+      });
+
+      return NextResponse.json(
+        { error: "Failed to send reset email. Please try again." },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({
@@ -42,7 +62,8 @@ export async function POST(req: Request) {
         "If an account with that email exists, a reset link has been sent.",
     });
   } catch (error) {
-    console.error("[FORGOT_PASSWORD]", error);
+    console.error("[FORGOT_PASSWORD_FATAL]", error);
+
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
